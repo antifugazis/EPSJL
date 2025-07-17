@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block title %}Bulletin de Notes - {{ eleve.prenom }} {{ eleve.nom }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Bulletin de Notes</h1>
+        <div class="flex space-x-2">
+            <button onclick="window.print()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded mr-2">
+                Imprimer
+            </button>
+            <a href="{{ url_for('notes.bulletin') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Print header - only visible when printing -->
+    <div class="hidden print:block mb-8">
+        <div class="text-center">
+            <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-20 mx-auto">
+            <h1 class="text-2xl font-bold mt-4">École Presbytérale Saint Joseph de L'Asile</h1>
+            <p class="text-lg">Bulletin de Notes</p>
+            <p class="text-lg">
+                {% if trimestre == '1' %}
+                    Premier Trimestre
+                {% elif trimestre == '2' %}
+                    Deuxième Trimestre
+                {% elif trimestre == '3' %}
+                    Troisième Trimestre
+                {% else %}
+                    Trimestre {{ trimestre }}
+                {% endif %}
+                - Année Scolaire {{ current_year }}-{{ current_year + 1 }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Student info -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6 print:mb-4">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 print:bg-white">
+            <h2 class="text-lg font-medium text-gray-900">Informations de l'élève</h2>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <div class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-3">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Matricule</h3>
+                    <p class="mt-1 text-sm text-gray-900">{{ eleve.matricule }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Nom complet</h3>
+                    <p class="mt-1 text-sm text-gray-900">{{ eleve.prenom }} {{ eleve.nom }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Classe</h3>
+                    <p class="mt-1 text-sm text-gray-900">{{ eleve.classe.nom if eleve.classe else 'Non assigné' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic summary -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6 print:mb-4">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 print:bg-white">
+            <h2 class="text-lg font-medium text-gray-900">Résumé académique</h2>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <div class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-3">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Moyenne générale</h3>
+                    <p class="mt-1 text-lg font-bold 
+                        {% if moyenne_generale >= 16 %}text-green-600
+                        {% elif moyenne_generale >= 14 %}text-green-500
+                        {% elif moyenne_generale >= 12 %}text-blue-500
+                        {% elif moyenne_generale >= 10 %}text-yellow-500
+                        {% else %}text-red-500{% endif %}">
+                        {{ "%.2f"|format(moyenne_generale) }}/20
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Rang</h3>
+                    <p class="mt-1 text-lg font-bold text-gray-900">{{ rang }}/{{ effectif }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Mention</h3>
+                    <p class="mt-1 text-lg font-bold 
+                        {% if moyenne_generale >= 16 %}text-green-600
+                        {% elif moyenne_generale >= 14 %}text-green-500
+                        {% elif moyenne_generale >= 12 %}text-blue-500
+                        {% elif moyenne_generale >= 10 %}text-yellow-500
+                        {% else %}text-red-500{% endif %}">
+                        {% if moyenne_generale >= 16 %}Très Bien
+                        {% elif moyenne_generale >= 14 %}Bien
+                        {% elif moyenne_generale >= 12 %}Assez Bien
+                        {% elif moyenne_generale >= 10 %}Passable
+                        {% else %}Insuffisant{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grades table -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg print:shadow-none">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 print:bg-white">
+            <h2 class="text-lg font-medium text-gray-900">Notes par matière</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 print:bg-white">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matière</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coefficient</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Devoirs</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Examens</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moyenne</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Appréciation</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for c in cours %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ c.nom }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ c.coefficient }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if c.id in notes_by_cours %}
+                            {% for note in notes_by_cours[c.id] if note.type == 'devoir' %}
+                                {{ "%.1f"|format(note.valeur) }}/{{ note.sur }}
+                                {% if not loop.last %}, {% endif %}
+                            {% else %}
+                                -
+                            {% endfor %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if c.id in notes_by_cours %}
+                            {% for note in notes_by_cours[c.id] if note.type == 'examen' %}
+                                {{ "%.1f"|format(note.valeur) }}/{{ note.sur }}
+                                {% if not loop.last %}, {% endif %}
+                            {% else %}
+                                -
+                            {% endfor %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium 
+                        {% if c.id in moyennes %}
+                            {% if moyennes[c.id] >= 16 %}text-green-600
+                            {% elif moyennes[c.id] >= 14 %}text-green-500
+                            {% elif moyennes[c.id] >= 12 %}text-blue-500
+                            {% elif moyennes[c.id] >= 10 %}text-yellow-500
+                            {% else %}text-red-500{% endif %}
+                        {% else %}
+                            text-gray-500
+                        {% endif %}">
+                        {% if c.id in moyennes %}
+                            {{ "%.2f"|format(moyennes[c.id]) }}/20
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if c.id in moyennes %}
+                            {% if moyennes[c.id] >= 16 %}Très Bien
+                            {% elif moyennes[c.id] >= 14 %}Bien
+                            {% elif moyennes[c.id] >= 12 %}Assez Bien
+                            {% elif moyennes[c.id] >= 10 %}Passable
+                            {% else %}Insuffisant{% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                        Aucun cours trouvé pour cet élève.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Signature section - only visible when printing -->
+    <div class="hidden print:block mt-10">
+        <div class="grid grid-cols-3 gap-4">
+            <div class="text-center">
+                <p class="font-medium">Le Directeur</p>
+                <div class="h-16"></div>
+                <p>_______________________</p>
+            </div>
+            <div class="text-center">
+                <p class="font-medium">Le Professeur Principal</p>
+                <div class="h-16"></div>
+                <p>_______________________</p>
+            </div>
+            <div class="text-center">
+                <p class="font-medium">Les Parents</p>
+                <div class="h-16"></div>
+                <p>_______________________</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        @page {
+            size: portrait;
+            margin: 1cm;
+        }
+        body {
+            font-size: 12pt;
+        }
+        .container {
+            max-width: 100%;
+            padding: 0;
+        }
+        .shadow {
+            box-shadow: none !important;
+        }
+        .sm\:rounded-lg {
+            border-radius: 0 !important;
+        }
+    }
+</style>
+{% endblock %}

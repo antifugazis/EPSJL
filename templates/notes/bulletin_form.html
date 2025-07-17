@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Bulletin de Notes{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Bulletin de Notes</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('notes.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Selection form -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Sélection de l'élève</h2>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">Veuillez sélectionner un élève et un trimestre pour afficher son bulletin de notes.</p>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <form action="{{ url_for('notes.bulletin') }}" method="GET" class="space-y-6">
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <!-- Classe -->
+                    <div class="sm:col-span-3">
+                        <label for="classe_id" class="block text-sm font-medium text-gray-700">Classe</label>
+                        <select id="classe_id" name="classe_id" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <option value="">Sélectionner une classe</option>
+                            {% for classe in classes %}
+                                <option value="{{ classe.id }}">{{ classe.nom }} ({{ classe.niveau }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Élève -->
+                    <div class="sm:col-span-3">
+                        <label for="eleve_id" class="block text-sm font-medium text-gray-700">Élève</label>
+                        <select id="eleve_id" name="eleve_id" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <option value="">Sélectionner un élève</option>
+                            <!-- Will be populated via JavaScript -->
+                        </select>
+                    </div>
+
+                    <!-- Trimestre -->
+                    <div class="sm:col-span-2">
+                        <label for="trimestre" class="block text-sm font-medium text-gray-700">Trimestre</label>
+                        <select id="trimestre" name="trimestre" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <option value="1">1er Trimestre</option>
+                            <option value="2">2ème Trimestre</option>
+                            <option value="3">3ème Trimestre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Afficher le bulletin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to load students when a class is selected
+    document.getElementById('classe_id').addEventListener('change', function() {
+        const classeId = this.value;
+        const eleveSelect = document.getElementById('eleve_id');
+        
+        // Clear current options
+        eleveSelect.innerHTML = '<option value="">Sélectionner un élève</option>';
+        
+        if (!classeId) return;
+        
+        // Fetch students for this class
+        fetch(`/notes/get_eleves_by_classe?classe_id=${classeId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(eleve => {
+                    const option = document.createElement('option');
+                    option.value = eleve.id;
+                    option.textContent = `${eleve.nom} ${eleve.prenom} (${eleve.matricule})`;
+                    eleveSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error loading students:', error));
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Saisie des Présences{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Saisie des Présences</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('presence.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Course and date info -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Informations</h2>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <div class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-3">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Cours</h3>
+                    <p class="mt-1 text-sm text-gray-900">{{ cours.nom }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Date</h3>
+                    <p class="mt-1 text-sm text-gray-900">{{ date }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Classe</h3>
+                    <p class="mt-1 text-sm text-gray-900">{{ cours.classe.nom if cours.classe else 'Non assigné' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance entry form -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Saisie des présences</h2>
+        </div>
+        <form action="{{ url_for('presence.saisie') }}" method="POST" id="presenceForm">
+            <input type="hidden" name="date" value="{{ date }}">
+            <input type="hidden" name="cours_id" value="{{ cours.id }}">
+            
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matricule</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom et Prénom</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for eleve in eleves %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ eleve.matricule }}
+                            <input type="hidden" name="eleve_id[]" value="{{ eleve.id }}">
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ eleve.nom }} {{ eleve.prenom }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <select name="statut[]" class="status-select block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md
+                                {% if eleve.id in presence_dict %}
+                                    {% if presence_dict[eleve.id].statut == 'present' %}
+                                        bg-green-100
+                                    {% elif presence_dict[eleve.id].statut == 'absent' %}
+                                        bg-red-100
+                                    {% elif presence_dict[eleve.id].statut == 'retard' %}
+                                        bg-yellow-100
+                                    {% elif presence_dict[eleve.id].statut == 'excuse' %}
+                                        bg-blue-100
+                                    {% endif %}
+                                {% endif %}">
+                                <option value="present" {% if eleve.id in presence_dict and presence_dict[eleve.id].statut == 'present' %}selected{% endif %}>Présent</option>
+                                <option value="absent" {% if eleve.id in presence_dict and presence_dict[eleve.id].statut == 'absent' %}selected{% endif %}>Absent</option>
+                                <option value="retard" {% if eleve.id in presence_dict and presence_dict[eleve.id].statut == 'retard' %}selected{% endif %}>Retard</option>
+                                <option value="excuse" {% if eleve.id in presence_dict and presence_dict[eleve.id].statut == 'excuse' %}selected{% endif %}>Excusé</option>
+                            </select>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <input type="text" name="note[]" 
+                                value="{{ presence_dict[eleve.id].notes if eleve.id in presence_dict and presence_dict[eleve.id].notes else '' }}" 
+                                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                                placeholder="Notes (optionnel)">
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                            Aucun élève trouvé dans cette classe.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="px-6 py-4 bg-gray-50 text-right">
+                <div class="flex justify-between items-center">
+                    <div class="flex space-x-4">
+                        <button type="button" id="allPresent" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Tous présents
+                        </button>
+                        <button type="button" id="allAbsent" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Tous absents
+                        </button>
+                    </div>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Enregistrer les présences
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Change background color based on status selection
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', function() {
+            // Reset all background classes
+            this.classList.remove('bg-green-100', 'bg-red-100', 'bg-yellow-100', 'bg-blue-100');
+            
+            // Add appropriate background class based on selection
+            switch(this.value) {
+                case 'present':
+                    this.classList.add('bg-green-100');
+                    break;
+                case 'absent':
+                    this.classList.add('bg-red-100');
+                    break;
+                case 'retard':
+                    this.classList.add('bg-yellow-100');
+                    break;
+                case 'excuse':
+                    this.classList.add('bg-blue-100');
+                    break;
+            }
+        });
+    });
+    
+    // Set all students as present
+    document.getElementById('allPresent').addEventListener('click', function() {
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.value = 'present';
+            select.classList.remove('bg-green-100', 'bg-red-100', 'bg-yellow-100', 'bg-blue-100');
+            select.classList.add('bg-green-100');
+        });
+    });
+    
+    // Set all students as absent
+    document.getElementById('allAbsent').addEventListener('click', function() {
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.value = 'absent';
+            select.classList.remove('bg-green-100', 'bg-red-100', 'bg-yellow-100', 'bg-blue-100');
+            select.classList.add('bg-red-100');
+        });
+    });
+</script>
+{% endblock %}

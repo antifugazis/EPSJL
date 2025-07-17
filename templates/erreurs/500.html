@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Erreur Serveur{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full text-center">
+        <h1 class="text-9xl font-bold text-blue-600">500</h1>
+        <h2 class="text-3xl font-bold text-gray-900 mt-4">Erreur Serveur</h2>
+        <p class="mt-2 text-lg text-gray-600">
+            Une erreur inattendue s'est produite sur le serveur. Veuillez réessayer plus tard.
+        </p>
+        <div class="mt-8">
+            <a href="{{ url_for('accueil') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

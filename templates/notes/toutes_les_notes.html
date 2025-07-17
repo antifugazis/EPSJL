@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Toutes les Notes{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Toutes les Notes</h1>
+    </div>
+    
+    <!-- Filters -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden mb-6">
+        <div class="p-4 border-b">
+            <form action="{{ url_for('notes.toutes_les_notes') }}" method="get" class="flex flex-wrap gap-4">
+                <div class="w-48">
+                    <label for="classe_id" class="block text-sm font-medium text-gray-700 mb-1">Classe</label>
+                    <select name="classe_id" id="classe_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Toutes les classes</option>
+                        {% for classe in classes %}
+                        <option value="{{ classe.id }}" {% if selected_classe_id|int == classe.id|int %}selected{% endif %}>{{ classe.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w-48">
+                    <label for="cours_id" class="block text-sm font-medium text-gray-700 mb-1">Cours</label>
+                    <select name="cours_id" id="cours_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Tous les cours</option>
+                        {% for cours in cours_list %}
+                        <option value="{{ cours.id }}" {% if selected_cours_id|int == cours.id|int %}selected{% endif %}>{{ cours.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w-48">
+                    <label for="trimestre" class="block text-sm font-medium text-gray-700 mb-1">Trimestre</label>
+                    <select name="trimestre" id="trimestre" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="1" {% if selected_trimestre == '1' %}selected{% endif %}>1er Trimestre</option>
+                        <option value="2" {% if selected_trimestre == '2' %}selected{% endif %}>2ème Trimestre</option>
+                        <option value="3" {% if selected_trimestre == '3' %}selected{% endif %}>3ème Trimestre</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        {% if notes %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cours</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commentaire</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for note in notes %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ note.eleve.nom }} {{ note.eleve.prenom }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ note.eleve.classe.nom if note.eleve.classe else 'Non assigné' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ note.cours.nom }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {% if note.type == 'devoir' %}
+                                Devoir
+                            {% elif note.type == 'examen' %}
+                                Examen
+                            {% elif note.type == 'projet' %}
+                                Projet
+                            {% else %}
+                                {{ note.type }}
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ note.valeur }}/{{ note.sur }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ note.date.strftime('%d/%m/%Y') }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 max-w-md truncate">
+                            {{ note.commentaire or '-' }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-8 text-center">
+            <p class="text-gray-500">Aucune note trouvée. Veuillez modifier vos critères de recherche.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Link to go back to notes index -->
+    <div class="mt-4">
+        <a href="{{ url_for('notes.index') }}" class="text-blue-600 hover:text-blue-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+            </svg>
+            Retour à la saisie des notes
+        </a>
+    </div>
+</div>
+{% endblock %}

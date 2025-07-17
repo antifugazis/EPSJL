@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block title %}Détails de l'élève - {{ eleve.prenom }} {{ eleve.nom }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex items-center mb-6">
+        <a href="{{ url_for('eleves.liste') }}" class="text-blue-600 hover:text-blue-800 mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+            </svg>
+            Retour à la liste
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900">{{ eleve.prenom }} {{ eleve.nom }}</h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Informations de base -->
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="bg-blue-600 px-4 py-3">
+                <h2 class="text-lg font-semibold text-white">Informations de base</h2>
+            </div>
+            <div class="p-4">
+                <div class="flex justify-center mb-4">
+                    {% if eleve.photo %}
+                    <img src="{{ url_for('static', filename='uploads/eleves/' + eleve.photo) }}" alt="{{ eleve.prenom }} {{ eleve.nom }}" class="h-32 w-32 rounded-full object-cover border-4 border-blue-100">
+                    {% else %}
+                    <div class="h-32 w-32 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-2xl font-bold border-4 border-blue-100">
+                        {{ eleve.prenom[0] }}{{ eleve.nom[0] }}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="space-y-3">
+                    <div>
+                        <span class="text-sm text-gray-500">Matricule:</span>
+                        <p class="font-medium">{{ eleve.matricule }}</p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500">Date de naissance:</span>
+                        <p class="font-medium">{{ eleve.date_naissance }}</p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500">Sexe:</span>
+                        <p class="font-medium">{{ 'Masculin' if eleve.sexe == 'M' else 'Féminin' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500">Classe:</span>
+                        <p class="font-medium">{{ eleve.classe_nom or 'Non assigné' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500">Date d'inscription:</span>
+                        <p class="font-medium">{{ eleve.date_inscription }}</p>
+                    </div>
+                </div>
+                
+                {% if session.user_role in ['admin', 'directeur'] %}
+                <div class="mt-6">
+                    <a href="{{ url_for('eleves.modifier', eleve_id=eleve.id) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded">
+                        Modifier
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Coordonnées -->
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="bg-blue-600 px-4 py-3">
+                <h2 class="text-lg font-semibold text-white">Coordonnées</h2>
+            </div>
+            <div class="p-4">
+                <div class="space-y-3">
+                    <div>
+                        <span class="text-sm text-gray-500">Adresse:</span>
+                        <p class="font-medium">{{ eleve.adresse or 'Non renseignée' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500">Téléphone:</span>
+                        <p class="font-medium">{{ eleve.telephone or 'Non renseigné' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500">Email:</span>
+                        <p class="font-medium">{{ eleve.email or 'Non renseigné' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500">Parent/Tuteur:</span>
+                        <p class="font-medium">{{ parent_nom or 'Non renseigné' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notes -->
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="bg-blue-600 px-4 py-3">
+                <h2 class="text-lg font-semibold text-white">Notes</h2>
+            </div>
+            <div class="p-4">
+                <p class="text-gray-700 whitespace-pre-line">{{ eleve.notes or 'Aucune note disponible.' }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Onglets -->
+    <div class="mt-8">
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex">
+                <button class="tab-button active whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm" data-tab="presences">
+                    Présences
+                </button>
+                <button class="tab-button whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm" data-tab="notes">
+                    Notes
+                </button>
+                <button class="tab-button whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm" data-tab="paiements">
+                    Paiements
+                </button>
+            </nav>
+        </div>
+        
+        <!-- Contenu des onglets -->
+        <div class="bg-white shadow-md rounded-lg overflow-hidden mt-4">
+            <!-- Présences -->
+            <div id="presences-tab" class="tab-content">
+                {% if presences %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cours</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for presence in presences %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ presence.date }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ presence.cours_nom }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    {% if presence.statut == 'present' %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Présent</span>
+                                    {% elif presence.statut == 'absent' %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Absent</span>
+                                    {% elif presence.statut == 'retard' %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Retard</span>
+                                    {% elif presence.statut == 'excuse' %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Excusé</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ presence.notes or '' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-8 text-center">
+                    <p class="text-gray-500">Aucune donnée de présence disponible.</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Notes -->
+            <div id="notes-tab" class="tab-content hidden">
+                {% if notes %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cours</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commentaire</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for note in notes %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ note.date }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ note.cours_nom }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {% if note.type == 'devoir' %}
+                                    Devoir
+                                    {% elif note.type == 'examen' %}
+                                    Examen
+                                    {% elif note.type == 'projet' %}
+                                    Projet
+                                    {% elif note.type == 'participation' %}
+                                    Participation
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    {{ note.valeur }}/{{ note.sur }}
+                                    {% set percentage = (note.valeur / note.sur * 100)|round %}
+                                    {% if percentage >= 80 %}
+                                    <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ percentage }}%</span>
+                                    {% elif percentage >= 60 %}
+                                    <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">{{ percentage }}%</span>
+                                    {% else %}
+                                    <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ percentage }}%</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ note.commentaire or '' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-8 text-center">
+                    <p class="text-gray-500">Aucune note disponible.</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Paiements -->
+            <div id="paiements-tab" class="tab-content hidden">
+                {% if paiements %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Méthode</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Référence</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for paiement in paiements %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ paiement.date }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {% if paiement.frais_type == 'inscription' %}
+                                    Frais d'inscription
+                                    {% elif paiement.frais_type == 'scolarite' %}
+                                    Frais de scolarité
+                                    {% elif paiement.frais_type == 'uniforme' %}
+                                    Uniforme
+                                    {% elif paiement.frais_type == 'cantine' %}
+                                    Cantine
+                                    {% elif paiement.frais_type == 'transport' %}
+                                    Transport
+                                    {% else %}
+                                    Autre
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{{ paiement.montant }} HTG</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {% if paiement.methode == 'especes' %}
+                                    Espèces
+                                    {% elif paiement.methode == 'cheque' %}
+                                    Chèque
+                                    {% elif paiement.methode == 'virement' %}
+                                    Virement
+                                    {% elif paiement.methode == 'carte' %}
+                                    Carte
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ paiement.reference or '' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-8 text-center">
+                    <p class="text-gray-500">Aucun paiement enregistré.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des onglets
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Désactiver tous les onglets
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active', 'border-blue-600', 'text-blue-600');
+                    btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                });
+                
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // Activer l'onglet cliqué
+                this.classList.add('active', 'border-blue-600', 'text-blue-600');
+                this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+            });
+        });
+        
+        // Activer le premier onglet par défaut
+        if (tabButtons.length > 0) {
+            tabButtons[0].click();
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

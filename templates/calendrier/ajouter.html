@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter un Événement{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Ajouter un Événement</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('calendrier.evenements') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Liste des événements
+            </a>
+            <a href="{{ url_for('calendrier.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Retour au calendrier
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Informations de l'événement</h2>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">Veuillez remplir tous les champs obligatoires.</p>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <form method="POST" action="{{ url_for('calendrier.ajouter') }}" class="space-y-6">
+                <!-- CSRF token would go here if using Flask-WTF -->
+                
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <!-- Titre -->
+                    <div class="sm:col-span-4">
+                        <label for="titre" class="block text-sm font-medium text-gray-700">Titre *</label>
+                        <div class="mt-1">
+                            <input type="text" name="titre" id="titre" required
+                                   class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                    </div>
+
+                    <!-- Type -->
+                    <div class="sm:col-span-2">
+                        <label for="type" class="block text-sm font-medium text-gray-700">Type *</label>
+                        <div class="mt-1">
+                            <select id="type" name="type" required
+                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                <option value="academique">Académique</option>
+                                <option value="sportif">Sportif</option>
+                                <option value="culturel">Culturel</option>
+                                <option value="religieux">Religieux</option>
+                                <option value="administratif">Administratif</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="sm:col-span-2">
+                        <label for="date" class="block text-sm font-medium text-gray-700">Date *</label>
+                        <div class="mt-1">
+                            <input type="date" name="date" id="date" required
+                                   class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                    </div>
+
+                    <!-- Heure début -->
+                    <div class="sm:col-span-2">
+                        <label for="heure_debut" class="block text-sm font-medium text-gray-700">Heure de début</label>
+                        <div class="mt-1">
+                            <input type="time" name="heure_debut" id="heure_debut"
+                                   class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                    </div>
+
+                    <!-- Heure fin -->
+                    <div class="sm:col-span-2">
+                        <label for="heure_fin" class="block text-sm font-medium text-gray-700">Heure de fin</label>
+                        <div class="mt-1">
+                            <input type="time" name="heure_fin" id="heure_fin"
+                                   class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                    </div>
+
+                    <!-- Lieu -->
+                    <div class="sm:col-span-6">
+                        <label for="lieu" class="block text-sm font-medium text-gray-700">Lieu</label>
+                        <div class="mt-1">
+                            <input type="text" name="lieu" id="lieu"
+                                   class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="sm:col-span-6">
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <div class="mt-1">
+                            <textarea id="description" name="description" rows="4"
+                                      class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md"></textarea>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">Brève description de l'événement.</p>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="sm:col-span-6">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="public" name="public" type="checkbox" value="1"
+                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="public" class="font-medium text-gray-700">Public</label>
+                                <p class="text-gray-500">Cochez cette case si l'événement est ouvert au public.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-6">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="important" name="important" type="checkbox" value="1"
+                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="important" class="font-medium text-gray-700">Important</label>
+                                <p class="text-gray-500">Cochez cette case si l'événement est important.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-5">
+                    <div class="flex justify-end">
+                        <button type="button" onclick="window.history.back()"
+                                class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Annuler
+                        </button>
+                        <button type="submit"
+                                class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set default date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+    });
+</script>
+{% endblock %}

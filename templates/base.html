@@ -1,0 +1,383 @@
+<html lang="en">
+   <head>
+   
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+      <!-- AOS Animation -->
+      <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+      <!-- GSAP -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+      <!-- Google Fonts -->
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+      <style>
+      /* Custom animations */
+      [data-aos="custom-float"] {
+         opacity: 0;
+         transform: translateY(20px);
+         transition-property: transform, opacity;
+      }
+      [data-aos="custom-float"].aos-animate {
+         opacity: 1;
+         transform: translateY(0);
+      }
+      
+      /* Staggered animations for lists */
+      [data-aos^="stagger"][data-aos^="stagger"] {
+         opacity: 0;
+         transition-property: opacity, transform;
+      }
+      
+      [data-aos="stagger-up"].aos-animate,
+      [data-aos="stagger-down"].aos-animate,
+      [data-aos="stagger-left"].aos-animate,
+      [data-aos="stagger-right"].aos-animate {
+         opacity: 1;
+         transform: translate(0);
+      }
+        body {
+          font-family: 'Poppins', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+          font-family: 'Montserrat', sans-serif;
+        }
+        .hero-title {
+          font-family: 'Playfair Display', serif;
+          font-weight: 800;
+        }
+        .gradient-bg {
+          background: linear-gradient(135deg, #00AEEF 0%, #0066CC 100%);
+        }
+        .card-hover {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .btn-primary {
+          background: linear-gradient(135deg, #00AEEF 0%, #0066CC 100%);
+          transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .section-title {
+          position: relative;
+          display: inline-block;
+          margin-bottom: 1.5rem;
+        }
+        .section-title:after {
+          content: '';
+          position: absolute;
+          width: 50%;
+          height: 4px;
+          bottom: -10px;
+          left: 0;
+          background: linear-gradient(90deg, #00AEEF 0%, #0066CC 100%);
+          border-radius: 2px;
+        }
+      </style>
+   </head>
+   <body>
+      <!-- News Ticker -->
+      <div class="news-ticker bg-[#00AEEF] text-white py-2 px-4">
+         <div class="container mx-auto">
+            <div class="flex items-center space-x-4">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5c0-.217.173-.4.4-.4.217 0 .4.173.4.4v2.926M7.5 14.25c0 .615.564 1.125 1.276 1.125.837 0 1.277-.653 1.277-1.667M4.97 3.478c-.315-.413-1.683-.996-3.478-.996-.976 0-1.88.348-2.418.923a3.055 3.055 0 000 2.196c.538.577 1.442.923 2.418.923.576 0 1.251-.22 1.757-.661l.111-2.222a1.87 1.87 0 01.661-1.26zM12 15.75h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0-8.25h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm.659-3.75h.007v.008h-.007v-.008zm0 0h.007v.008h-.007v-.008zm0 0h.007v.008h-.007v-.008z"/>
+               </svg>
+               <div class="flex-1 overflow-hidden">
+                  <div class="news-ticker-content whitespace-nowrap animate-marquee">
+                     <span class="mr-8">Inscription en cours pour la rentrée 2024 - Places limitées !</span>
+                     <span class="mr-8">Cérémonie de remise des prix le 15 juin 2024</span>
+                     <span class="mr-8">Nouveau club de robotique ouvert aux élèves</span>
+                  </div>
+               </div>
+               <button class="text-sm hover:text-[#0098d1]">Voir tout</button>
+            </div>
+         </div>
+      </div>
+      <!-- Loading Animation -->
+      <div id="loader" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+         <div class="animate-pulse flex flex-col items-center">
+            <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-24 w-24 rounded-full mb-4">
+            <div class="h-2 bg-gray-200 rounded-full w-48 mb-2.5"></div>
+            <div class="h-2 bg-gray-200 rounded-full w-36"></div>
+         </div>
+      </div>
+      
+      <div id="root">
+         <div class="flex flex-col min-h-screen w-full">
+            <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm">
+               <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="flex h-16 items-center justify-between">
+                     <div class="flex items-center">
+                        <a href="#" class="flex items-center">
+                           <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-10 w-10 rounded-full">
+                           <div class="ml-3">
+                              <h1 class="text-sm font-bold text-black md:text-base">École Presbytérale</h1>
+                              <p class="text-xs text-[#00AEEF] md:text-sm">Saint Joseph de L'Asile</p>
+                           </div>
+                        </a>
+                     </div>
+                     <nav class="hidden md:flex md:items-center md:space-x-6">
+                        <a href="{{ url_for('accueil') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Accueil</a>
+                        <a href="#about" class="text-sm font-medium text-black hover:text-[#00AEEF]">À Propos</a>
+                        <a href="#academics" class="text-sm font-medium text-black hover:text-[#00AEEF]">Programmes</a>
+                        <a href="#faculty" class="text-sm font-medium text-black hover:text-[#00AEEF]">Équipe</a>
+                        <a href="#gallery" class="text-sm font-medium text-black hover:text-[#00AEEF]">Galerie</a>
+                        <a href="#events" class="text-sm font-medium text-black hover:text-[#00AEEF]">Événements</a>
+                        <a href="#contact" class="text-sm font-medium text-black hover:text-[#00AEEF]">Contact</a>
+                        
+                        {% if session.get('user_id') %}
+                            <div class="relative group">
+                                <button class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF]">
+                                    {{ session.get('user_name', 'Utilisateur') }}
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                                    {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+                                        <a href="{{ url_for('eleves.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Élèves</a>
+                                        <a href="{{ url_for('cours.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cours</a>
+                                        <a href="{{ url_for('notes.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notes</a>
+                                        <a href="{{ url_for('presence.saisie') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Présence</a>
+                                    {% endif %}
+                                    {% if session.get('user_role') in ['admin', 'directeur'] %}
+                                        <a href="{{ url_for('finances.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Finances</a>
+                                        <a href="{{ url_for('rapports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rapports</a>
+                                    {% endif %}
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Déconnexion</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Connexion</a>
+                            <a href="{{ url_for('auth.register') }}" class="btn-primary rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300">S'inscrire</a>
+                        {% endif %}
+                        </nav>
+                     <div class="flex md:hidden">
+                        <button type="button" id="mobile-menu-button" class="inline-flex items-center justify-center rounded-md p-2 text-black hover:bg-[#00AEEF]/10">
+                           <span class="sr-only">Open main menu</span>
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu block h-6 w-6" aria-hidden="true">
+                              <line x1="4" x2="20" y1="12" y2="12"></line>
+                              <line x1="4" x2="20" y1="6" y2="6"></line>
+                              <line x1="4" x2="20" y1="18" y2="18"></line>
+                           </svg>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+               
+               <!-- Mobile menu, show/hide based on menu state -->
+               <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg rounded-b-lg">
+                  <div class="px-2 pt-2 pb-3 space-y-1">
+                     <a href="{{ url_for('accueil') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Accueil</a>
+                     <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">À Propos</a>
+                     <a href="#academics" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Programmes</a>
+                     <a href="#faculty" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Équipe</a>
+                     <a href="#gallery" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Galerie</a>
+                     <a href="#events" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Événements</a>
+                     <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Contact</a>
+                     
+                     {% if session.get('user_id') %}
+                        <div class="border-t border-gray-200 my-2 pt-2">
+                           <p class="px-3 py-2 text-base font-medium text-gray-500">{{ session.get('user_name', 'Utilisateur') }}</p>
+                           
+                           {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+                              <a href="{{ url_for('eleves.liste') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Élèves</a>
+                              <a href="{{ url_for('cours.liste') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Cours</a>
+                              <a href="{{ url_for('notes.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Notes</a>
+                              <a href="{{ url_for('presence.saisie') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Présence</a>
+                           {% endif %}
+                           
+                           {% if session.get('user_role') in ['admin', 'directeur'] %}
+                              <a href="{{ url_for('finances.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Finances</a>
+                              <a href="{{ url_for('rapports.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Rapports</a>
+                           {% endif %}
+                           
+                           <a href="{{ url_for('auth.logout') }}" class="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50">Déconnexion</a>
+                        </div>
+                     {% else %}
+                        <div class="border-t border-gray-200 my-2 pt-2">
+                           <a href="{{ url_for('auth.login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Connexion</a>
+                           <a href="{{ url_for('auth.register') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-[#00AEEF] hover:bg-[#0098d1] mt-2">S'inscrire</a>
+                        </div>
+                     {% endif %}
+                  </div>
+               </div>
+            </header>
+            {% block content %}
+
+            {% endblock %}
+            <footer class="bg-black text-white">
+               <div class="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+                  <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
+                     <div class="md:col-span-1">
+                        <div class="flex items-center">
+                           <a href="#" class="flex items-center">
+                              <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-10 w-10 rounded-full" data-aos="fade-right">
+                              <div class="ml-3">
+                                 <h2 class="text-sm font-bold text-white md:text-base">École Presbytérale</h2>
+                                 <p class="text-xs text-[#00AEEF] md:text-sm">Saint Joseph de L'Asile</p>
+                              </div>
+                           </a>
+                        </div>
+                        <p class="mt-4 text-sm text-gray-300">Une éducation de qualité fondée sur des valeurs chrétiennes et l'excellence académique.</p>
+                     </div>
+                     <div>
+                        <h3 class="text-base font-medium text-white">Liens Rapides</h3>
+                        <ul class="mt-4 space-y-2">
+                           <li><a href="#about" class="text-sm text-gray-300 hover:text-[#00AEEF]">À Propos</a></li>
+                           <li><a href="#academics" class="text-sm text-gray-300 hover:text-[#00AEEF]">Programmes</a></li>
+                           <li><a href="#faculty" class="text-sm text-gray-300 hover:text-[#00AEEF]">Notre Équipe</a></li>
+                           <li><a href="#events" class="text-sm text-gray-300 hover:text-[#00AEEF]">Événements</a></li>
+                           <li><a href="#gallery" class="text-sm text-gray-300 hover:text-[#00AEEF]">Galerie</a></li>
+                        </ul>
+                     </div>
+                     <div>
+                        <h3 class="text-base font-medium text-white">Admissions</h3>
+                        <ul class="mt-4 space-y-2">
+                           <li><a href="#admissions" class="text-sm text-gray-300 hover:text-[#00AEEF]">Processus d'Admission</a></li>
+                           <li><a href="#" class="text-sm text-gray-300 hover:text-[#00AEEF]">Frais de Scolarité</a></li>
+                           <li><a href="#" class="text-sm text-gray-300 hover:text-[#00AEEF]">Bourses</a></li>
+                           <li><a href="#" class="text-sm text-gray-300 hover:text-[#00AEEF]">FAQ</a></li>
+                        </ul>
+                     </div>
+                     <div>
+                        <h3 class="text-base font-medium text-white">Contact</h3>
+                        <ul class="mt-4 space-y-2">
+                           <li class="flex items-start">
+                              <svg class="mt-1 h-5 w-5 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                              </svg>
+                              <span class="ml-2 text-sm text-gray-300">123 Rue Principale, L'Asile, Haïti</span>
+                           </li>
+                           <li class="flex items-start">
+                              <svg class="mt-1 h-5 w-5 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                              </svg>
+                              <span class="ml-2 text-sm text-gray-300">+509 1234-5678</span>
+                           </li>
+                           <li class="flex items-start">
+                              <svg class="mt-1 h-5 w-5 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                              </svg>
+                              <span class="ml-2 text-sm text-gray-300">info@ecolepresbyteral-stjoseph.ht</span>
+                           </li>
+                        </ul>
+                     </div>
+                  </div>
+                  <div class="mt-12 border-t border-gray-800 pt-8">
+                     <p class="text-center text-sm text-gray-400">© 2025 École Presbytérale Saint Joseph de L'Asile. Tous droits réservés.</p>
+                  </div>
+               </div>
+            </footer>
+         </div>
+      </div>
+      <script type="module" src="/src/index.tsx"></script>
+      </div>
+      
+      <!-- Initialize AOS and GSAP -->
+      <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+      <script>
+         // Hide loader when page is loaded
+         window.addEventListener('load', function() {
+            document.getElementById('loader').style.display = 'none';
+            
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+               mobileMenuButton.addEventListener('click', function() {
+                  mobileMenu.classList.toggle('hidden');
+               });
+            }
+            
+            // Initialize AOS
+            AOS.init({
+               duration: 800,
+               easing: 'ease-out-quad',
+               once: true,
+               mirror: false,
+               offset: 100,
+               delay: 100
+            });
+            
+            // Add data-aos attributes dynamically to all cards and sections
+            const features = document.querySelectorAll('.feature-card');
+            features.forEach((card, index) => {
+               card.setAttribute('data-aos', 'fade-up');
+               card.setAttribute('data-aos-delay', (index * 100) + 'ms');
+            });
+            
+            const teamMembers = document.querySelectorAll('.team-member');
+            teamMembers.forEach((member, index) => {
+               member.setAttribute('data-aos', 'zoom-in');
+               member.setAttribute('data-aos-delay', (index * 150) + 'ms');
+            });
+            
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            galleryItems.forEach((item, index) => {
+               item.setAttribute('data-aos', 'flip-left');
+               item.setAttribute('data-aos-delay', (index % 3 * 100) + 'ms');
+            });
+            
+            const testimonials = document.querySelectorAll('.testimonial');
+            testimonials.forEach((testimonial, index) => {
+               testimonial.setAttribute('data-aos', index % 2 === 0 ? 'fade-right' : 'fade-left');
+               testimonial.setAttribute('data-aos-delay', (index * 200) + 'ms');
+            });
+            
+            const stats = document.querySelectorAll('.stat-item');
+            stats.forEach((stat, index) => {
+               stat.setAttribute('data-aos', 'zoom-in');
+               stat.setAttribute('data-aos-delay', (index * 100) + 'ms');
+            });
+            
+            // GSAP Animations
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Hero section animation
+            gsap.from('.hero-title', {
+               y: 50,
+               opacity: 0,
+               duration: 1,
+               stagger: 0.2
+            });
+            
+            // Animate features on scroll
+            gsap.utils.toArray('.feature-card').forEach((card, i) => {
+               gsap.from(card, {
+                  scrollTrigger: {
+                     trigger: card,
+                     start: 'top 80%',
+                     toggleActions: 'play none none none'
+                  },
+                  y: 50,
+                  opacity: 0,
+                  duration: 0.8,
+                  delay: i * 0.1
+               });
+            });
+            
+            // Parallax effect for hero image
+            gsap.to('.hero-image', {
+               scrollTrigger: {
+                  trigger: '.hero-section',
+                  start: 'top bottom',
+                  end: 'bottom top',
+                  scrub: true
+               },
+               y: 100,
+               ease: 'none'
+            });
+         });
+      </script>
+   </body>
+</html>

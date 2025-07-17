@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Liste des cours{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Liste des cours</h1>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="py-3 px-4 border-b text-left">Nom du cours</th>
+                    <th class="py-3 px-4 border-b text-left">Description</th>
+                    <th class="py-3 px-4 border-b text-left">Coefficient</th>
+                    <th class="py-3 px-4 border-b text-left">Classe</th>
+                    <th class="py-3 px-4 border-b text-left">Professeur</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cours in cours %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-2 px-4">
+                        <a href="{{ url_for('cours.details', cours_id=cours.id) }}" class="text-blue-600 hover:underline">
+                            {{ cours.nom }}
+                        </a>
+                    </td>
+                    <td class="py-2 px-4">{{ cours.description or '-' }}</td>
+                    <td class="py-2 px-4">{{ cours.coefficient }}</td>
+                    <td class="py-2 px-4">{{ cours.classe_nom }}</td>
+                    <td class="py-2 px-4">{{ cours.professeur_nom or '-' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="py-4 px-4 text-center text-gray-500">Aucun cours trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

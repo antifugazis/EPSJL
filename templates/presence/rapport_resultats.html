@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}Résultats du Rapport de Présences{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Résultats du Rapport de Présences</h1>
+        <div class="flex space-x-2">
+            <button onclick="window.print()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded mr-2">
+                Imprimer
+            </button>
+            <a href="{{ url_for('presence.rapport') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Modifier les filtres
+            </a>
+        </div>
+    </div>
+
+    <!-- Print header - only visible when printing -->
+    <div class="hidden print:block mb-8">
+        <div class="text-center">
+            <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-20 mx-auto">
+            <h1 class="text-2xl font-bold mt-4">École Presbytérale Saint Joseph de L'Asile</h1>
+            <p class="text-lg">Rapport de Présences</p>
+            <p class="text-lg">
+                {% if filters.date_debut and filters.date_fin %}
+                    Période: {{ filters.date_debut }} au {{ filters.date_fin }}
+                {% elif filters.date_debut %}
+                    À partir du: {{ filters.date_debut }}
+                {% elif filters.date_fin %}
+                    Jusqu'au: {{ filters.date_fin }}
+                {% else %}
+                    Toutes les dates
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Filters summary -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6 print:mb-4">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 print:bg-white">
+            <h2 class="text-lg font-medium text-gray-900">Filtres appliqués</h2>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <div class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-4">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Élève</h3>
+                    <p class="mt-1 text-sm text-gray-900">
+                        {% if filters.eleve_id %}
+                            {% for p in presences %}
+                                {% if p.eleve.id|string == filters.eleve_id %}
+                                    {{ p.eleve.prenom }} {{ p.eleve.nom }} ({{ p.eleve.matricule }})
+                                    {% break %}
+                                {% endif %}
+                            {% else %}
+                                ID: {{ filters.eleve_id }}
+                            {% endfor %}
+                        {% else %}
+                            Tous les élèves
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Cours</h3>
+                    <p class="mt-1 text-sm text-gray-900">
+                        {% if filters.cours_id %}
+                            {% for p in presences %}
+                                {% if p.cours.id|string == filters.cours_id %}
+                                    {{ p.cours.nom }}
+                                    {% break %}
+                                {% endif %}
+                            {% else %}
+                                ID: {{ filters.cours_id }}
+                            {% endfor %}
+                        {% else %}
+                            Tous les cours
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Date de début</h3>
+                    <p class="mt-1 text-sm text-gray-900">{{ filters.date_debut or 'Non spécifiée' }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Date de fin</h3>
+                    <p class="mt-1 text-sm text-gray-900">{{ filters.date_fin or 'Non spécifiée' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics summary -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6 print:mb-4">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 print:bg-white">
+            <h2 class="text-lg font-medium text-gray-900">Statistiques</h2>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <div class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-5">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Total</h3>
+                    <p class="mt-1 text-lg font-bold text-gray-900">{{ stats.total }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Présents</h3>
+                    <p class="mt-1 text-lg font-bold text-green-600">{{ stats.present }} ({{ (stats.present / stats.total * 100)|round|int if stats.total > 0 else 0 }}%)</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Absents</h3>
+                    <p class="mt-1 text-lg font-bold text-red-600">{{ stats.absent }} ({{ (stats.absent / stats.total * 100)|round|int if stats.total > 0 else 0 }}%)</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Retards</h3>
+                    <p class="mt-1 text-lg font-bold text-yellow-600">{{ stats.retard }} ({{ (stats.retard / stats.total * 100)|round|int if stats.total > 0 else 0 }}%)</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500">Excusés</h3>
+                    <p class="mt-1 text-lg font-bold text-blue-600">{{ stats.excuse }} ({{ (stats.excuse / stats.total * 100)|round|int if stats.total > 0 else 0 }}%)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance results table -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg print:shadow-none">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 print:bg-white">
+            <h2 class="text-lg font-medium text-gray-900">Détails des présences</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 print:bg-white">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cours</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for presence in presences %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ presence.date }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ presence.eleve.nom }} {{ presence.eleve.prenom }}</div>
+                        <div class="text-sm text-gray-500">{{ presence.eleve.matricule }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ presence.cours.nom }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            {% if presence.statut == 'present' %}
+                                bg-green-100 text-green-800
+                            {% elif presence.statut == 'absent' %}
+                                bg-red-100 text-red-800
+                            {% elif presence.statut == 'retard' %}
+                                bg-yellow-100 text-yellow-800
+                            {% elif presence.statut == 'excuse' %}
+                                bg-blue-100 text-blue-800
+                            {% endif %}">
+                            {% if presence.statut == 'present' %}
+                                Présent
+                            {% elif presence.statut == 'absent' %}
+                                Absent
+                            {% elif presence.statut == 'retard' %}
+                                Retard
+                            {% elif presence.statut == 'excuse' %}
+                                Excusé
+                            {% else %}
+                                {{ presence.statut|capitalize }}
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ presence.notes or '-' }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                        Aucune présence trouvée avec les critères sélectionnés.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Signature section - only visible when printing -->
+    <div class="hidden print:block mt-10">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="text-center">
+                <p class="font-medium">Le Directeur</p>
+                <div class="h-16"></div>
+                <p>_______________________</p>
+            </div>
+            <div class="text-center">
+                <p class="font-medium">Le Responsable</p>
+                <div class="h-16"></div>
+                <p>_______________________</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        @page {
+            size: portrait;
+            margin: 1cm;
+        }
+        body {
+            font-size: 12pt;
+        }
+        .container {
+            max-width: 100%;
+            padding: 0;
+        }
+        .shadow {
+            box-shadow: none !important;
+        }
+        .sm\:rounded-lg {
+            border-radius: 0 !important;
+        }
+    }
+</style>
+{% endblock %}

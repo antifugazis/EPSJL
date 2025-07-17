@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Documents{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Documents</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('communication.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Retour
+            </a>
+            {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+            <a href="{{ url_for('communication.ajouter_document') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Ajouter un document
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filter options -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Filtrer les documents</h2>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <form method="GET" action="{{ url_for('communication.documents') }}" class="space-y-4 sm:space-y-0 sm:flex sm:items-end sm:space-x-4">
+                <div class="sm:w-1/3">
+                    <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
+                    <select id="type" name="type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                        <option value="">Tous les types</option>
+                        <option value="pdf" {% if request.args.get('type') == 'pdf' %}selected{% endif %}>PDF</option>
+                        <option value="image" {% if request.args.get('type') == 'image' %}selected{% endif %}>Images</option>
+                        <option value="word" {% if request.args.get('type') == 'word' %}selected{% endif %}>Documents Word</option>
+                        <option value="excel" {% if request.args.get('type') == 'excel' %}selected{% endif %}>Feuilles Excel</option>
+                        <option value="autre" {% if request.args.get('type') == 'autre' %}selected{% endif %}>Autres</option>
+                    </select>
+                </div>
+                <div class="sm:w-1/3">
+                    <label for="search" class="block text-sm font-medium text-gray-700">Recherche</label>
+                    <input type="text" name="search" id="search" value="{{ request.args.get('search', '') }}" 
+                           placeholder="Titre ou description"
+                           class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Filtrer
+                    </button>
+                    {% if request.args.get('type') or request.args.get('search') %}
+                    <a href="{{ url_for('communication.documents') }}" class="ml-2 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Réinitialiser
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Documents list -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-green-50">
+            <h2 class="text-lg font-medium text-gray-900">
+                {% if session.get('user_id') %}
+                Documents disponibles
+                {% else %}
+                Documents publics
+                {% endif %}
+            </h2>
+        </div>
+        
+        {% if documents %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            {% for document in documents %}
+            <div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200">
+                <div class="p-4 flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        {% if document.type == 'pdf' %}
+                        <span class="inline-flex items-center justify-center h-12 w-12 rounded-md bg-red-100 text-red-600">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </span>
+                        {% elif document.type == 'image' %}
+                        <span class="inline-flex items-center justify-center h-12 w-12 rounded-md bg-purple-100 text-purple-600">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </span>
+                        {% elif document.type == 'word' %}
+                        <span class="inline-flex items-center justify-center h-12 w-12 rounded-md bg-blue-100 text-blue-600">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </span>
+                        {% elif document.type == 'excel' %}
+                        <span class="inline-flex items-center justify-center h-12 w-12 rounded-md bg-green-100 text-green-600">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center justify-center h-12 w-12 rounded-md bg-gray-100 text-gray-600">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-medium text-gray-900">{{ document.titre }}</h3>
+                        {% if document.description %}
+                        <p class="mt-1 text-sm text-gray-500 line-clamp-2">{{ document.description }}</p>
+                        {% endif %}
+                        <div class="mt-2 flex items-center text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                            </svg>
+                            <span>{{ document.date_creation.strftime('%d/%m/%Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 sm:px-6 flex justify-between items-center">
+                    <a href="/uploads/documents/{{ document.fichier }}" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="-ml-0.5 mr-1.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Télécharger
+                    </a>
+                    
+                    {% if session.get('user_role') in ['admin', 'directeur'] or (session.get('user_id') == document.cree_par and session.get('user_role') == 'professeur') %}
+                    <form action="{{ url_for('communication.supprimer_document', document_id=document.id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document?');">
+                        <!-- CSRF token would go here if using Flask-WTF -->
+                        <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            <svg class="-ml-0.5 mr-1.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            Supprimer
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            </svg>
+            <h3 class="mt-2 text-lg font-medium text-gray-900">Aucun document</h3>
+            <p class="mt-1 text-sm text-gray-500">Il n'y a pas de documents disponibles pour le moment.</p>
+            {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+            <div class="mt-6">
+                <a href="{{ url_for('communication.ajouter_document') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Ajouter un document
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

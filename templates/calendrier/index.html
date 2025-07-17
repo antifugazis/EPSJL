@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendrier{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Calendrier</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('calendrier.evenements') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Liste des événements
+            </a>
+            {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+            <a href="{{ url_for('calendrier.ajouter') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Ajouter un événement
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Month navigation -->
+    <div class="flex justify-between items-center mb-4">
+        <a href="{{ url_for('calendrier.index', month=prev_month, year=prev_year) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+            &laquo; Mois précédent
+        </a>
+        <h2 class="text-xl font-semibold text-gray-900">{{ month_name }} {{ year }}</h2>
+        <a href="{{ url_for('calendrier.index', month=next_month, year=next_year) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+            Mois suivant &raquo;
+        </a>
+    </div>
+
+    <!-- Calendar grid -->
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+        <!-- Weekday headers -->
+        <div class="grid grid-cols-7 gap-px bg-gray-200">
+            {% for day in ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'] %}
+            <div class="bg-gray-100 p-2 text-center font-semibold">
+                {{ day }}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Calendar days -->
+        {% for week in weeks %}
+        <div class="grid grid-cols-7 gap-px bg-gray-200">
+            {% for day in week %}
+            <div class="bg-white p-2 min-h-[120px] {% if day.day == None %}bg-gray-50{% endif %}">
+                {% if day.day %}
+                <div class="font-medium {% if day.day == now.day and month == now.month and year == now.year %}bg-blue-100 rounded-full w-7 h-7 flex items-center justify-center{% endif %}">
+                    {{ day.day }}
+                </div>
+                
+                <!-- Events for this day -->
+                <div class="mt-1 space-y-1">
+                    {% for event in day.events %}
+                    <a href="{{ url_for('calendrier.details', evenement_id=event.id) }}" class="block text-xs p-1 rounded truncate"
+                       style="background-color: {{ get_event_color(event.type) }}20; border-left: 3px solid {{ get_event_color(event.type) }};"
+                       title="{{ event.titre }} - {{ event.heure_debut.strftime('%H:%M') if event.heure_debut else '' }} {% if event.heure_fin %}à {{ event.heure_fin.strftime('%H:%M') }}{% endif %}">
+                        {% if event.heure_debut %}
+                            <span class="font-medium">{{ event.heure_debut.strftime('%H:%M') }}</span>
+                        {% endif %}
+                        {{ event.titre }}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Full calendar view -->
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Vue complète</h2>
+        <div id="calendar" class="bg-white shadow overflow-hidden rounded-lg p-4"></div>
+    </div>
+</div>
+
+<!-- Include FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales/fr.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'fr',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: {
+                url: '{{ url_for("calendrier.api_evenements") }}',
+                failure: function() {
+                    alert('Erreur lors du chargement des événements.');
+                }
+            },
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false
+            },
+            firstDay: 1, // Monday
+            buttonText: {
+                today: 'Aujourd\'hui',
+                month: 'Mois',
+                week: 'Semaine',
+                day: 'Jour'
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Événements{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Liste des Événements</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('calendrier.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Retour au calendrier
+            </a>
+            {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+            <a href="{{ url_for('calendrier.ajouter') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Ajouter un événement
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Upcoming events -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+        <div class="px-4 py-5 sm:px-6 bg-blue-50">
+            <h2 class="text-xl font-semibold text-gray-900">Événements à venir</h2>
+        </div>
+        <div class="border-t border-gray-200">
+            {% if evenements_a_venir %}
+            <ul class="divide-y divide-gray-200">
+                {% for evenement in evenements_a_venir %}
+                <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                    <a href="{{ url_for('calendrier.details', evenement_id=evenement.id) }}" class="block">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full mr-3" style="background-color: {{ get_event_color(evenement.type) }}"></div>
+                                <p class="text-lg font-medium text-gray-900">{{ evenement.titre }}</p>
+                            </div>
+                            <div class="flex items-center">
+                                {% if evenement.important %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 mr-2">
+                                    Important
+                                </span>
+                                {% endif %}
+                                <span class="text-sm text-gray-500">
+                                    {{ evenement.date.strftime('%d/%m/%Y') }}
+                                    {% if evenement.heure_debut %}
+                                    à {{ evenement.heure_debut.strftime('%H:%M') }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500 truncate">{{ evenement.description }}</p>
+                            <div class="mt-1 flex items-center text-xs text-gray-500">
+                                <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                </svg>
+                                {{ evenement.lieu or 'Lieu non spécifié' }}
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="px-4 py-5 sm:p-6 text-center text-gray-500">
+                Aucun événement à venir
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Past events -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h2 class="text-xl font-semibold text-gray-900">Événements passés</h2>
+        </div>
+        <div class="border-t border-gray-200">
+            {% if evenements_passes %}
+            <ul class="divide-y divide-gray-200">
+                {% for evenement in evenements_passes %}
+                <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                    <a href="{{ url_for('calendrier.details', evenement_id=evenement.id) }}" class="block">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full mr-3" style="background-color: {{ get_event_color(evenement.type) }}"></div>
+                                <p class="text-lg font-medium text-gray-900">{{ evenement.titre }}</p>
+                            </div>
+                            <div>
+                                <span class="text-sm text-gray-500">
+                                    {{ evenement.date.strftime('%d/%m/%Y') }}
+                                    {% if evenement.heure_debut %}
+                                    à {{ evenement.heure_debut.strftime('%H:%M') }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500 truncate">{{ evenement.description }}</p>
+                            <div class="mt-1 flex items-center text-xs text-gray-500">
+                                <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                </svg>
+                                {{ evenement.lieu or 'Lieu non spécifié' }}
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="px-4 py-5 sm:p-6 text-center text-gray-500">
+                Aucun événement passé
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

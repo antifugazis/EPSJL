@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ annonce.titre }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Détails de l'annonce</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('communication.annonces') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Retour aux annonces
+            </a>
+            {% if session.get('user_role') in ['admin', 'directeur'] or (session.get('user_id') == annonce.auteur_id and session.get('user_role') == 'professeur') %}
+            <a href="{{ url_for('communication.modifier_annonce', annonce_id=annonce.id) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                Modifier
+            </a>
+            <button onclick="confirmDelete()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                Supprimer
+            </button>
+            <form id="delete-form" action="{{ url_for('communication.supprimer_annonce', annonce_id=annonce.id) }}" method="POST" class="hidden">
+                <!-- CSRF token would go here if using Flask-WTF -->
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 {% if annonce.important %}bg-red-50{% else %}bg-blue-50{% endif %}">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    {% if annonce.important %}
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-red-100">
+                        <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-100">
+                        <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-xl font-semibold text-gray-900">{{ annonce.titre }}</h2>
+                    <div class="flex items-center mt-1">
+                        {% if annonce.public %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 mr-2">
+                            Public
+                        </span>
+                        {% else %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 mr-2">
+                            Privé
+                        </span>
+                        {% endif %}
+                        {% if annonce.important %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 mr-2">
+                            Important
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Date de publication</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ annonce.date_creation.strftime('%d/%m/%Y à %H:%M') }}
+                    </dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Auteur</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ annonce.createur.prenom }} {{ annonce.createur.nom }}
+                    </dd>
+                </div>
+                {% if annonce.date_expiration %}
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Date d'expiration</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ annonce.date_expiration.strftime('%d/%m/%Y') }}
+                    </dd>
+                </div>
+                {% endif %}
+                <div class="{% if annonce.date_expiration %}bg-white{% else %}bg-gray-50{% endif %} px-4 py-5 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500 mb-2">Contenu</dt>
+                    <dd class="mt-1 text-sm text-gray-900 prose max-w-none">
+                        {{ annonce.contenu|safe }}
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDelete() {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette annonce? Cette action est irréversible.')) {
+            document.getElementById('delete-form').submit();
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Paiements{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Paiements</h1>
+        <a href="{{ url_for('finances.ajouter_paiement') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Ajouter un paiement
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white shadow rounded-lg p-4 mb-6">
+        <form action="{{ url_for('finances.paiements') }}" method="GET" class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-6">
+            <!-- Student filter -->
+            <div class="sm:col-span-2">
+                <label for="eleve_id" class="block text-sm font-medium text-gray-700">Élève</label>
+                <select id="eleve_id" name="eleve_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option value="">Tous les élèves</option>
+                    {% for eleve in eleves %}
+                        <option value="{{ eleve.id }}" {% if eleve_id == eleve.id|string %}selected{% endif %}>
+                            {{ eleve.nom }} {{ eleve.prenom }} ({{ eleve.matricule }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Class filter -->
+            <div class="sm:col-span-1">
+                <label for="classe_id" class="block text-sm font-medium text-gray-700">Classe</label>
+                <select id="classe_id" name="classe_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option value="">Toutes les classes</option>
+                    {% for classe in classes %}
+                        <option value="{{ classe.id }}" {% if classe_id == classe.id|string %}selected{% endif %}>
+                            {{ classe.nom }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Fee type filter -->
+            <div class="sm:col-span-1">
+                <label for="type_frais" class="block text-sm font-medium text-gray-700">Type de frais</label>
+                <select id="type_frais" name="type_frais" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option value="">Tous les types</option>
+                    {% for type in types_frais %}
+                        <option value="{{ type.type }}" {% if type_frais == type.type %}selected{% endif %}>
+                            {{ type.type|capitalize }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Date range filters -->
+            <div class="sm:col-span-1">
+                <label for="date_debut" class="block text-sm font-medium text-gray-700">Date début</label>
+                <input type="date" id="date_debut" name="date_debut" value="{{ date_debut }}" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+            </div>
+
+            <div class="sm:col-span-1">
+                <label for="date_fin" class="block text-sm font-medium text-gray-700">Date fin</label>
+                <input type="date" id="date_fin" name="date_fin" value="{{ date_fin }}" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+            </div>
+
+            <!-- Filter button -->
+            <div class="sm:col-span-6 flex justify-end">
+                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                    Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Payments table -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type de frais</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Méthode</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Référence</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reçu par</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for paiement in paiements %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ paiement.date }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ paiement.eleve_nom }} {{ paiement.eleve_prenom }}</div>
+                        <div class="text-sm text-gray-500">{{ paiement.matricule }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ paiement.frais_type|capitalize }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {{ paiement.montant }} HTG
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if paiement.methode == 'especes' %}
+                            Espèces
+                        {% elif paiement.methode == 'cheque' %}
+                            Chèque
+                        {% elif paiement.methode == 'virement' %}
+                            Virement
+                        {% elif paiement.methode == 'carte' %}
+                            Carte
+                        {% else %}
+                            {{ paiement.methode }}
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ paiement.reference or '-' }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ paiement.recu_par_prenom }} {{ paiement.recu_par_nom }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <a href="{{ url_for('finances.situation', eleve_id=paiement.eleve_id) }}" class="text-blue-600 hover:text-blue-900">Situation</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
+                        Aucun paiement trouvé avec les critères sélectionnés.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

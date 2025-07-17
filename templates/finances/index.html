@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de Bord Financier{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Tableau de Bord Financier</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('finances.frais') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Gérer les frais
+            </a>
+            <a href="{{ url_for('finances.paiements') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Voir les paiements
+            </a>
+        </div>
+    </div>
+
+    <!-- Financial summary cards -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-6">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Revenus totaux (année en cours)</dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ total_revenus }} HTG</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Mois le plus rentable</dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                        {% set max_month = {'month': 0, 'amount': 0} %}
+                        {% for month in revenus_par_mois %}
+                            {% if month.total > max_month.amount %}
+                                {% set _ = max_month.update({'month': month.mois, 'amount': month.total}) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% set month_names = {
+                            1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril', 5: 'Mai', 6: 'Juin',
+                            7: 'Juillet', 8: 'Août', 9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+                        } %}
+                        {{ month_names[max_month.month]|default('N/A') }}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Type de frais principal</dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                        {% set max_type = {'type': 'N/A', 'amount': 0} %}
+                        {% for type in revenus_par_type %}
+                            {% if type.total > max_type.amount %}
+                                {% set _ = max_type.update({'type': type.type, 'amount': type.total}) %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ max_type.type|capitalize }}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts section -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 mb-6">
+        <!-- Monthly revenue chart -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                <h3 class="text-lg font-medium text-gray-900">Revenus mensuels</h3>
+            </div>
+            <div class="px-4 py-5 sm:p-6" style="height: 300px;">
+                <canvas id="monthlyRevenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Revenue by fee type chart -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                <h3 class="text-lg font-medium text-gray-900">Revenus par type de frais</h3>
+            </div>
+            <div class="px-4 py-5 sm:p-6" style="height: 300px;">
+                <canvas id="feeTypeChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent payments -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 flex justify-between items-center">
+            <h3 class="text-lg font-medium text-gray-900">Paiements récents</h3>
+            <a href="{{ url_for('finances.paiements') }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+                Voir tous les paiements
+            </a>
+        </div>
+        <div class="border-t border-gray-200">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type de frais</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reçu par</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for paiement in paiements_recents %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ paiement.date }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ paiement.eleve_nom }} {{ paiement.eleve_prenom }}</div>
+                            <div class="text-sm text-gray-500">{{ paiement.matricule }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ paiement.frais_type|capitalize }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ paiement.montant }} HTG
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ paiement.recu_par_prenom }} {{ paiement.recu_par_nom }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <a href="{{ url_for('finances.situation', eleve_id=paiement.eleve_id) }}" class="text-blue-600 hover:text-blue-900">Situation</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                            Aucun paiement récent.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for monthly revenue chart
+    const monthlyData = {
+        labels: [
+            {% for month in revenus_par_mois %}
+                '{{ ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"][month.mois-1] }}',
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Revenus mensuels (HTG)',
+            data: [
+                {% for month in revenus_par_mois %}
+                    {{ month.total }},
+                {% endfor %}
+            ],
+            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+            borderColor: 'rgb(59, 130, 246)',
+            borderWidth: 1
+        }]
+    };
+
+    // Data for fee type chart
+    const feeTypeData = {
+        labels: [
+            {% for type in revenus_par_type %}
+                '{{ type.type|capitalize }}',
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Revenus par type de frais (HTG)',
+            data: [
+                {% for type in revenus_par_type %}
+                    {{ type.total }},
+                {% endfor %}
+            ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 159, 64, 0.5)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Initialize charts when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Monthly revenue chart
+        const monthlyCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+        new Chart(monthlyCtx, {
+            type: 'bar',
+            data: monthlyData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Fee type chart
+        const feeTypeCtx = document.getElementById('feeTypeChart').getContext('2d');
+        new Chart(feeTypeCtx, {
+            type: 'pie',
+            data: feeTypeData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

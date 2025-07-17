@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Détails du cours{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Détails du cours</h1>
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            <div>
+                <dt class="font-semibold">Nom du cours</dt>
+                <dd>{{ cours.nom }}</dd>
+            </div>
+            <div>
+                <dt class="font-semibold">Classe</dt>
+                <dd>{{ cours.classe_nom }}</dd>
+            </div>
+            <div>
+                <dt class="font-semibold">Professeur</dt>
+                <dd>{{ cours.professeur_nom or '-' }}</dd>
+            </div>
+            <div>
+                <dt class="font-semibold">Coefficient</dt>
+                <dd>{{ cours.coefficient }}</dd>
+            </div>
+            <div class="md:col-span-2">
+                <dt class="font-semibold">Description</dt>
+                <dd>{{ cours.description or '-' }}</dd>
+            </div>
+        </dl>
+    </div>
+
+    <h2 class="text-xl font-bold mb-4">Élèves inscrits dans la classe</h2>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="py-3 px-4 border-b text-left">Matricule</th>
+                    <th class="py-3 px-4 border-b text-left">Nom</th>
+                    <th class="py-3 px-4 border-b text-left">Prénom</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for eleve in eleves %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-2 px-4">{{ eleve.matricule }}</td>
+                    <td class="py-2 px-4">{{ eleve.nom }}</td>
+                    <td class="py-2 px-4">{{ eleve.prenom }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="py-4 px-4 text-center text-gray-500">Aucun élève inscrit dans cette classe.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

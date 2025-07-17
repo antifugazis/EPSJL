@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Rapport de Présences{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Rapport de Présences</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('presence.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter form -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Filtrer les présences</h2>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">Utilisez les filtres ci-dessous pour générer un rapport de présences.</p>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <form action="{{ url_for('presence.rapport') }}" method="GET" class="space-y-6">
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <!-- Classe -->
+                    <div class="sm:col-span-2">
+                        <label for="classe_id" class="block text-sm font-medium text-gray-700">Classe</label>
+                        <select id="classe_id" name="classe_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <option value="">Toutes les classes</option>
+                            {% for classe in classes %}
+                                <option value="{{ classe.id }}">{{ classe.nom }} ({{ classe.niveau }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Élève -->
+                    <div class="sm:col-span-2">
+                        <label for="eleve_id" class="block text-sm font-medium text-gray-700">Élève</label>
+                        <select id="eleve_id" name="eleve_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <option value="">Tous les élèves</option>
+                            {% for eleve in eleves %}
+                                <option value="{{ eleve.id }}">{{ eleve.nom }} {{ eleve.prenom }} ({{ eleve.matricule }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Cours -->
+                    <div class="sm:col-span-2">
+                        <label for="cours_id" class="block text-sm font-medium text-gray-700">Cours</label>
+                        <select id="cours_id" name="cours_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <option value="">Tous les cours</option>
+                            {% for cours in cours %}
+                                <option value="{{ cours.id }}">{{ cours.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Date range -->
+                    <div class="sm:col-span-3">
+                        <label for="date_debut" class="block text-sm font-medium text-gray-700">Date de début</label>
+                        <input type="date" id="date_debut" name="date_debut" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    </div>
+
+                    <div class="sm:col-span-3">
+                        <label for="date_fin" class="block text-sm font-medium text-gray-700">Date de fin</label>
+                        <input type="date" id="date_fin" name="date_fin" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Générer le rapport
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Preset reports -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mt-6">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Rapports prédéfinis</h2>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <a href="{{ url_for('presence.rapport', date_debut=today, date_fin=today) }}" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                    <div class="flex-1 min-w-0">
+                        <span class="absolute inset-0" aria-hidden="true"></span>
+                        <p class="text-sm font-medium text-gray-900">Présences d'aujourd'hui</p>
+                        <p class="text-sm text-gray-500 truncate">Toutes les présences enregistrées aujourd'hui</p>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('presence.rapport', date_debut=week_start, date_fin=today) }}" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                    <div class="flex-1 min-w-0">
+                        <span class="absolute inset-0" aria-hidden="true"></span>
+                        <p class="text-sm font-medium text-gray-900">Présences de la semaine</p>
+                        <p class="text-sm text-gray-500 truncate">Toutes les présences enregistrées cette semaine</p>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('presence.rapport', date_debut=month_start, date_fin=today) }}" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                    <div class="flex-1 min-w-0">
+                        <span class="absolute inset-0" aria-hidden="true"></span>
+                        <p class="text-sm font-medium text-gray-900">Présences du mois</p>
+                        <p class="text-sm text-gray-500 truncate">Toutes les présences enregistrées ce mois-ci</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to filter students by class
+    document.getElementById('classe_id').addEventListener('change', function() {
+        const classeId = this.value;
+        const eleveSelect = document.getElementById('eleve_id');
+        const coursSelect = document.getElementById('cours_id');
+        
+        // If no class is selected, show all students
+        if (!classeId) {
+            // You could reload all students here if needed
+            return;
+        }
+        
+        // Fetch students for this class
+        fetch(`/notes/get_eleves_by_classe?classe_id=${classeId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Clear current options except the first one
+                eleveSelect.innerHTML = '<option value="">Tous les élèves</option>';
+                
+                // Add new options
+                data.forEach(eleve => {
+                    const option = document.createElement('option');
+                    option.value = eleve.id;
+                    option.textContent = `${eleve.nom} ${eleve.prenom} (${eleve.matricule})`;
+                    eleveSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error loading students:', error));
+            
+        // Fetch courses for this class
+        fetch(`/presence/get_cours_by_classe?classe_id=${classeId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Clear current options except the first one
+                coursSelect.innerHTML = '<option value="">Tous les cours</option>';
+                
+                // Add new options
+                data.forEach(cours => {
+                    const option = document.createElement('option');
+                    option.value = cours.id;
+                    option.textContent = cours.nom;
+                    coursSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error loading courses:', error));
+    });
+    
+    // Set default dates
+    const today = new Date();
+    document.getElementById('date_fin').valueAsDate = today;
+    
+    // Set default start date to 30 days ago
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    document.getElementById('date_debut').valueAsDate = thirtyDaysAgo;
+</script>
+{% endblock %}
