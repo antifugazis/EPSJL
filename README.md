@@ -1,131 +1,138 @@
-# École Presbytérale Saint Joseph de L'Asile - Système de Gestion Scolaire
+# Guide d'Utilisation - EPSJL Gestion Scolaire
 
-Un système de gestion scolaire complet pour l'École Presbytérale Saint Joseph de L'Asile, permettant de gérer les élèves, les cours, les présences, les notes, les finances et plus encore.
+Bienvenue sur la plateforme de gestion scolaire de l'École Presbytérale Saint Joseph de L'Asile. Ce guide vous aidera à naviguer et à utiliser efficacement notre système.
 
-## Fonctionnalités
+## Table des Matières
+- [Accès au système](#accès-au-système)
+- [Tableau de bord](#tableau-de-bord)
+- [Gestion des élèves](#gestion-des-élèves)
+- [Gestion des cours](#gestion-des-cours)
+- [Suivi des présences](#suivi-des-présences)
+- [Gestion des notes](#gestion-des-notes)
+- [Calendrier scolaire](#calendrier-scolaire)
+- [Ressources](#ressources)
+- [Support technique](#support-technique)
 
-### Gestion des Élèves
-- Inscription des élèves
-- Gestion des profils élèves
-- Recherche et filtrage des élèves
-- Suivi des informations personnelles et académiques
+## Accès au système
 
-### Gestion des Cours
-- Création et assignation des cours
-- Attribution des enseignants
-- Suivi des inscriptions aux cours
+### Première connexion
+1. Rendez-vous à l'adresse suivante : [https://votreecole.epsjl.edu.ht](https://votreecole.epsjl.edu.ht)
+2. Entrez vos identifiants fournis par l'administration
+3. Choisissez un mot de passe sécurisé lors de votre première connexion
 
-### Suivi des Présences
-- Enregistrement quotidien des présences par cours
-- Rapports de présence avec statistiques
-- Statuts multiples (présent, absent, retard, excusé)
+### Récupération de mot de passe
+Si vous avez oublié votre mot de passe :
+1. Cliquez sur "Mot de passe oublié ?"
+2. Entrez votre adresse email enregistrée
+3. Suivez les instructions reçues par email
 
-### Gestion des Notes
-- Saisie des notes par cours, trimestre et type d'évaluation
-- Bulletins scolaires avec moyennes et classements
-- Suivi des performances sur plusieurs périodes d'évaluation
+## Tableau de bord
 
-### Gestion Financière
-- Configuration des frais par classe et année scolaire
-- Suivi des paiements avec différentes méthodes
-- Rapports financiers et relevés de solde des élèves
+Votre tableau de bord affiche :
+- Prochains événements importants
+- Messages non lus
+- Tâches en attente
+- Aperçu des présences et notes (selon votre rôle)
 
-### Authentification des Utilisateurs
-- Contrôle d'accès basé sur les rôles (admin, directeur, enseignant, parent)
-- Système sécurisé de connexion et d'inscription
-- Gestion des profils utilisateurs
+## Gestion des élèves
 
-### Calendrier et Événements
-- Planification des événements scolaires
-- Visualisation du calendrier mensuel
-- Gestion des différents types d'événements
+### Inscription d'un nouvel élève
+1. Allez dans "Élèves" > "Nouvelle inscription"
+2. Remplissez le formulaire avec les informations de l'élève
+3. Téléchargez les documents requis (acte de naissance, photos, etc.)
+4. Soumettez la demande
 
-### Communication
-- Annonces et actualités
-- Gestion des documents
-- Partage d'informations avec la communauté scolaire
+### Consultation du dossier d'un élève
+1. Recherchez l'élève via la barre de recherche
+2. Cliquez sur le nom de l'élève
+3. Consultez les onglets pour accéder aux différentes informations
 
-## Prérequis
+## Gestion des cours
 
-- Python 3.7+
-- MySQL 5.7+ ou MariaDB 10.3+
-- pip (gestionnaire de paquets Python)
+### Consultation de l'emploi du temps
+1. Allez dans "Cours" > "Mon emploi du temps"
+2. Sélectionnez la classe ou le professeur
+3. Consultez l'horaire hebdomadaire
 
-## Installation
+### Matériel de cours
+1. Accédez au cours concerné
+2. Cliquez sur l'onglet "Ressources"
+3. Téléchargez les documents partagés par les enseignants
 
-1. Cloner le dépôt :
-   ```
-   git clone https://github.com/votre-nom/epsjl-gestion.git
-   cd epsjl-gestion
-   ```
+## Suivi des présences
 
-2. Créer un environnement virtuel :
-   ```
-   python -m venv venv
-   source venv/bin/activate  # Sur Windows : venv\Scripts\activate
-   ```
+### Marquer les présences
+1. Allez dans "Présences" > "Marquer les présences"
+2. Sélectionnez la classe et le cours
+3. Cochez les élèves présents/absents
+4. Enregistrez les modifications
 
-3. Installer les dépendances :
-   ```
-   pip install -r requirements.txt
-   ```
+### Consulter les absences
+1. Allez dans "Présences" > "Historique"
+2. Filtrez par élève, classe ou période
+3. Exportez le rapport si nécessaire
 
-4. Configurer la base de données :
-   - Créer une base de données MySQL
-   - Exécuter le script SQL fourni dans `database/schema.sql`
-   - Configurer les variables d'environnement ou modifier `config.py`
+## Gestion des notes
 
-5. Lancer l'application :
-   ```
-   python app.py
-   ```
+### Saisie des notes
+1. Allez dans "Notes" > "Saisie des notes"
+2. Sélectionnez la classe et le cours
+3. Entrez les notes des élèves
+4. Validez la saisie
 
-6. Accéder à l'application dans votre navigateur :
-   ```
-   http://localhost:5000
-   ```
+### Consultation des bulletins
+1. Allez dans "Notes" > "Bulletins"
+2. Sélectionnez l'élève et la période
+3. Consultez ou imprimez le bulletin
 
-## Structure du Projet
+## Calendrier scolaire
 
-```
-EPSJL/
-├── app.py                   # Application principale
-├── config.py                # Configuration
-├── requirements.txt         # Dépendances
-├── static/                  # Fichiers statiques (CSS, JS, Images)
-├── templates/               # Templates Jinja2
-│   ├── base.html            # Template de base
-│   ├── accueil.html         # Page d'accueil
-│   ├── auth/                # Templates d'authentification
-│   ├── eleves/              # Templates de gestion des élèves
-│   ├── cours/               # Templates de gestion des cours
-│   ├── finances/            # Templates de gestion financière
-│   └── admin/               # Templates d'administration
-└── modules/                 # Modules de l'application
-    ├── __init__.py
-    ├── auth.py              # Fonctions d'authentification
-    ├── eleves.py            # Gestion des élèves
-    ├── cours.py             # Gestion des cours
-    ├── presence.py          # Suivi des présences
-    ├── notes.py             # Gestion des notes
-    ├── finances.py          # Gestion financière
-    ├── rapports.py          # Rapports et analyses
-    ├── calendrier.py        # Calendrier et événements
-    └── communication.py     # Outils de communication
-```
+### Consultation des événements
+1. Accédez à "Calendrier"
+2. Naviguez entre les mois avec les flèches
+3. Cliquez sur un événement pour plus de détails
 
-## Utilisateurs par défaut
+### Ajout d'événement (administrateurs)
+1. Cliquez sur "Ajouter un événement"
+2. Remplissez les détails (titre, date, description)
+3. Sélectionnez la visibilité (public/privé)
+4. Enregistrez l'événement
 
-Un utilisateur administrateur est créé par défaut :
-- Nom d'utilisateur : `admin`
-- Mot de passe : `admin123`
+## Ressources
 
-**Important** : Changez ce mot de passe immédiatement après la première connexion.
+### Documents importants
+- [Guide d'utilisation complet (PDF)](#)
+- [Calendrier scolaire 2024-2025](#)
+- [Règlement intérieur](#)
 
-## Contribution
+### Liens utiles
+- [Ministère de l'Éducation Nationale](#)
+- [Portail des bourses d'études](#)
+- [Ressources pédagogiques](#)
 
-Les contributions sont les bienvenues ! N'hésitez pas à soumettre des pull requests ou à ouvrir des issues pour améliorer le système.
+## Support technique
 
-## Licence
+### Problèmes de connexion
+- Vérifiez votre connexion internet
+- Assurez-vous d'utiliser un navigateur à jour (Chrome, Firefox, Edge)
+- Essayez de vider le cache de votre navigateur
 
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+### Contactez-nous
+Pour toute assistance :
+- Email : support@epsjl.edu.ht
+- Téléphone : +509 XX XX XX XX
+- Horaires : Lundi au Vendredi, 8h-16h
+
+## Questions fréquentes
+
+### Comment mettre à jour mes informations personnelles ?
+Allez dans "Mon compte" > "Profil" et cliquez sur "Modifier".
+
+### Puis-je accéder au système depuis mon téléphone ?
+Oui, le système est entièrement responsive et accessible depuis tout appareil.
+
+### Comment recevoir les notifications par email ?
+Vérifiez vos paramètres de notification dans "Mon compte" > "Préférences".
+
+---
+*Dernière mise à jour : 20 juillet 2025*

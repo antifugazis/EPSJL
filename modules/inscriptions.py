@@ -42,51 +42,183 @@ def ensure_upload_dirs():
     return upload_folder
 
 def save_uploaded_file(file, subfolder):
-    if file and allowed_file(file.filename):
-        # Create a unique filename
+    print(f"\n=== DEBUG: save_uploaded_file called for {subfolder} ===")
+    print(f"File object: {file}")
+    
+    try:
+        # Check if file object is valid
+        if not file:
+            print("ERROR: No file object provided")
+            return None
+            
+        if not hasattr(file, 'filename') or not file.filename:
+            print(f"ERROR: Invalid or empty filename in {subfolder} file object")
+            print(f"File attributes: {dir(file)}")
+            return None
+            
+        print(f"Processing file: {file.filename}")
+        print(f"Content type: {file.content_type}")
+        print(f"Content length: {file.content_length if hasattr(file, 'content_length') else 'N/A'}")
+        
+        # Validate file extension
+        if not allowed_file(file.filename):
+            print(f"ERROR: File type not allowed: {file.filename}")
+            print(f"Allowed extensions: {ALLOWED_EXTENSIONS}")
+            return None
+            
+        # Create a secure filename
         filename = secure_filename(file.filename)
         unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        print(f"Generated unique filename: {unique_filename}")
         
         # Ensure upload directory exists
         upload_path = os.path.join(UPLOAD_FOLDER, subfolder)
-        os.makedirs(upload_path, exist_ok=True)
+        print(f"Upload path: {upload_path}")
+        
+        try:
+            # Create directory if it doesn't exist
+            os.makedirs(upload_path, exist_ok=True, mode=0o755)
+            print(f"Verified/Created directory: {upload_path}")
+            
+            # Check directory permissions
+            if not os.access(upload_path, os.W_OK):
+                print(f"ERROR: No write permissions for directory: {upload_path}")
+                print(f"Current working directory: {os.getcwd()}")
+                print(f"Directory exists: {os.path.exists(upload_path)}")
+                print(f"Directory permissions: {oct(os.stat(upload_path).st_mode)[-3:]}")
+                return None
+                
+        except Exception as e:
+            print(f"ERROR: Failed to create directory {upload_path}")
+            print(f"Error type: {type(e).__name__}")
+            print(f"Error details: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return None
         
         # Save the file
         file_path = os.path.join(upload_path, unique_filename)
-        file.save(file_path)
-        return file_path
-    return None
+        print(f"Saving to: {file_path}")
+        
+        try:
+            # Save the file
+            file.save(file_path)
+            print(f"File saved successfully: {file_path}")
+            
+            # Verify file was saved
+            if not os.path.exists(file_path):
+                print(f"ERROR: File was not saved: {file_path}")
+                return None
+                
+            # Set file permissions
+            try:
+                os.chmod(file_path, 0o644)
+                print(f"Set file permissions to 644")
+            except Exception as e:
+                print(f"WARNING: Could not set file permissions: {str(e)}")
+            
+            print(f"File upload successful: {file_path} ({os.path.getsize(file_path)} bytes)")
+            return file_path
+            
+        except Exception as e:
+            print(f"ERROR: Failed to save file {file_path}")
+            print(f"Error type: {type(e).__name__}")
+            print(f"Error details: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            
+            # Try to remove partially saved file if it exists
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                    print(f"Removed partially saved file: {file_path}")
+                except Exception as remove_error:
+                    print(f"WARNING: Could not remove partially saved file: {str(remove_error)}")
+            
+            return None
+            
+    except Exception as e:
+        print(f"UNEXPECTED ERROR in save_uploaded_file:")
+        print(f"Type: {type(e).__name__}")
+        print(f"Details: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return None
 
 # Public route for inscription form
 @inscriptions_blueprint.route('/', methods=['GET', 'POST'])
 def formulaire():
     if request.method == 'POST':
         try:
+            print("\n=== DEBUG: Form Submission Started ===")
+            print(f"Form Data: {request.form}")
+            
             # Get form data
             data = request.form
             
-            # Handle file uploads
+            # Debug: Print all files in request
+            print("\n=== DEBUG: Files in request ===")
+            for key in request.files:
+                file_list = request.files.getlist(key)
+                print(f"File field '{key}': {len(file_list)} file(s)")
+                for i, f in enumerate(file_list):
+                    print(f"  File {i+1}: {f.filename} (type: {f.content_type}, size: {f.content_length if hasattr(f, 'content_length') else 'N/A'} bytes)")
+            
+            # Handle file uploads with better error handling
             acte_naissance_path = None
             bulletins_paths = []
             photo_identite_path = None
             
-            if 'acte_naissance' in request.files:
-                file = request.files['acte_naissance']
-                if file.filename != '':
-                    acte_naissance_path = save_uploaded_file(file, 'actes_naissance')
-            
-            if 'bulletins_notes' in request.files:
-                files = request.files.getlist('bulletins_notes')
-                for file in files:
-                    if file.filename != '':
-                        path = save_uploaded_file(file, 'bulletins')
-                        if path:
-                            bulletins_paths.append(path)
-            
-            if 'photo_identite' in request.files:
-                file = request.files['photo_identite']
-                if file.filename != '':
-                    photo_identite_path = save_uploaded_file(file, 'photos_identite')
+            try:
+                # Process acte de naissance
+                print("\n=== Processing Acte de Naissance ===")
+                if 'acte_naissance' in request.files:
+                    file = request.files['acte_naissance']
+                    print(f"Acte de naissance file: {file.filename if file.filename else 'No file'}")
+                    if file and file.filename != '':
+                        print(f"Saving acte de naissance: {file.filename}")
+                        acte_naissance_path = save_uploaded_file(file, 'actes_naissance')
+                        print(f"Saved to: {acte_naissance_path}")
+                        if not acte_naissance_path:
+                            error_msg = 'Erreur lors du téléchargement de l\'acte de naissance'
+                            print(error_msg)
+                            flash(error_msg, 'error')
+                
+                # Process bulletins de notes (multiple files)
+                print("\n=== Processing Bulletins de Notes ===")
+                if 'bulletins_notes' in request.files:
+                    files = request.files.getlist('bulletins_notes')
+                    print(f"Found {len(files)} bulletin(s) to process")
+                    for i, file in enumerate(files):
+                        if file and file.filename != '':
+                            print(f"Processing bulletin {i+1}: {file.filename}")
+                            path = save_uploaded_file(file, 'bulletins')
+                            print(f"Saved to: {path}")
+                            if path:
+                                bulletins_paths.append(path)
+                
+                # Process photo d'identité
+                print("\n=== Processing Photo d'identité ===")
+                if 'photo_identite' in request.files:
+                    file = request.files['photo_identite']
+                    print(f"Photo d'identité file: {file.filename if file.filename else 'No file'}")
+                    if file and file.filename != '':
+                        print(f"Saving photo d'identité: {file.filename}")
+                        photo_identite_path = save_uploaded_file(file, 'photos_identite')
+                        print(f"Saved to: {photo_identite_path}")
+                        if not photo_identite_path:
+                            error_msg = 'Erreur lors du téléchargement de la photo d\'identité'
+                            print(error_msg)
+                            flash(error_msg, 'error')
+                            
+            except Exception as e:
+                error_msg = f'Erreur lors du traitement des fichiers: {str(e)}'
+                print(error_msg)
+                print(f"Error type: {type(e).__name__}")
+                print(f"Error details: {str(e)}")
+                import traceback
+                traceback.print_exc()
+                flash(error_msg, 'error')
             
             # Create new inscription
             nouvelle_inscription = Inscription(
