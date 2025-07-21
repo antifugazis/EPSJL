@@ -4,7 +4,7 @@
         <!-- Logo -->
         <div class="flex items-center flex-shrink-0 px-6">
             <img class="h-8 w-auto" src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
-            <span class="ml-2 text-xl font-bold text-gray-900">EPSJL Admin</span>
+            <span class="ml-2 text-xl font-bold text-gray-900">EPSJA Admin</span>
         </div>
         
         <!-- Navigation -->

@@ -1,4 +1,4 @@
-# Guide d'Utilisation - EPSJL Gestion Scolaire
+# Guide d'Utilisation - EPSJA Gestion Scolaire
 
 Bienvenue sur la plateforme de gestion scolaire de l'École Presbytérale Saint Joseph de L'Asile. Ce guide vous aidera à naviguer et à utiliser efficacement notre système.
 

@@ -374,7 +374,7 @@ def convert_to_student(id):
         # Generate a unique matricule
         current_year = datetime.now().year
         count = Eleve.query.count() + 1
-        matricule = f"EPSJL-{current_year}-{count:04d}"
+        matricule = f"EPSJA-{current_year}-{count:04d}"
         
         # Create parent user if needed
         parent_id = None
