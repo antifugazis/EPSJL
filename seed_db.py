@@ -180,10 +180,10 @@ def seed_database():
                 if jour.weekday() < 5:  # Only for weekdays
                     presence = Presence(
                         eleve_id=eleve.id,
+                        cours_id=enseignements[0].cours_id,  # Assign the first course for demonstration
                         date=jour,
                         statut="présent" if i % 5 != 0 else "absent",
-                        justifie=False,
-                        commentaire="Absence non justifiée" if i % 5 == 0 else None
+                        notes="Absence non justifiée" if i % 5 == 0 else None
                     )
                     db.session.add(presence)
         
@@ -260,24 +260,24 @@ def seed_database():
                 contenu="Nous sommes heureux de vous accueillir pour cette nouvelle année scolaire. Nous vous souhaitons une excellente année pleine de réussite.",
                 date_creation=datetime.now(),
                 date_expiration=date.today() + timedelta(days=30),
-                cree_par=directeur.id,
-                public=True
+                public=True,
+                important=False
             ),
             Annonce(
                 titre="Nouveaux horaires de la bibliothèque",
                 contenu="La bibliothèque sera désormais ouverte de 8h à 17h du lundi au vendredi, et de 9h à 12h le samedi.",
                 date_creation=datetime.now(),
                 date_expiration=date.today() + timedelta(days=60),
-                cree_par=directeur.id,
-                public=True
+                public=True,
+                important=False
             ),
             Annonce(
                 titre="Recrutement club de robotique",
                 contenu="Le club de robotique recrute de nouveaux membres. Les élèves intéressés peuvent s'inscrire auprès du professeur d'informatique.",
                 date_creation=datetime.now(),
                 date_expiration=date.today() + timedelta(days=15),
-                cree_par=professeurs[0].id,
-                public=True
+                public=True,
+                important=False
             )
         ]
         for annonce in annonces:

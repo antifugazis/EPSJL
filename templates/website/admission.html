@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+<section id="admissions" class="py-20 bg-[#00AEEF]/5">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+       <div class="text-center">
+          <h2 class="text-base font-semibold uppercase tracking-wide text-[#00AEEF]">Admissions</h2>
+          <p class="mt-2 text-3xl font-bold tracking-tight text-black sm:text-4xl">Rejoignez Notre Communauté</p>
+          <p class="mx-auto mt-5 max-w-prose text-lg text-gray-600">Nous sommes ravis de votre intérêt pour l'École Presbytérale Saint Joseph de L'Asile. Découvrez notre processus d'admission et commencez votre parcours avec nous.</p>
+       </div>
+       <div class="mt-16">
+          <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+             <div>
+                <h3 class="text-xl font-bold text-black">Processus d'Admission</h3>
+                <div class="mt-8 space-y-12">
+                   <div class="relative pl-16">
+                      <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-[#00AEEF] text-white">1</div>
+                      <h4 class="text-lg font-medium text-black">Demande d'Information</h4>
+                      <p class="mt-2 text-gray-600">Contactez notre bureau d'admission pour recevoir des informations détaillées sur nos programmes et notre processus d'admission.</p>
+                   </div>
+                   <div class="relative pl-16">
+                      <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-[#00AEEF] text-white">2</div>
+                      <h4 class="text-lg font-medium text-black">Visite de l'École</h4>
+                      <p class="mt-2 text-gray-600">Planifiez une visite de notre campus pour rencontrer notre personnel et en savoir plus sur notre communauté scolaire.</p>
+                   </div>
+                   <div class="relative pl-16">
+                      <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-[#00AEEF] text-white">3</div>
+                      <h4 class="text-lg font-medium text-black">Soumission de la Demande</h4>
+                      <p class="mt-2 text-gray-600">Remplissez et soumettez le formulaire de demande d'admission avec tous les documents requis.</p>
+                   </div>
+                   <div class="relative pl-16">
+                      <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-[#00AEEF] text-white">4</div>
+                      <h4 class="text-lg font-medium text-black">Entretien et Évaluation</h4>
+                      <p class="mt-2 text-gray-600">Les candidats participent à un entretien et, selon le niveau, à une évaluation académique.</p>
+                   </div>
+                   <div class="relative pl-16">
+                      <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-[#00AEEF] text-white">5</div>
+                      <h4 class="text-lg font-medium text-black">Décision d'Admission</h4>
+                      <p class="mt-2 text-gray-600">Les familles sont informées de la décision d'admission dans les semaines suivant l'évaluation.</p>
+                   </div>
+                </div>
+             </div>
+             <div class="rounded-lg bg-white p-8 shadow-md">
+                <h3 class="text-xl font-bold text-black">Demande d'Admission</h3>
+                <p class="mt-2 text-gray-600">Remplissez ce formulaire pour commencer votre demande d'admission. Notre équipe vous contactera pour les prochaines étapes.</p>
+                <form class="mt-6 space-y-6">
+                   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                      <div><label for="first-name" class="block text-sm font-medium text-gray-700">Prénom</label><input type="text" id="first-name" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#00AEEF] focus:outline-none focus:ring-[#00AEEF]"></div>
+                      <div><label for="last-name" class="block text-sm font-medium text-gray-700">Nom de Famille</label><input type="text" id="last-name" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#00AEEF] focus:outline-none focus:ring-[#00AEEF]"></div>
+                   </div>
+                   <div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#00AEEF] focus:outline-none focus:ring-[#00AEEF]"></div>
+                   <div><label for="phone" class="block text-sm font-medium text-gray-700">Téléphone</label><input type="tel" id="phone" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#00AEEF] focus:outline-none focus:ring-[#00AEEF]"></div>
+                   <div>
+                      <label for="grade" class="block text-sm font-medium text-gray-700">Niveau Scolaire</label>
+                      <select id="grade" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#00AEEF] focus:outline-none focus:ring-[#00AEEF]">
+                         <option>Sélectionnez un niveau</option>
+                         <option>Primaire - CP</option>
+                         <option>Primaire - CE1</option>
+                         <option>Primaire - CE2</option>
+                         <option>Primaire - CM1</option>
+                         <option>Primaire - CM2</option>
+                         <option>Secondaire - 6ème</option>
+                         <option>Secondaire - 5ème</option>
+                         <option>Secondaire - 4ème</option>
+                         <option>Secondaire - 3ème</option>
+                         <option>Secondaire - 2nde</option>
+                         <option>Secondaire - 1ère</option>
+                         <option>Secondaire - Terminale</option>
+                      </select>
+                   </div>
+                   <div><label for="message" class="block text-sm font-medium text-gray-700">Message</label><textarea id="message" rows="4" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#00AEEF] focus:outline-none focus:ring-[#00AEEF]"></textarea></div>
+                   <div><button type="submit" class="inline-flex w-full justify-center rounded-md bg-[#00AEEF] px-4 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#0098d1] focus:outline-none focus:ring-2 focus:ring-[#00AEEF] focus:ring-offset-2">Soumettre la Demande</button></div>
+                </form>
+             </div>
+          </div>
+       </div>
+       <div class="mt-16">
+          <div class="rounded-lg bg-[#00AEEF]/10 p-8">
+             <h3 class="text-xl font-bold text-black">Pourquoi Choisir Notre École?</h3>
+             <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div class="flex">
+                   <svg class="h-6 w-6 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                   </svg>
+                   <div class="ml-3">
+                      <h4 class="text-base font-medium text-black">Excellence Académique</h4>
+                      <p class="mt-2 text-sm text-gray-600">Un programme rigoureux qui prépare les élèves pour l'université et au-delà.</p>
+                   </div>
+                </div>
+                <div class="flex">
+                   <svg class="h-6 w-6 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                   </svg>
+                   <div class="ml-3">
+                      <h4 class="text-base font-medium text-black">Formation Spirituelle</h4>
+                      <p class="mt-2 text-sm text-gray-600">Un environnement qui nourrit la croissance spirituelle et le développement du caractère.</p>
+                   </div>
+                </div>
+                <div class="flex">
+                   <svg class="h-6 w-6 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                   </svg>
+                   <div class="ml-3">
+                      <h4 class="text-base font-medium text-black">Communauté Bienveillante</h4>
+                      <p class="mt-2 text-sm text-gray-600">Un environnement sûr et solidaire où chaque élève est valorisé et soutenu.</p>
+                   </div>
+                </div>
+                <div class="flex">
+                   <svg class="h-6 w-6 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                   </svg>
+                   <div class="ml-3">
+                      <h4 class="text-base font-medium text-black">Développement Intégral</h4>
+                      <p class="mt-2 text-sm text-gray-600">Une approche qui développe l'esprit, le corps et l'âme de chaque élève.</p>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </section>
+{% endblock %}

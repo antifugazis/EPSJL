@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmation d'inscription{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 py-12">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 bg-green-50">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg leading-6 font-medium text-green-800">
+                            Inscription soumise avec succès !
+                        </h3>
+                        <p class="mt-1 max-w-2xl text-sm text-green-700">
+                            Votre demande d'inscription a été enregistrée.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                <div class="prose max-w-none">
+                    <p>Cher(s) parent(s),</p>
+                    
+                    <p>Nous vous remercions d'avoir soumis une demande d'inscription pour <strong>{{ inscription.prenom_eleve }} {{ inscription.nom_eleve }}</strong> à l'École Privée Saint Jean de Lalande.</p>
+                    
+                    <p>Votre demande a été enregistrée sous le numéro de référence : <strong>{{ inscription.id }}</strong>.</p>
+                    
+                    <h4 class="text-lg font-medium text-gray-900 mt-4">Prochaines étapes :</h4>
+                    
+                    <ol class="list-decimal pl-5 space-y-2">
+                        <li>Notre équipe administrative examinera votre dossier dans les plus brefs délais.</li>
+                        <li>Vous serez contacté(e) par email ou téléphone pour vous informer de la décision.</li>
+                        <li>En cas d'approbation, des informations supplémentaires vous seront communiquées concernant les frais de scolarité et la date de rentrée.</li>
+                    </ol>
+                    
+                    <p class="mt-4">Si vous avez des questions ou besoin d'informations complémentaires, n'hésitez pas à nous contacter :</p>
+                    
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Par téléphone : <strong>+509 3702-0079</strong></li>
+                        <li>Par email : <strong>contact@epsjl.edu.ht</strong></li>
+                    </ul>
+                    
+                    <p class="mt-4">Nous vous remercions de votre confiance et de l'intérêt que vous portez à notre établissement.</p>
+                    
+                    <p class="mt-6 text-sm text-gray-500">Date de soumission : {{ inscription.date_soumission.strftime('%d/%m/%Y à %H:%M') }}</p>
+                </div>
+                
+                <div class="mt-8 flex justify-center">
+                    <a href="{{ url_for('home') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

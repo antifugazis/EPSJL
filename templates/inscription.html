@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- En-tête de la page -->
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Inscription en Ligne</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Remplissez le formulaire ci-dessous pour inscrire votre enfant à l'École Père Lucson Siméon.
+            </p>
+            <div class="mt-4 text-sm text-gray-500">
+                <p>Tous les champs marqués d'un astérisque (*) sont obligatoires.</p>
+            </div>
+        </div>
+
+        <!-- Formulaire d'inscription -->
+        <div class="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
+            <form id="inscriptionForm" class="mb-0 space-y-6" action="{{ url_for('inscriptions.formulaire') }}" method="POST" enctype="multipart/form-data">
+                <!-- Informations de l'élève -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations de l'élève</h3>
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-3">
+                            <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom *</label>
+                            <div class="mt-1">
+                                <input type="text" name="prenom" id="prenom" autocomplete="given-name" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="nom" class="block text-sm font-medium text-gray-700">Nom *</label>
+                            <div class="mt-1">
+                                <input type="text" name="nom" id="nom" autocomplete="family-name" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="date_naissance" class="block text-sm font-medium text-gray-700">Date de naissance *</label>
+                            <div class="mt-1">
+                                <input type="date" name="date_naissance" id="date_naissance" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="lieu_naissance" class="block text-sm font-medium text-gray-700">Lieu de naissance *</label>
+                            <div class="mt-1">
+                                <input type="text" name="lieu_naissance" id="lieu_naissance" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="genre" class="block text-sm font-medium text-gray-700">Genre *</label>
+                            <div class="mt-1">
+                                <select id="genre" name="genre" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                    <option value="">Sélectionnez un genre</option>
+                                    <option value="masculin">Masculin</option>
+                                    <option value="feminin">Féminin</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="niveau" class="block text-sm font-medium text-gray-700">Niveau demandé *</label>
+                            <div class="mt-1">
+                                <select id="niveau" name="niveau" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                    <option value="">Sélectionnez un niveau</option>
+                                    <option value="maternelle">Maternelle</option>
+                                    <option value="preparatoire">Préparatoire</option>
+                                    <option value="elementaire">Élémentaire</option>
+                                    <option value="moyen">Moyen</option>
+                                    <option value="secondaire">Secondaire</option>
+                                    <option value="philo">Philo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informations des parents -->
+                <div class="pt-8 border-t border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations des parents / tuteurs</h3>
+                    
+                    <!-- Parent 1 -->
+                    <div class="mb-8">
+                        <h4 class="text-md font-medium text-gray-700 mb-3">Parent / Tuteur 1 *</h4>
+                        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                            <div class="sm:col-span-3">
+                                <label for="parent1_nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
+                                <div class="mt-1">
+                                    <input type="text" name="parent1_nom" id="parent1_nom" required
+                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="parent1_lien" class="block text-sm font-medium text-gray-700">Lien de parenté *</label>
+                                <div class="mt-1">
+                                    <select id="parent1_lien" name="parent1_lien" required
+                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                        <option value="">Sélectionnez</option>
+                                        <option value="pere">Père</option>
+                                        <option value="mere">Mère</option>
+                                        <option value="tuteur">Tuteur légal</option>
+                                        <option value="autre">Autre</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="parent1_telephone" class="block text-sm font-medium text-gray-700">Téléphone *</label>
+                                <div class="mt-1">
+                                    <input type="tel" name="parent1_telephone" id="parent1_telephone" required
+                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="parent1_email" class="block text-sm font-medium text-gray-700">Email *</label>
+                                <div class="mt-1">
+                                    <input type="email" name="parent1_email" id="parent1_email" required
+                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Parent 2 -->
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-3">Parent / Tuteur 2</h4>
+                        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                            <div class="sm:col-span-3">
+                                <label for="parent2_nom" class="block text-sm font-medium text-gray-700">Nom complet</label>
+                                <div class="mt-1">
+                                    <input type="text" name="parent2_nom" id="parent2_nom"
+                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="parent2_lien" class="block text-sm font-medium text-gray-700">Lien de parenté</label>
+                                <div class="mt-1">
+                                    <select id="parent2_lien" name="parent2_lien"
+                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                        <option value="">Sélectionnez</option>
+                                        <option value="pere">Père</option>
+                                        <option value="mere">Mère</option>
+                                        <option value="tuteur">Tuteur légal</option>
+                                        <option value="autre">Autre</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="parent2_telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
+                                <div class="mt-1">
+                                    <input type="tel" name="parent2_telephone" id="parent2_telephone"
+                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="parent2_email" class="block text-sm font-medium text-gray-700">Email</label>
+                                <div class="mt-1">
+                                    <input type="email" name="parent2_email" id="parent2_email"
+                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informations complémentaires -->
+                <div class="pt-8 border-t border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations complémentaires</h3>
+                    
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-6">
+                            <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse complète *</label>
+                            <div class="mt-1">
+                                <input type="text" name="adresse" id="adresse" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="ville" class="block text-sm font-medium text-gray-700">Ville *</label>
+                            <div class="mt-1">
+                                <input type="text" name="ville" id="ville" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="pays" class="block text-sm font-medium text-gray-700">Pays *</label>
+                            <div class="mt-1">
+                                <input type="text" name="pays" id="pays" value="Haïti" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label class="block text-sm font-medium text-gray-700">Langues parlées à la maison *</label>
+                            <div class="mt-2 space-y-2">
+                                <div class="flex items-center">
+                                    <input id="langue_creole" name="langues[]" type="checkbox" value="creole" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                    <label for="langue_creole" class="ml-2 block text-sm text-gray-700">Créole</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="langue_francais" name="langues[]" type="checkbox" value="francais" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                    <label for="langue_francais" class="ml-2 block text-sm text-gray-700">Français</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="langue_espagnol" name="langues[]" type="checkbox" value="espagnol" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                    <label for="langue_espagnol" class="ml-2 block text-sm text-gray-700">Espagnol</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="langue_anglais" name="langues[]" type="checkbox" value="anglais" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                    <label for="langue_anglais" class="ml-2 block text-sm text-gray-700">Anglais</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label for="commentaires" class="block text-sm font-medium text-gray-700">Commentaires ou informations supplémentaires</label>
+                            <div class="mt-1">
+                                <textarea id="commentaires" name="commentaires" rows="3"
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents à fournir -->
+                <div class="pt-8 border-t border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Documents à fournir</h3>
+                    <p class="text-sm text-gray-500 mb-4">Veuillez télécharger les documents suivants :</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Acte de naissance *</label>
+                            <div class="mt-1 flex items-center">
+                                <input type="file" name="acte_naissance" id="acte_naissance" required
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Bulletins de notes (si disponible)</label>
+                            <div class="mt-1 flex items-center">
+                                <input type="file" name="bulletins_notes" id="bulletins_notes" multiple
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Photo d'identité</label>
+                            <div class="mt-1 flex items-center">
+                                <input type="file" name="photo_identite" id="photo_identite" accept="image/*"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirmation -->
+                <div class="pt-8 border-t border-gray-200">
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="confirmation" name="confirmation" type="checkbox" required
+                                class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="confirmation" class="font-medium text-gray-700">Je certifie que les informations fournies sont exactes et complètes. *</label>
+                            <p class="text-gray-500">En cochant cette case, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton de soumission -->
+                <div class="pt-5">
+                    <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Soumettre la demande d'inscription
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Informations supplémentaires -->
+        <div class="mt-8 text-center text-sm text-gray-500">
+            <p>Pour toute question ou assistance, n'hésitez pas à <a href="{{ url_for('contact') }}" class="font-medium text-blue-600 hover:text-blue-500">nous contacter</a>.</p>
+            <p class="mt-2">Notre équipe vous répondra dans les plus brefs délais.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialisation des animations AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Gestion de la soumission du formulaire
+        const form = document.getElementById('inscriptionForm');
+        if (form) {
+            // Validation côté client avant soumission
+            form.addEventListener('submit', function(e) {
+                // Laissons le formulaire se soumettre normalement pour traiter les fichiers
+                // Le backend s'occupera de la validation et du traitement
+            });
+        }
+    });
+</script>
+{% endblock %}

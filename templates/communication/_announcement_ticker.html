@@ -1,0 +1,182 @@
+{% if annonces %}
+<!-- GSAP CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+
+<div class="ticker-wrap">
+    <div class="ticker">
+        <div class="ticker-track" id="ticker-track">
+            {% for annonce in annonces %}
+            <div class="ticker-item">
+                <a href="{{ url_for('communication.details_annonce', annonce_id=annonce.id) }}" class="ticker-link">
+                    {% if annonce.important %}
+                    <span class="ticker-icon important">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    {% else %}
+                    <span class="ticker-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    {% endif %}
+                    <span class="ticker-title">{{ annonce.titre }}</span>
+                    <span class="ticker-date">{{ annonce.date_creation.strftime('%d/%m/%Y') }}</span>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.ticker-wrap {
+    position: relative;
+    background: #f0f4f8;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.ticker {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.ticker-track {
+    display: flex;
+    position: relative;
+    white-space: nowrap;
+}
+
+.ticker-item {
+    flex-shrink: 0;
+    padding: 0 20px;
+}
+
+.ticker-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.ticker-link:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ticker-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    background: #e6f0ff;
+    border-radius: 50%;
+}
+
+.ticker-icon svg {
+    width: 16px;
+    height: 16px;
+    color: #3b82f6;
+}
+
+.ticker-icon.important {
+    background: #fee2e2;
+}
+
+.ticker-icon.important svg {
+    color: #ef4444;
+}
+
+.ticker-title {
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.ticker-date {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+@media (max-width: 768px) {
+    .ticker-link {
+        padding: 6px 12px;
+    }
+    
+    .ticker-title {
+        font-size: 0.9rem;
+    }
+    
+    .ticker-date {
+        font-size: 0.75rem;
+    }
+}
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Make sure GSAP is loaded
+        if (typeof gsap === 'undefined') {
+            console.error('GSAP not loaded');
+            return;
+        }
+        
+        const track = document.getElementById('ticker-track');
+        const tickerWrap = document.querySelector('.ticker-wrap');
+        if (!track || !tickerWrap) return;
+    
+        const items = Array.from(track.children);
+        if (items.length <= 1) return; // No need to animate if there's only one or zero items
+        
+        // --- How it Works ---
+        // 1. Clone all original items to create a duplicate set for a seamless transition.
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
+        
+        // 2. We calculate the width of the *original* set of items.
+        // We use scrollWidth which measures the full width of the content.
+        const originalSetWidth = track.scrollWidth / 2;
+        
+        // 3. Set a dynamic duration based on the width to keep the speed consistent.
+        // Adjust the divisor (e.g., 100) to change speed. Higher = slower.
+        const duration = originalSetWidth / 100; 
+    
+        let tween; // This variable will hold our animation
+    
+        const animateTicker = () => {
+            tween = gsap.to(track, {
+                x: -originalSetWidth, // Animate to the left by the width of one full set
+                duration: duration,
+                ease: "none",
+                onComplete: () => {
+                    // 4. When the animation completes, the cloned set is perfectly in view,
+                    // looking identical to the starting state.
+                    gsap.set(track, { x: 0 }); // Instantly and invisibly jump back to the start position.
+                    animateTicker(); // Call the function again to loop forever.
+                }
+            });
+        };
+        
+        // Start the animation
+        animateTicker();
+        
+        // 5. Pause and play the animation on hover.
+        tickerWrap.addEventListener('mouseenter', () => tween.pause());
+        tickerWrap.addEventListener('mouseleave', () => tween.play());
+    });
+    </script>
+{% endif %}

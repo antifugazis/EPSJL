@@ -58,18 +58,38 @@
                     <!-- Date range -->
                     <div class="sm:col-span-3">
                         <label for="date_debut" class="block text-sm font-medium text-gray-700">Date de début</label>
-                        <input type="date" id="date_debut" name="date_debut" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                        <div class="mt-1">
+                            <input type="date" name="date_debut" id="date_debut" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
                     </div>
 
                     <div class="sm:col-span-3">
                         <label for="date_fin" class="block text-sm font-medium text-gray-700">Date de fin</label>
-                        <input type="date" id="date_fin" name="date_fin" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                        <div class="mt-1">
+                            <input type="date" name="date_fin" id="date_fin" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
                     </div>
+                    
+                    <div class="sm:col-span-3">
+                        <label for="statut" class="block text-sm font-medium text-gray-700">Statut</label>
+                        <div class="mt-1">
+                            <select id="statut" name="statut" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                <option value="">Tous les statuts</option>
+                                {% for statut in statuts %}
+                                <option value="{{ statut.value }}">{{ statut.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="flex justify-end">
                     <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Générer le rapport
+                    </button>
+                    <button type="submit" name="export" value="csv" class="ml-2 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Exporter en CSV
                     </button>
                 </div>
             </form>

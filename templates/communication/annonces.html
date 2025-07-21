@@ -18,6 +18,9 @@
         </div>
     </div>
 
+    <!-- Scrolling Ticker -->
+    {% include 'communication/_announcement_ticker.html' %}
+
     <!-- Announcements list -->
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         {% if annonces %}
@@ -50,23 +53,23 @@
                                         Public
                                     </span>
                                     {% else %}
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 mr-2">
-                                        Privé
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        Interne
                                     </span>
                                     {% endif %}
-                                    <p class="text-sm text-gray-500">
+                                    <span class="text-sm text-gray-500">
                                         {{ annonce.date_creation.strftime('%d/%m/%Y') }}
-                                    </p>
+                                    </span>
                                 </div>
                             </div>
-                            <div class="mt-2">
-                                <p class="text-sm text-gray-500 line-clamp-2">{{ annonce.contenu|striptags|truncate(200) }}</p>
-                            </div>
+                            <p class="mt-1 text-sm text-gray-600 line-clamp-2">
+                                {{ annonce.contenu|striptags|truncate(200) }}
+                            </p>
                             <div class="mt-2 flex items-center text-sm text-gray-500">
                                 <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                 </svg>
-                                <span>{{ annonce.createur.prenom }} {{ annonce.createur.nom }}</span>
+                    
                                 
                                 {% if annonce.date_expiration %}
                                 <svg class="flex-shrink-0 ml-4 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

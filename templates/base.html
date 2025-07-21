@@ -8,6 +8,8 @@
       <!-- GSAP -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
       <!-- Google Fonts -->
       <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
@@ -79,28 +81,11 @@
           border-radius: 2px;
         }
       </style>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
    </head>
    <body>
-      <!-- News Ticker -->
-      <div class="news-ticker bg-[#00AEEF] text-white py-2 px-4">
-         <div class="container mx-auto">
-            <div class="flex items-center space-x-4">
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5c0-.217.173-.4.4-.4.217 0 .4.173.4.4v2.926M7.5 14.25c0 .615.564 1.125 1.276 1.125.837 0 1.277-.653 1.277-1.667M4.97 3.478c-.315-.413-1.683-.996-3.478-.996-.976 0-1.88.348-2.418.923a3.055 3.055 0 000 2.196c.538.577 1.442.923 2.418.923.576 0 1.251-.22 1.757-.661l.111-2.222a1.87 1.87 0 01.661-1.26zM12 15.75h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0-8.25h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm0 0h.007v.008H12v-.008zm.659-3.75h.007v.008h-.007v-.008zm0 0h.007v.008h-.007v-.008zm0 0h.007v.008h-.007v-.008z"/>
-               </svg>
-               <div class="flex-1 overflow-hidden">
-                  <div class="news-ticker-content whitespace-nowrap animate-marquee">
-                     <span class="mr-8">Inscription en cours pour la rentrée 2024 - Places limitées !</span>
-                     <span class="mr-8">Cérémonie de remise des prix le 15 juin 2024</span>
-                     <span class="mr-8">Nouveau club de robotique ouvert aux élèves</span>
-                  </div>
-               </div>
-               <button class="text-sm hover:text-[#0098d1]">Voir tout</button>
-            </div>
-         </div>
-      </div>
       <!-- Loading Animation -->
-      <div id="loader" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+      <div id="loader" class="fixed inset-0 bg-white z-[100] flex items-center justify-center">
          <div class="animate-pulse flex flex-col items-center">
             <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-24 w-24 rounded-full mb-4">
             <div class="h-2 bg-gray-200 rounded-full w-48 mb-2.5"></div>
@@ -109,10 +94,218 @@
       </div>
       
       <div id="root">
-         <div class="flex flex-col min-h-screen w-full">
-            <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm">
-               <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                  <div class="flex h-16 items-center justify-between">
+         <!-- Dynamic Announcement Ticker -->
+         {% if annonces and annonces|length > 0 %}
+         <div class="ticker-wrap w-full">
+            <div class="ticker container mx-auto">
+               <div class="ticker-track" id="ticker-track">
+                  {% for annonce in annonces %}
+                  <div class="ticker-item">
+                     <a href="{{ url_for('communication.details_annonce', annonce_id=annonce.id) }}" class="ticker-link">
+                        {% if annonce.important is defined and annonce.important %}
+                        <span class="ticker-icon important">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                           </svg>
+                        </span>
+                        {% else %}
+                        <span class="ticker-icon">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd" />
+                           </svg>
+                        </span>
+                        {% endif %}
+                        <span class="ticker-title">{{ annonce.titre }}</span>
+                        <span class="ticker-date">{{ annonce.date_creation.strftime('%d/%m/%Y') }}</span>
+                     </a>
+                  </div>
+                  {% endfor %}
+               </div>
+            </div>
+         </div>
+      
+         <style>
+         .ticker-wrap {
+            position: relative;
+            background: #00AEEF;
+            color: white;
+            padding: 8px 0;
+            overflow: hidden;
+            margin: 0;
+            z-index: 40;
+         }
+         
+         .ticker {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 0 8px;
+         }
+         
+         .ticker-track {
+            display: flex;
+            position: relative;
+            white-space: nowrap;
+         }
+         
+         .ticker-item {
+            flex-shrink: 0;
+            padding: 0 20px;
+         }
+         
+         .ticker-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 4px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.2s ease;
+         }
+         
+         .ticker-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+         }
+         
+         .ticker-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+         }
+         
+         .ticker-icon svg {
+            width: 14px;
+            height: 14px;
+            color: white;
+         }
+         
+         .ticker-icon.important {
+            background: #ff6b6b;
+         }
+         
+         .ticker-icon.important svg {
+            color: white;
+         }
+         
+         .ticker-title {
+            font-weight: 500;
+            margin-right: 8px;
+         }
+         
+         .ticker-date {
+            font-size: 0.8rem;
+            opacity: 0.8;
+         }
+         
+         @media (max-width: 768px) {
+            .ticker-link {
+               padding: 3px 8px;
+            }
+            
+            .ticker-title {
+               font-size: 0.85rem;
+            }
+            
+            .ticker-date {
+               font-size: 0.7rem;
+            }
+            
+            .ticker-icon {
+               width: 18px;
+               height: 18px;
+            }
+            
+            .ticker-icon svg {
+               width: 12px;
+               height: 12px;
+            }
+         }
+         </style>
+         
+         <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            // Make sure GSAP is loaded
+            if (typeof gsap === 'undefined') {
+               console.error('GSAP not loaded');
+               return;
+            }
+            
+            const track = document.getElementById('ticker-track');
+            const tickerWrap = document.querySelector('.ticker-wrap');
+            if (!track || !tickerWrap) {
+               console.error('Ticker elements not found');
+               return;
+            }
+         
+            const items = Array.from(track.children);
+            if (items.length <= 1) {
+               console.log('Not enough items to animate ticker');
+               return; // No need to animate if there's only one or zero items
+            }
+            
+            // Clone all original items for seamless scrolling
+            items.forEach(item => {
+               const clone = item.cloneNode(true);
+               track.appendChild(clone);
+            });
+            
+            // Calculate the width of the original set of items
+            const originalSetWidth = track.scrollWidth / 2;
+            
+            // Set animation speed based on content length
+            // Adjust the divisor to change speed (higher = slower)
+            const duration = Math.max(15, originalSetWidth / 80);
+            
+            // Create the animation
+            function createAnimation() {
+               // Clear any existing animation
+               if (window.tickerAnimation) {
+                  window.tickerAnimation.kill();
+               }
+               
+               // Reset position
+               gsap.set(track, { x: 0 });
+               
+               // Create new animation
+               window.tickerAnimation = gsap.to(track, {
+                  x: -originalSetWidth,
+                  duration: duration,
+                  ease: "none",
+                  repeat: -1,
+                  onRepeat: () => {
+                     // Jump back to start when repeating (creates seamless loop)
+                     gsap.set(track, { x: 0 });
+                  }
+               });
+               
+               return window.tickerAnimation;
+            }
+            
+            // Initialize animation
+            const tween = createAnimation();
+            
+            // Pause on hover
+            tickerWrap.addEventListener('mouseenter', () => tween.pause());
+            tickerWrap.addEventListener('mouseleave', () => tween.play());
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+               // Recreate animation on window resize
+               createAnimation();
+            });
+         });
+         </script>
+         {% endif %}
+         
+         <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm">
+            <div class="container mx-auto">
+               <div class="flex h-24 items-center justify-between">
                      <div class="flex items-center">
                         <a href="#" class="flex items-center">
                            <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-10 w-10 rounded-full">
@@ -122,14 +315,17 @@
                            </div>
                         </a>
                      </div>
-                     <nav class="hidden md:flex md:items-center md:space-x-6">
+                     <nav class="hidden lg:flex lg:items-center lg:space-x-6">
                         <a href="{{ url_for('accueil') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Accueil</a>
-                        <a href="#about" class="text-sm font-medium text-black hover:text-[#00AEEF]">À Propos</a>
-                        <a href="#academics" class="text-sm font-medium text-black hover:text-[#00AEEF]">Programmes</a>
-                        <a href="#faculty" class="text-sm font-medium text-black hover:text-[#00AEEF]">Équipe</a>
-                        <a href="#gallery" class="text-sm font-medium text-black hover:text-[#00AEEF]">Galerie</a>
-                        <a href="#events" class="text-sm font-medium text-black hover:text-[#00AEEF]">Événements</a>
-                        <a href="#contact" class="text-sm font-medium text-black hover:text-[#00AEEF]">Contact</a>
+                        <a href="{{ url_for('a_propos') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">À Propos</a>
+                        <a href="{{ url_for('programmes') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Programmes</a>
+                        <a href="{{ url_for('equipe') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Équipe</a>
+                        <a href="{{ url_for('admission') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Admission</a>
+                        <a href="{{ url_for('evenements') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Événements</a>
+                        <a href="{{ url_for('gallery') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Galerie</a>
+                        <a href="{{ url_for('temoignages') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Témoignages</a>
+                        <a href="{{ url_for('contact') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Contact</a>
+                        <a href="{{ url_for('inscriptions.formulaire') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Inscription</a>
                         
                         {% if session.get('user_id') %}
                             <div class="relative group">
@@ -145,10 +341,13 @@
                                         <a href="{{ url_for('cours.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cours</a>
                                         <a href="{{ url_for('notes.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notes</a>
                                         <a href="{{ url_for('presence.saisie') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Présence</a>
+                                        <a href="{{ url_for('inscriptions.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inscriptions</a>
                                     {% endif %}
                                     {% if session.get('user_role') in ['admin', 'directeur'] %}
                                         <a href="{{ url_for('finances.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Finances</a>
                                         <a href="{{ url_for('rapports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rapports</a>
+                                        <a href="{{ url_for('communication.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Annonces</a>
+                                        <a href="{{ url_for('admin_contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages Contact</a>
                                     {% endif %}
                                     <div class="border-t border-gray-100 my-1"></div>
                                     <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Déconnexion</a>
@@ -159,7 +358,7 @@
                             <a href="{{ url_for('auth.register') }}" class="btn-primary rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300">S'inscrire</a>
                         {% endif %}
                         </nav>
-                     <div class="flex md:hidden">
+                     <div class="flex lg:hidden">
                         <button type="button" id="mobile-menu-button" class="inline-flex items-center justify-center rounded-md p-2 text-black hover:bg-[#00AEEF]/10">
                            <span class="sr-only">Open main menu</span>
                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu block h-6 w-6" aria-hidden="true">
@@ -171,47 +370,80 @@
                      </div>
                   </div>
                </div>
-               
-               <!-- Mobile menu, show/hide based on menu state -->
-               <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg rounded-b-lg">
-                  <div class="px-2 pt-2 pb-3 space-y-1">
-                     <a href="{{ url_for('accueil') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Accueil</a>
-                     <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">À Propos</a>
-                     <a href="#academics" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Programmes</a>
-                     <a href="#faculty" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Équipe</a>
-                     <a href="#gallery" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Galerie</a>
-                     <a href="#events" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Événements</a>
-                     <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Contact</a>
-                     
-                     {% if session.get('user_id') %}
-                        <div class="border-t border-gray-200 my-2 pt-2">
-                           <p class="px-3 py-2 text-base font-medium text-gray-500">{{ session.get('user_name', 'Utilisateur') }}</p>
-                           
-                           {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
-                              <a href="{{ url_for('eleves.liste') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Élèves</a>
-                              <a href="{{ url_for('cours.liste') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Cours</a>
-                              <a href="{{ url_for('notes.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Notes</a>
-                              <a href="{{ url_for('presence.saisie') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Présence</a>
-                           {% endif %}
-                           
-                           {% if session.get('user_role') in ['admin', 'directeur'] %}
-                              <a href="{{ url_for('finances.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Finances</a>
-                              <a href="{{ url_for('rapports.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Rapports</a>
-                           {% endif %}
-                           
-                           <a href="{{ url_for('auth.logout') }}" class="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50">Déconnexion</a>
+                              <!-- Mobile menu, show/hide based on menu state -->
+                <div id="mobile-menu" class="hidden lg:hidden bg-white shadow-lg rounded-b-lg overflow-y-auto max-h-[80vh]">
+                    <div class="p-2">
+                        <!-- Main Navigation Links in 2-column grid -->
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <a href="{{ url_for('accueil') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Accueil</a>
+                            <a href="{{ url_for('a_propos') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">À Propos</a>
+                            <a href="{{ url_for('programmes') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Programmes</a>
+                            <a href="{{ url_for('equipe') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Équipe</a>
+                            <a href="{{ url_for('admission') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Admission</a>
+                            <a href="{{ url_for('evenements') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Événements</a>
+                            <a href="{{ url_for('gallery') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Galerie</a>
+                            <a href="{{ url_for('temoignages') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Témoignages</a>
+                            <a href="{{ url_for('contact') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Contact</a>
+                            <a href="{{ url_for('inscriptions.formulaire') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Inscription</a>
                         </div>
-                     {% else %}
-                        <div class="border-t border-gray-200 my-2 pt-2">
-                           <a href="{{ url_for('auth.login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-[#00AEEF]/10 hover:text-[#00AEEF]">Connexion</a>
-                           <a href="{{ url_for('auth.register') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-[#00AEEF] hover:bg-[#0098d1] mt-2">S'inscrire</a>
-                        </div>
-                     {% endif %}
-                  </div>
-               </div>
+                        
+                        {% if session.get('user_id') %}
+                            <div class="border-t border-gray-200 my-2"></div>
+                            
+                            <!-- Admin Links -->
+                            {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+                                <div class="px-1 py-1">
+                                    <p class="px-2 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gestion</p>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+                                            <a href="{{ url_for('eleves.liste') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Élèves</a>
+                                            <a href="{{ url_for('cours.liste') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Cours</a>
+                                            <a href="{{ url_for('notes.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Notes</a>
+                                            <a href="{{ url_for('presence.saisie') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Présence</a>
+                                            <a href="{{ url_for('inscriptions.liste') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Inscriptions</a>
+                                        {% endif %}
+                                        
+                                        {% if session.get('user_role') in ['admin', 'directeur'] %}
+                                            <a href="{{ url_for('finances.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Finances</a>
+                                            <a href="{{ url_for('rapports.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Rapports</a>
+                                            <a href="{{ url_for('admin_contacts') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Messages</a>
+                                        {% endif %}
+                                        
+                                        <a href="{{ url_for('communication.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Annonces</a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="border-t border-gray-200 my-2"></div>
+                            <a href="{{ url_for('auth.logout') }}" class="block px-4 py-3 text-base font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors">Déconnexion</a>
+                            
+                        {% else %}
+                            <div class="border-t border-gray-200 my-2 pt-2">
+                                <a href="{{ url_for('auth.login') }}" class="block px-4 py-3 text-base font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded-md transition-colors">Connexion</a>
+                                <a href="{{ url_for('auth.register') }}" class="block px-4 py-3 mt-2 text-base font-medium text-white bg-[#00AEEF] hover:bg-[#0098d1] rounded-md transition-colors text-center">S'inscrire</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </header>
+            
+            <!-- Flash Messages -->
+            <div class="container mx-auto">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="{{ 'bg-green-100 border-green-500 text-green-700' if category == 'success' else 'bg-red-100 border-red-500 text-red-700' }} px-4 py-3 rounded relative border mb-4" role="alert">
+                                <span class="block sm:inline">{{ message }}</span>
+                                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                                    <svg class="fill-current h-6 w-6 {{ 'text-green-500' if category == 'success' else 'text-red-500' }}" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
             {% block content %}
-
             {% endblock %}
             <footer class="bg-black text-white">
                <div class="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
@@ -277,10 +509,9 @@
                   </div>
                </div>
             </footer>
-         </div>
+         
       </div>
-      <script type="module" src="/src/index.tsx"></script>
-      </div>
+      
       
       <!-- Initialize AOS and GSAP -->
       <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -379,5 +610,34 @@
             });
          });
       </script>
+   {% block scripts %}{% endblock %}
+   
+   <script>
+   // Load news ticker items dynamically
+   document.addEventListener('DOMContentLoaded', function() {
+      const newsTicker = document.getElementById('news-ticker-content');
+      if (newsTicker) {
+         fetch('/api/news')
+            .then(response => response.json())
+            .then(data => {
+               if (data && data.length > 0) {
+                  newsTicker.innerHTML = '';
+                  data.forEach(item => {
+                     const span = document.createElement('span');
+                     span.className = 'mr-8';
+                     span.textContent = item.content;
+                     newsTicker.appendChild(span);
+                  });
+               } else {
+                  newsTicker.innerHTML = '<span class="mr-8">Aucune actualité disponible</span>';
+               }
+            })
+            .catch(error => {
+               console.error('Erreur lors du chargement des actualités:', error);
+               newsTicker.innerHTML = '<span class="mr-8">Erreur de chargement des actualités</span>';
+            });
+      }
+   });
+   </script>
    </body>
 </html>

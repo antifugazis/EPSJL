@@ -90,35 +90,108 @@
     </div>
 
     <!-- Statistics summary -->
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6 print:mb-4">
-        <div class="px-4 py-5 sm:px-6 bg-gray-50 print:bg-white">
-            <h2 class="text-lg font-medium text-gray-900">Statistiques</h2>
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Statistiques</h3>
         </div>
-        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-            <div class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-5">
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500">Total</h3>
-                    <p class="mt-1 text-lg font-bold text-gray-900">{{ stats.total }}</p>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+            <dl class="sm:divide-y sm:divide-gray-200">
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Total</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ stats.total }}</dd>
                 </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500">Présents</h3>
-                    <p class="mt-1 text-lg font-bold text-green-600">{{ stats.present }} ({{ (stats.present / stats.total * 100)|round|int if stats.total > 0 else 0 }}%)</p>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Présents</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ stats.present }}</dd>
                 </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500">Absents</h3>
-                    <p class="mt-1 text-lg font-bold text-red-600">{{ stats.absent }} ({{ (stats.absent / stats.total * 100)|round|int if stats.total > 0 else 0 }}%)</p>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Absents</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ stats.absent }}</dd>
                 </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500">Retards</h3>
-                    <p class="mt-1 text-lg font-bold text-yellow-600">{{ stats.retard }} ({{ (stats.retard / stats.total * 100)|round|int if stats.total > 0 else 0 }}%)</p>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Retards</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ stats.retard }}</dd>
                 </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500">Excusés</h3>
-                    <p class="mt-1 text-lg font-bold text-blue-600">{{ stats.excuse }} ({{ (stats.excuse / stats.total * 100)|round|int if stats.total > 0 else 0 }}%)</p>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Excusés</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ stats.excuse }}</dd>
                 </div>
-            </div>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6 bg-blue-50">
+                    <dt class="text-sm font-medium text-blue-700">Taux de présence</dt>
+                    <dd class="mt-1 text-sm text-blue-700 sm:mt-0 font-bold">{{ stats.attendance_rate }}%</dd>
+                </div>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6 bg-red-50">
+                    <dt class="text-sm font-medium text-red-700">Taux d'absence</dt>
+                    <dd class="mt-1 text-sm text-red-700 sm:mt-0 font-bold">{{ stats.absence_rate }}%</dd>
+                </div>
+            </dl>
         </div>
     </div>
+
+    <!-- Student-specific statistics (if available) -->
+    {% if student_stats %}
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6 print:mb-4">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 print:bg-white">
+            <h2 class="text-lg font-medium text-gray-900">Statistiques par élève</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50 print:bg-white">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Élève
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Total
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Présences
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Absences
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Retards
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Excusés
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Taux de présence
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for student_id, stat in student_stats.items() %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ stat.eleve.nom }} {{ stat.eleve.prenom }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ stat.total }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
+                            {{ stat.present }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">
+                            {{ stat.absent }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-600 font-medium">
+                            {{ stat.retard }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">
+                            {{ stat.excuse }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold {% if stat.attendance_rate >= 90 %}text-green-600{% elif stat.attendance_rate >= 75 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                            {{ stat.attendance_rate }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Attendance results table -->
     <div class="bg-white shadow overflow-hidden sm:rounded-lg print:shadow-none">
@@ -133,6 +206,7 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cours</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider print:hidden">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -175,10 +249,17 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {{ presence.notes or '-' }}
                     </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium print:hidden">
+                        <form action="{{ url_for('presence.delete_presence', id=presence.id) }}" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette présence ?');">
+                            <button type="submit" class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
                         Aucune présence trouvée avec les critères sélectionnés.
                     </td>
                 </tr>

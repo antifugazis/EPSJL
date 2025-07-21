@@ -1,13 +1,16 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, session, jsonify, send_from_directory, abort
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, login_required, current_user
+from flask_login import LoginManager, login_required, current_user, login_user, logout_user
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+from datetime import datetime, timedelta, date
 import os
-from datetime import datetime
 import json
-from models import Cours
-
-# Import SQLAlchemy models
-from models import db, User, Eleve, Evenement, Annonce
+import uuid
+from functools import wraps
+from flask_migrate import Migrate
+from models import Cours, db, User, Eleve, Evenement, Annonce, Inscription, Contact
 
 # Import modules
 from modules.auth import auth_blueprint
@@ -19,12 +22,15 @@ from modules.finances import finances_blueprint
 from modules.rapports import rapports_blueprint
 from modules.calendrier import calendrier_blueprint
 from modules.communication import communication_blueprint
+from modules.inscriptions import inscriptions_blueprint
+from modules.news import news_blueprint
 
 # Configuration
 from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
+migrate = Migrate(app, db)
 
 # Initialize extensions
 db.init_app(app)
@@ -46,6 +52,8 @@ app.register_blueprint(finances_blueprint)
 app.register_blueprint(rapports_blueprint)
 app.register_blueprint(calendrier_blueprint)
 app.register_blueprint(communication_blueprint)
+app.register_blueprint(inscriptions_blueprint)
+app.register_blueprint(news_blueprint)
 
 # Home route
 @app.route('/')
@@ -61,12 +69,225 @@ def accueil():
     evenements = Evenement.query.filter(Evenement.date >= today).order_by(Evenement.date).limit(5).all()
     
     # Get recent announcements
-    annonces = Annonce.query.order_by(Annonce.date_creation.desc()).limit(3).all()
+    annonces = Annonce.query.order_by(Annonce.date_creation.desc()).limit(5).all()
     
-    return render_template('accueil.html', 
-                          total_eleves=total_eleves,
-                          evenements=evenements,
-                          annonces=annonces)
+    return render_template('website/accueil.html', total_eleves=total_eleves, upcoming_events=evenements, recent_announcements=annonces)
+
+@app.route('/a-propos')
+def a_propos():
+    return render_template('website/a-propos.html')
+
+@app.route('/programmes')
+def programmes():
+    return render_template('website/programmes.html')
+
+@app.route('/equipe')
+def equipe():
+    return render_template('website/team.html')
+
+@app.route('/admission')
+def admission():
+    return render_template('website/admission.html')
+
+
+@app.route('/evenements')
+def evenements():
+    return render_template('website/events.html')
+
+@app.route('/gallery')
+def gallery():
+    return render_template('website/gallery.html')
+
+@app.route('/temoignages')
+def temoignages():
+    return render_template('website/temoignages.html')
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        try:
+            # Récupérer les données du formulaire
+            nom = request.form.get('name')
+            email = request.form.get('email')
+            sujet = request.form.get('subject')
+            message = request.form.get('message')
+            
+            # Créer un nouveau message de contact
+            nouveau_message = Contact(
+                nom=nom,
+                email=email,
+                sujet=sujet,
+                message=message
+            )
+            
+            # Sauvegarder dans la base de données
+            db.session.add(nouveau_message)
+            db.session.commit()
+            
+            # Afficher un message de succès
+            flash('Votre message a été envoyé avec succès. Nous vous contacterons bientôt.', 'success')
+            return redirect(url_for('contact'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Une erreur est survenue lors de l\'envoi de votre message: {str(e)}', 'error')
+            return redirect(url_for('contact'))
+    
+    # Afficher le formulaire pour les requêtes GET
+    return render_template('website/contact.html')
+
+
+
+
+# Configuration pour le téléchargement de fichiers
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+# Créer le dossier de téléchargement s'il n'existe pas
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_uploaded_file(file, subfolder):
+    if file and allowed_file(file.filename):
+        # Créer un nom de fichier unique
+        filename = secure_filename(file.filename)
+        unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        
+        # Créer le sous-dossier s'il n'existe pas
+        upload_path = os.path.join(UPLOAD_FOLDER, subfolder)
+        os.makedirs(upload_path, exist_ok=True)
+        
+        # Sauvegarder le fichier
+        file_path = os.path.join(upload_path, unique_filename)
+        file.save(file_path)
+        return file_path
+    return None
+
+# Redirect old inscription URL to new blueprint route
+@app.route('/inscription')
+def old_inscription():
+    return redirect(url_for('inscriptions.formulaire'))
+
+# Redirect old confirmation URL to new blueprint route
+@app.route('/inscription/confirmation/<int:id>')
+def confirmation_inscription(id):
+    return redirect(url_for('inscriptions.confirmation', id=id))
+
+# Redirect old admin inscriptions URL to new blueprint route
+@app.route('/admin/inscriptions')
+@login_required
+def admin_inscriptions():
+    statut = request.args.get('statut', 'tous')
+    return redirect(url_for('inscriptions.liste', statut=statut))
+
+# Redirect old update status URL to new blueprint route
+@app.route('/admin/inscription/<int:id>/statut', methods=['POST'])
+@login_required
+def update_inscription_statut(id):
+    return redirect(url_for('inscriptions.update_statut', id=id))
+
+# Redirect old view inscription URL to new blueprint route
+@app.route('/admin/inscription/<int:id>')
+@login_required
+def view_inscription(id):
+    return redirect(url_for('inscriptions.details', id=id))
+
+# Redirect old delete inscription URL to new blueprint route
+@app.route('/admin/inscription/<int:id>', methods=['DELETE'])
+@login_required
+def delete_inscription(id):
+    return redirect(url_for('inscriptions.delete', id=id))
+
+# Interface d'administration pour gérer les messages de contact
+@app.route('/admin/contacts')
+@login_required
+def admin_contacts():
+    if not current_user.is_authenticated or current_user.role != 'admin':
+        abort(403)
+    
+    statut = request.args.get('statut', 'tous')
+    
+    query = Contact.query
+    
+    if statut == 'non_lu':
+        query = query.filter_by(lu=False)
+    elif statut == 'traite':
+        query = query.filter_by(traite=True)
+    
+    contacts = query.order_by(Contact.date_envoi.desc()).all()
+    return render_template('admin/contacts.html', 
+                         contacts=contacts, 
+                         statut_actuel=statut)
+
+# Mettre à jour le statut d'un message de contact (AJAX)
+@app.route('/admin/contact/<int:id>/status', methods=['POST'])
+@login_required
+def update_contact_status(id):
+    if not current_user.is_authenticated or current_user.role != 'admin':
+        return jsonify({'success': False, 'error': 'Non autorisé'}), 403
+    
+    contact = Contact.query.get_or_404(id)
+    data = request.get_json()
+    
+    try:
+        if 'lu' in data:
+            contact.lu = data['lu']
+        
+        if 'traite' in data:
+            contact.traite = data['traite']
+        
+        db.session.commit()
+        return jsonify({
+            'success': True,
+            'lu': contact.lu,
+            'traite': contact.traite
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# Enregistrer les notes d'un message de contact (AJAX)
+@app.route('/admin/contact/<int:id>/notes', methods=['POST'])
+@login_required
+def update_contact_notes(id):
+    if not current_user.is_authenticated or current_user.role != 'admin':
+        return jsonify({'success': False, 'error': 'Non autorisé'}), 403
+    
+    contact = Contact.query.get_or_404(id)
+    data = request.get_json()
+    
+    try:
+        if 'notes' in data:
+            contact.notes_admin = data['notes']
+        
+        db.session.commit()
+        return jsonify({
+            'success': True
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# Supprimer un message de contact (AJAX)
+@app.route('/admin/contact/<int:id>', methods=['DELETE'])
+@login_required
+def delete_contact(id):
+    if not current_user.is_authenticated or current_user.role != 'admin':
+        return jsonify({'success': False, 'error': 'Non autorisé'}), 403
+    
+    contact = Contact.query.get_or_404(id)
+    
+    try:
+        # Supprimer de la base de données
+        db.session.delete(contact)
+        db.session.commit()
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 # API endpoints
 @app.route('/api/cours')
@@ -127,7 +348,71 @@ def server_error(e):
 def inject_data():
     current_year = datetime.now().year
     school_name = "École Presbytérale Saint Joseph de L'Asile"
-    return dict(current_year=current_year, school_name=school_name)
+    
+    # Get recent public announcements for the ticker
+    annonces = None
+    try:
+        print("DEBUG: Fetching announcements for ticker")
+        # Check if the important field exists in the Annonce model
+        has_important_field = hasattr(Annonce, 'important')
+        print(f"DEBUG: has_important_field = {has_important_field}")
+        
+        # Count total announcements in the database
+        total_annonces = Annonce.query.count()
+        print(f"DEBUG: Total announcements in database: {total_annonces}")
+        
+        # Count public announcements
+        public_count = Annonce.query.filter(Annonce.public == 1).count()
+        print(f"DEBUG: Public announcements count: {public_count}")
+        
+        # Base query for public announcements that are not expired
+        # Using is_() instead of == for None comparison as recommended by SQLAlchemy
+        base_query = Annonce.query.filter(
+            Annonce.public == 1,
+            (Annonce.date_expiration.is_(None)) | (Annonce.date_expiration >= date.today())
+        )
+        
+        # Check SQL generated
+        print(f"DEBUG: SQL Query: {str(base_query)}")
+        
+        # Order by importance if the field exists, otherwise just by date
+        if has_important_field:
+            # Using SQLite integer for boolean (1 for True, 0 for False)
+            annonces = base_query.order_by(Annonce.important.desc(), Annonce.date_creation.desc()).limit(10).all()
+        else:
+            annonces = base_query.order_by(Annonce.date_creation.desc()).limit(10).all()
+            
+        print(f"DEBUG: Found {len(annonces) if annonces else 0} announcements for ticker")
+        if annonces:
+            for i, a in enumerate(annonces):
+                # Show raw SQLite values (0/1) for boolean fields
+                print(f"DEBUG: Announcement {i+1}: id={a.id}, title={a.titre}, public={a.public} (raw: {int(a.public)}), important={a.important if has_important_field else 'N/A'} (raw: {int(a.important) if has_important_field else 'N/A'})")
+        else:
+            print("DEBUG: No announcements found. This could be due to:")  
+            print("  1. No announcements in the database")
+            print("  2. No public announcements (public=1)")
+            print("  3. All announcements are expired")
+            print("  4. Boolean value mismatch between Python (True/False) and SQLite (1/0)")
+            print("DEBUG: Try running a direct query on the database to check raw values:")  
+            print("  SELECT id, titre, public, important, date_expiration FROM annonces;")
+            print("DEBUG: If public=1 announcements exist but aren't showing, check date_expiration values.")
+            print(f"DEBUG: Today's date for comparison: {date.today()}")
+            
+            # Try a simpler query just to see if any public announcements exist
+            simple_query = Annonce.query.filter(Annonce.public == 1).all()
+            print(f"DEBUG: Simple query (just public=1) found {len(simple_query)} announcements")
+            if simple_query:
+                for i, a in enumerate(simple_query):
+                    print(f"DEBUG: Simple query result {i+1}: id={a.id}, title={a.titre}, date_expiration={a.date_expiration}")
+                print("DEBUG: If announcements appear here but not in the ticker, the date_expiration filter is excluding them")
+    except Exception as e:
+        print(f"Error fetching announcements for context: {str(e)}")
+    
+    return dict(
+        current_year=current_year, 
+        school_name=school_name,
+        annonces=annonces
+    )
 
 # Create database tables if they don't exist
 # Note: before_first_request is deprecated in newer Flask versions

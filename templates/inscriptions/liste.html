@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des inscriptions - Administration{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    
+    <div class="lg:pl-64 flex flex-col">
+        <!-- Header -->
+        <div class="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
+            <div class="flex-1 px-4 flex justify-between">
+                <div class="flex-1 flex">
+                    <h1 class="text-2xl font-bold text-gray-900 self-center">Gestion des inscriptions</h1>
+                </div>
+                <div class="ml-4 flex items-center md:ml-6">
+                    <!-- User dropdown -->
+                    {% include 'admin/user_dropdown.html' %}
+                </div>
+            </div>
+        </div>
+
+        <main class="flex-1">
+            <div class="py-6">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                    <!-- Filtres -->
+                    <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Filtrer par statut
+                        </h3>
+                        <div class="mt-3 sm:mt-0 sm:ml-4">
+                            <div class="flex space-x-2">
+                                <a href="{{ url_for('inscriptions.liste', statut='tous') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 {{ 'ring-2 ring-blue-500' if statut_actuel == 'tous' else '' }}">
+                                    Tous
+                                </a>
+                                <a href="{{ url_for('inscriptions.liste', statut='en_attente') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 {{ 'ring-2 ring-blue-500' if statut_actuel == 'en_attente' else '' }}">
+                                    En attente
+                                </a>
+                                <a href="{{ url_for('inscriptions.liste', statut='approuvee') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 {{ 'ring-2 ring-blue-500' if statut_actuel == 'approuvee' else '' }}">
+                                    Approuvées
+                                </a>
+                                <a href="{{ url_for('inscriptions.liste', statut='rejetee') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 {{ 'ring-2 ring-blue-500' if statut_actuel == 'rejetee' else '' }}">
+                                    Rejetées
+                                </a>
+                                <a href="{{ url_for('inscriptions.liste', statut='completee') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 {{ 'ring-2 ring-blue-500' if statut_actuel == 'completee' else '' }}">
+                                    Complétées
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table des inscriptions -->
+                    <div class="mt-8 flex flex-col">
+                        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                                <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Élève
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Niveau demandé
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Parent/Tuteur
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Date de soumission
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Statut
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            {% for inscription in inscriptions %}
+                                            <tr class="hover:bg-gray-50" data-id="{{ inscription.id }}">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-10 w-10">
+                                                            {% if inscription.photo_identite_path %}
+                                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ url_for('static', filename=inscription.photo_identite_path.replace('static/', '')) }}" alt="Photo d'identité">
+                                                            {% else %}
+                                                            <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                                                <span class="text-gray-600 font-medium">{{ inscription.prenom_eleve[0] }}{{ inscription.nom_eleve[0] }}</span>
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ inscription.prenom_eleve }} {{ inscription.nom_eleve }}
+                                                            </div>
+                                                            <div class="text-sm text-gray-500">
+                                                                {{ inscription.date_naissance.strftime('%d/%m/%Y') }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-gray-900">{{ inscription.niveau_demande }}</div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-gray-900">{{ inscription.prenom_parent }} {{ inscription.nom_parent }}</div>
+                                                    <div class="text-sm text-gray-500">{{ inscription.telephone_parent }}</div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {{ inscription.date_soumission.strftime('%d/%m/%Y') }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    {% if inscription.statut == 'en_attente' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        En attente
+                                                    </span>
+                                                    {% elif inscription.statut == 'approuvee' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Approuvée
+                                                    </span>
+                                                    {% elif inscription.statut == 'rejetee' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                        Rejetée
+                                                    </span>
+                                                    {% elif inscription.statut == 'completee' %}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                        Complétée
+                                                    </span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <a href="{{ url_for('inscriptions.details', id=inscription.id) }}" class="text-blue-600 hover:text-blue-900 mr-3">Voir</a>
+                                                    {% if inscription.statut == 'en_attente' %}
+                                                        <button onclick="updateStatut({{ inscription.id }}, 'approuvee')" class="text-green-600 hover:text-green-900 mr-2">Approuver</button>
+                                                        <button onclick="updateStatut({{ inscription.id }}, 'rejetee')" class="text-red-600 hover:text-red-900 mr-2">Rejeter</button>
+                                                    {% elif inscription.statut == 'approuvee' %}
+                                                        <button onclick="convertToStudent({{ inscription.id }})" class="text-green-600 hover:text-green-900 mr-3">Convertir en élève</button>
+                                                    {% endif %}
+                                                    <button onclick="deleteInscription({{ inscription.id }})" class="text-red-600 hover:text-red-900">Supprimer</button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Fonction pour mettre à jour le statut d'une inscription
+function updateStatut(inscriptionId, nouveauStatut) {
+    fetch(`/inscriptions/admin/${inscriptionId}/statut`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            statut: nouveauStatut
+            // Remove the notes field that was causing errors
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Recharger la page pour voir les changements
+            window.location.reload();
+        } else {
+            alert('Erreur lors de la mise à jour du statut: ' + (data.error || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la mise à jour du statut');
+    });
+}
+
+// Fonction pour supprimer une inscription
+function deleteInscription(inscriptionId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette inscription ? Cette action est irréversible.')) {
+        fetch(`/inscriptions/admin/${inscriptionId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Supprimer la ligne du tableau
+                const row = document.querySelector(`tr[data-id="${inscriptionId}"]`);
+                if (row) row.remove();
+                // Afficher un message de succès
+                alert('Inscription supprimée avec succès');
+            } else {
+                alert('Erreur lors de la suppression: ' + (data.error || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors de la suppression');
+        });
+    }
+}
+
+// Fonction pour convertir une inscription approuvée en élève
+function convertToStudent(inscriptionId) {
+    if (confirm('Voulez-vous convertir cette inscription en fiche élève ? Cette action créera un nouvel élève dans le système.')) {
+        fetch(`/inscriptions/admin/${inscriptionId}/convert`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Afficher un message de succès avec le matricule généré
+                alert(`Inscription convertie avec succès en élève. Matricule: ${data.matricule}`);
+                // Rediriger vers la page des élèves ou recharger la page
+                window.location.reload();
+            } else {
+                alert('Erreur lors de la conversion: ' + (data.error || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors de la conversion en élève');
+        });
+    }
+}
+</script>
+{% endblock %}

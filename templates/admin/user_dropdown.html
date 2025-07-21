@@ -1,0 +1,71 @@
+<!-- Profile dropdown -->
+<div class="ml-4 flex items-center md:ml-6">
+    <button type="button" class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <span class="sr-only">Voir les notifications</span>
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+    </button>
+
+    <!-- Profile dropdown -->
+    <div class="ml-3 relative">
+        <div>
+            <button type="button" id="user-menu" class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                <span class="sr-only">Ouvrir le menu utilisateur</span>
+                <img class="h-8 w-8 rounded-full" 
+                     src="{{ current_user.avatar_url or url_for('static', filename='img/avatar-placeholder.png') }}" 
+                     alt="{{ current_user.nom }} {{ current_user.prenom }}">
+            </button>
+        </div>
+        <!--
+            Dropdown menu, show/hide based on menu state.
+            Entering: "transition ease-out duration-100"
+            From: "transform opacity-0 scale-95"
+            To: "transform opacity-100 scale-100"
+            Leaving: "transition ease-in duration-75"
+            From: "transform opacity-100 scale-100"
+            To: "transform opacity-0 scale-95"
+        -->
+        <div id="user-dropdown" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+            <!-- Active: "bg-gray-100", Not Active: "" -->
+            <a href="{{ url_for('auth.users') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">
+                Votre profil
+            </a>
+            <a href="{{ url_for('news.admin_news') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-1">
+                Actualités
+            </a>
+            <a href="{{ url_for('admin_contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">
+                Paramètres
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-3">
+                Déconnexion
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Gestion du menu déroulant utilisateur
+document.addEventListener('DOMContentLoaded', function() {
+    const userMenuButton = document.getElementById('user-menu');
+    const userDropdown = document.getElementById('user-dropdown');
+    
+    // Afficher/masquer le menu déroulant
+    userMenuButton.addEventListener('click', function(event) {
+        event.stopPropagation();
+        userDropdown.classList.toggle('hidden');
+    });
+    
+    // Fermer le menu quand on clique ailleurs
+    document.addEventListener('click', function(event) {
+        if (!userDropdown.contains(event.target) && !userMenuButton.contains(event.target)) {
+            userDropdown.classList.add('hidden');
+        }
+    });
+    
+    // Empêcher la fermeture quand on clique dans le menu
+    userDropdown.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+});
+</script>

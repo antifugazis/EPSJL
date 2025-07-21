@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription - École Privée Saint Jean de Lalande{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                Formulaire d'inscription
+            </h1>
+            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                Merci de remplir ce formulaire pour inscrire votre enfant à l'École Privée Saint Jean de Lalande.
+            </p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 rounded-md {% if category == 'error' %}bg-red-50 border border-red-200 text-red-700{% else %}bg-green-50 border border-green-200 text-green-700{% endif %} p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                {% if category == 'error' %}
+                                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                                {% else %}
+                                <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                                {% endif %}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm">{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <form method="post" enctype="multipart/form-data" class="divide-y divide-gray-200">
+                <!-- Informations de l'élève -->
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">Informations de l'élève</h3>
+                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-3">
+                            <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom</label>
+                            <div class="mt-1">
+                                <input type="text" name="prenom" id="prenom" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
+                            <div class="mt-1">
+                                <input type="text" name="nom" id="nom" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="date_naissance" class="block text-sm font-medium text-gray-700">Date de naissance</label>
+                            <div class="mt-1">
+                                <input type="date" name="date_naissance" id="date_naissance" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="lieu_naissance" class="block text-sm font-medium text-gray-700">Lieu de naissance</label>
+                            <div class="mt-1">
+                                <input type="text" name="lieu_naissance" id="lieu_naissance" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="genre" class="block text-sm font-medium text-gray-700">Genre</label>
+                            <div class="mt-1">
+                                <select id="genre" name="genre" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                    <option value="">Sélectionner</option>
+                                    <option value="M">Masculin</option>
+                                    <option value="F">Féminin</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="niveau" class="block text-sm font-medium text-gray-700">Niveau demandé</label>
+                            <div class="mt-1">
+                                <select id="niveau" name="niveau" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                    <option value="">Sélectionner</option>
+                                    <option value="Préscolaire 1">Préscolaire 1</option>
+                                    <option value="Préscolaire 2">Préscolaire 2</option>
+                                    <option value="Préscolaire 3">Préscolaire 3</option>
+                                    <option value="1ère Année">1ère Année</option>
+                                    <option value="2ème Année">2ème Année</option>
+                                    <option value="3ème Année">3ème Année</option>
+                                    <option value="4ème Année">4ème Année</option>
+                                    <option value="5ème Année">5ème Année</option>
+                                    <option value="6ème Année">6ème Année</option>
+                                    <option value="7ème Année">7ème Année</option>
+                                    <option value="8ème Année">8ème Année</option>
+                                    <option value="9ème Année">9ème Année</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse</label>
+                            <div class="mt-1">
+                                <input type="text" name="adresse" id="adresse" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informations du parent/tuteur -->
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">Informations du parent/tuteur</h3>
+                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-3">
+                            <label for="prenom_parent" class="block text-sm font-medium text-gray-700">Prénom</label>
+                            <div class="mt-1">
+                                <input type="text" name="prenom_parent" id="prenom_parent" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="nom_parent" class="block text-sm font-medium text-gray-700">Nom</label>
+                            <div class="mt-1">
+                                <input type="text" name="nom_parent" id="nom_parent" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="relation_parent" class="block text-sm font-medium text-gray-700">Relation avec l'élève</label>
+                            <div class="mt-1">
+                                <select id="relation_parent" name="relation_parent" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                    <option value="">Sélectionner</option>
+                                    <option value="Père">Père</option>
+                                    <option value="Mère">Mère</option>
+                                    <option value="Tuteur légal">Tuteur légal</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="telephone_parent" class="block text-sm font-medium text-gray-700">Téléphone</label>
+                            <div class="mt-1">
+                                <input type="tel" name="telephone_parent" id="telephone_parent" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label for="email_parent" class="block text-sm font-medium text-gray-700">Email</label>
+                            <div class="mt-1">
+                                <input type="email" name="email_parent" id="email_parent" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents requis -->
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">Documents requis</h3>
+                    <p class="mt-1 text-sm text-gray-500">Veuillez fournir les documents suivants (formats acceptés: PDF, JPG, PNG).</p>
+                    
+                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-6">
+                            <label for="acte_naissance" class="block text-sm font-medium text-gray-700">Acte de naissance</label>
+                            <div class="mt-1">
+                                <input type="file" name="acte_naissance" id="acte_naissance" required accept=".pdf,.jpg,.jpeg,.png" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label for="bulletins" class="block text-sm font-medium text-gray-700">Bulletins scolaires (3 derniers trimestres)</label>
+                            <div class="mt-1">
+                                <input type="file" name="bulletins" id="bulletins" multiple accept=".pdf,.jpg,.jpeg,.png" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                <p class="mt-1 text-xs text-gray-500">Vous pouvez sélectionner plusieurs fichiers.</p>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label for="photo_identite" class="block text-sm font-medium text-gray-700">Photo d'identité récente</label>
+                            <div class="mt-1">
+                                <input type="file" name="photo_identite" id="photo_identite" required accept=".jpg,.jpeg,.png" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton de soumission -->
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex justify-end">
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Soumettre l'inscription
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

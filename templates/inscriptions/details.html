@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+
+{% block title %}Détails de l'inscription - Administration{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    
+    <div class="lg:pl-64 flex flex-col">
+        <!-- Header -->
+        <div class="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
+            <div class="flex-1 px-4 flex justify-between">
+                <div class="flex items-center">
+                    <a href="{{ url_for('inscriptions.liste') }}" class="text-gray-500 hover:text-gray-700 mr-4">
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-900">Détails de l'inscription</h1>
+                </div>
+                <div class="ml-4 flex items-center md:ml-6">
+                    <!-- User dropdown -->
+                    {% include 'admin/user_dropdown.html' %}
+                </div>
+            </div>
+        </div>
+
+        <main class="flex-1">
+            <div class="py-6">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                    <!-- En-tête avec statut et actions -->
+                    <div class="md:flex md:items-center md:justify-between mb-6">
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                                {{ inscription.prenom_eleve }} {{ inscription.nom_eleve }}
+                            </h2>
+                            <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                    </svg>
+                                    Soumise le {{ inscription.date_soumission.strftime('%d/%m/%Y à %H:%M') }}
+                                </div>
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {% if inscription.statut == 'en_attente' %}bg-yellow-100 text-yellow-800
+                                        {% elif inscription.statut == 'approuvee' %}bg-green-100 text-green-800
+                                        {% elif inscription.statut == 'rejetee' %}bg-red-100 text-red-800
+                                        {% elif inscription.statut == 'completee' %}bg-blue-100 text-blue-800
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {% if inscription.statut == 'en_attente' %}En attente
+                                        {% elif inscription.statut == 'approuvee' %}Approuvée
+                                        {% elif inscription.statut == 'rejetee' %}Rejetée
+                                        {% elif inscription.statut == 'completee' %}Complétée
+                                        {% else %}{{ inscription.statut }}{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations de l'élève -->
+                    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+                        <div class="px-4 py-5 sm:px-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                Informations de l'élève
+                            </h3>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                                Détails personnels et scolaires.
+                            </p>
+                        </div>
+                        <div class="border-t border-gray-200">
+                            <dl>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Nom complet
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.prenom_eleve }} {{ inscription.nom_eleve }}
+                                    </dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Date de naissance
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.date_naissance.strftime('%d/%m/%Y') }}
+                                    </dd>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Lieu de naissance
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.lieu_naissance }}
+                                    </dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Genre
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ 'Masculin' if inscription.genre == 'M' else 'Féminin' }}
+                                    </dd>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Niveau demandé
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.niveau_demande }}
+                                    </dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Adresse
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.adresse }}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <!-- Informations du parent/tuteur -->
+                    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+                        <div class="px-4 py-5 sm:px-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                Informations du parent/tuteur
+                            </h3>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                                Coordonnées du responsable légal.
+                            </p>
+                        </div>
+                        <div class="border-t border-gray-200">
+                            <dl>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Nom complet
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.prenom_parent }} {{ inscription.nom_parent }}
+                                    </dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Relation
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.relation_parent }}
+                                    </dd>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Email
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.email_parent }}
+                                    </dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Téléphone
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ inscription.telephone_parent }}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <!-- Documents joints -->
+                    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+                        <div class="px-4 py-5 sm:px-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                Documents joints
+                            </h3>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                                Pièces justificatives fournies lors de l'inscription.
+                            </p>
+                        </div>
+                        <div class="border-t border-gray-200">
+                            <dl>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Acte de naissance
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {% if inscription.acte_naissance_path %}
+                                        <a href="{{ url_for('static', filename=inscription.acte_naissance_path.replace('static/', '')) }}" target="_blank" class="text-blue-600 hover:text-blue-900">
+                                            Voir le document
+                                        </a>
+                                        {% else %}
+                                        <span class="text-red-500">Non fourni</span>
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Bulletins scolaires
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {% if inscription.bulletins_paths %}
+                                            <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
+                                                {% for bulletin in inscription.bulletins_paths.split('|') %}
+                                                    {% if bulletin %}
+                                                    <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                                        <div class="w-0 flex-1 flex items-center">
+                                                            <svg class="flex-shrink-0 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            <span class="ml-2 flex-1 w-0 truncate">
+                                                                Bulletin {{ loop.index }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="ml-4 flex-shrink-0">
+                                                            <a href="{{ url_for('static', filename=bulletin.replace('static/', '')) }}" target="_blank" class="font-medium text-blue-600 hover:text-blue-500">
+                                                                Télécharger
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <span class="text-red-500">Non fournis</span>
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Photo d'identité
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {% if inscription.photo_identite_path %}
+                                        <div class="flex items-center">
+                                            <img src="{{ url_for('static', filename=inscription.photo_identite_path.replace('static/', '')) }}" alt="Photo d'identité" class="h-24 w-24 object-cover rounded-md">
+                                            <a href="{{ url_for('static', filename=inscription.photo_identite_path.replace('static/', '')) }}" target="_blank" class="ml-4 text-blue-600 hover:text-blue-900">
+                                                Voir en taille réelle
+                                            </a>
+                                        </div>
+                                        {% else %}
+                                        <span class="text-red-500">Non fournie</span>
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <!-- Notes et commentaires -->
+                    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+                        <div class="px-4 py-5 sm:px-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                Notes et commentaires
+                            </h3>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                                Observations internes sur cette inscription.
+                            </p>
+                        </div>
+                        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                            <textarea id="notes" rows="4" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Ajoutez vos notes ici...">{{ inscription.notes or '' }}</textarea>
+                            <div class="mt-3 text-right">
+                                <button type="button" onclick="saveNotes()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    Enregistrer les notes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-6 flex justify-between">
+                        <button type="button" onclick="showDeleteModal()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Supprimer cette inscription
+                        </button>
+                        <div class="space-x-3">
+                            <a href="{{ url_for('inscriptions.liste') }}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Retour à la liste
+                            </a>
+                            {% if inscription.statut == 'en_attente' %}
+                            <button type="button" onclick="updateStatut('approuvee')" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                Approuver cette inscription
+                            </button>
+                            {% elif inscription.statut == 'approuvee' %}
+                            <button type="button" onclick="convertToStudent()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Convertir en élève
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div id="deleteModal" class="hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Supprimer l'inscription
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Êtes-vous sûr de vouloir supprimer cette inscription ? Cette action est irréversible.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" onclick="confirmDelete()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Supprimer
+                </button>
+                <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Fonction pour mettre à jour le statut de l'inscription
+function updateStatut(statut) {
+    fetch(`/inscriptions/admin/{{ inscription.id }}/statut`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            statut: statut,
+            notes: document.getElementById('notes').value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert('Erreur lors de la mise à jour du statut: ' + (data.error || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la mise à jour du statut');
+    });
+}
+
+// Fonction pour enregistrer les notes
+function saveNotes() {
+    fetch(`/inscriptions/admin/{{ inscription.id }}/statut`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            statut: '{{ inscription.statut }}',
+            notes: document.getElementById('notes').value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Afficher un message de succès
+            const alert = document.createElement('div');
+            alert.className = 'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded';
+            alert.role = 'alert';
+            alert.innerHTML = '<strong class="font-bold">Succès !</strong> Les notes ont été enregistrées.';
+            document.body.appendChild(alert);
+            
+            // Supprimer le message après 3 secondes
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        } else {
+            throw new Error(data.error || 'Erreur inconnue');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors de l\'enregistrement des notes: ' + error.message);
+    });
+}
+
+// Fonction pour convertir l'inscription en élève
+function convertToStudent() {
+    if (confirm('Voulez-vous convertir cette inscription en fiche élève ? Cette action créera un nouvel élève dans le système.')) {
+        fetch(`/inscriptions/admin/{{ inscription.id }}/convert`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Afficher un message de succès avec le matricule généré
+                alert(`Inscription convertie avec succès en élève. Matricule: ${data.matricule}`);
+                // Rediriger vers la page des élèves
+                window.location.href = '/admin/eleves';
+            } else {
+                alert('Erreur lors de la conversion: ' + (data.error || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors de la conversion en élève');
+        });
+    }
+}
+
+// Fonction pour afficher la modale de suppression
+function showDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+}
+
+// Fonction pour fermer la modale
+function closeModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+}
+
+// Fonction pour confirmer la suppression
+function confirmDelete() {
+    fetch(`/inscriptions/admin/{{ inscription.id }}/delete`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = "{{ url_for('inscriptions.liste') }}";
+        } else {
+            throw new Error(data.error || 'Erreur inconnue');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la suppression: ' + error.message);
+    });
+}
+
+// Fonction pour supprimer l'inscription
+function deleteInscription() {
+    showDeleteModal();
+}
+</script>
+{% endblock %}

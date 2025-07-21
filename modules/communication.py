@@ -7,16 +7,65 @@ communication_blueprint = Blueprint('communication', __name__, url_prefix='/comm
 
 @communication_blueprint.route('/')
 def index():
+    print("DEBUG: Fetching announcements for communication index page")
+    
     # Get public announcements
+    try:
+        annonces = Annonce.query.filter(
+            Annonce.public == 1,
+            (Annonce.date_expiration.is_(None)) | (Annonce.date_expiration >= date.today())
+        ).order_by(Annonce.important.desc(), Annonce.date_creation.desc()).all()
+        
+        print(f"DEBUG: Found {len(annonces)} announcements for index page")
+        for i, a in enumerate(annonces):
+            print(f"DEBUG: Announcement {i+1}: id={a.id}, title={a.titre}, public={a.public}, important={a.important}")
+    except Exception as e:
+        print(f"ERROR in index route: {str(e)}")
+        annonces = []
+    
     return render_template('communication/index.html', annonces=annonces)
 
 @communication_blueprint.route('/annonces')
 def annonces():
+    print("DEBUG: Fetching announcements for /annonces page")
+    
+    # Count total announcements in the database
+    total_annonces = Annonce.query.count()
+    print(f"DEBUG: Total announcements in database: {total_annonces}")
+    
+    # Dump all announcements for debugging
+    all_announcements = Annonce.query.all()
+    print(f"DEBUG: All announcements in database:")
+    for a in all_announcements:
+        print(f"DEBUG: ID={a.id}, Title={a.titre}, Public={a.public} (raw: {int(a.public)}), Important={a.important if hasattr(a, 'important') else 'N/A'}, Date_Expiration={a.date_expiration}, Created={a.date_creation}")
+    
+    # Check today's date for comparison
+    today = date.today()
+    print(f"DEBUG: Today's date for comparison: {today}")
+    
     # Get all public announcements
-    annonces = Annonce.query.filter(
-        Annonce.public == 1,
-        (Annonce.date_expiration == None) | (Annonce.date_expiration >= date.today())
-    ).order_by(Annonce.important.desc(), Annonce.date_creation.desc()).all()
+    try:
+        annonces = Annonce.query.filter(
+            Annonce.public == 1,
+            (Annonce.date_expiration.is_(None)) | (Annonce.date_expiration >= date.today())
+        ).order_by(Annonce.important.desc(), Annonce.date_creation.desc()).all()
+        
+        print(f"DEBUG: Found {len(annonces)} announcements for /annonces page")
+        for i, a in enumerate(annonces):
+            print(f"DEBUG: Announcement {i+1}: id={a.id}, title={a.titre}, public={a.public} (raw: {int(a.public)}), important={a.important} (raw: {int(a.important)}), date_expiration={a.date_expiration}")
+        
+        if len(annonces) == 0:
+            # Try a simpler query just to see if any public announcements exist
+            simple_query = Annonce.query.filter(Annonce.public == 1).all()
+            print(f"DEBUG: Simple query (just public=1) found {len(simple_query)} announcements")
+            if simple_query:
+                for i, a in enumerate(simple_query):
+                    print(f"DEBUG: Simple query result {i+1}: id={a.id}, title={a.titre}, date_expiration={a.date_expiration}")
+                print("DEBUG: If announcements appear here but not in the main query, the date_expiration filter is excluding them")
+    except Exception as e:
+        print(f"ERROR in annonces route: {str(e)}")
+        annonces = []
+    
     return render_template('communication/annonces.html', annonces=annonces)
 
 @communication_blueprint.route('/annonces/<int:annonce_id>')
@@ -37,18 +86,17 @@ def ajouter_annonce():
     if request.method == 'POST':
         titre = request.form['titre']
         contenu = request.form['contenu']
-        date_expiration = request.form.get('date_expiration')
+        date_expiration_str = request.form.get('date_expiration')
+        date_expiration = datetime.strptime(date_expiration_str, '%Y-%m-%d').date() if date_expiration_str else None
         public = int(request.form.get('public', 0))
         important = int(request.form.get('important', 0))
-        auteur_id = session.get('user_id')
         annonce = Annonce(
             titre=titre,
             contenu=contenu,
             date_creation=date.today(),
             date_expiration=date_expiration if date_expiration else None,
             public=public,
-            important=important,
-            auteur_id=auteur_id
+            important=important
         )
         db.session.add(annonce)
         db.session.commit()

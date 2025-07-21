@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<section id="gallery" class="py-20 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+       <div class="text-center">
+          <h2 class="text-base font-semibold uppercase tracking-wide text-[#00AEEF]">Galerie</h2>
+          <p class="mt-2 text-3xl font-bold tracking-tight text-black sm:text-4xl">La Vie à Notre École</p>
+          <p class="mx-auto mt-5 max-w-prose text-lg text-gray-600">Découvrez les moments qui font de l'École Presbytérale Saint Joseph de L'Asile un lieu spécial d'apprentissage, de croissance et de communauté.</p>
+       </div>
+       <div class="mt-16">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3" data-aos="fade-up" data-aos-delay="200">
+             <div class="group relative overflow-hidden rounded-lg">
+                <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1770&amp;q=80" alt="Élèves en classe" class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                   <h3 class="text-lg font-semibold">Apprentissage actif</h3>
+                </div>
+             </div>
+             <div class="group relative overflow-hidden rounded-lg">
+                <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1622&amp;q=80" alt="Cérémonie religieuse" class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                   <h3 class="text-lg font-semibold">Célébration spirituelle</h3>
+                </div>
+             </div>
+             <div class="group relative overflow-hidden rounded-lg">
+                <img src="https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1772&amp;q=80" alt="Laboratoire de sciences" class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                   <h3 class="text-lg font-semibold">Exploration scientifique</h3>
+                </div>
+             </div>
+             <div class="group relative overflow-hidden rounded-lg">
+                <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1770&amp;q=80" alt="Activité sportive" class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                   <h3 class="text-lg font-semibold">Développement athlétique</h3>
+                </div>
+             </div>
+             <div class="group relative overflow-hidden rounded-lg">
+                <img src="https://images.unsplash.com/photo-1587691592099-24045742c181?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1773&amp;q=80" alt="Élèves en musique" class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                   <h3 class="text-lg font-semibold">Expression artistique</h3>
+                </div>
+             </div>
+             <div class="group relative overflow-hidden rounded-lg">
+                <img src="https://images.unsplash.com/photo-1610500796385-3ffc1ae2f046?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1770&amp;q=80" alt="Service communautaire" class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                   <h3 class="text-lg font-semibold">Engagement communautaire</h3>
+                </div>
+             </div>
+          </div>
+       </div>
+       <div class="mt-16 text-center">
+          <a href="#" class="inline-flex items-center rounded-md bg-[#00AEEF] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#0098d1]">
+             Voir Plus de Photos
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ml-2 h-5 w-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"></path>
+             </svg>
+          </a>
+       </div>
+    </div>
+ </section>
+{% endblock %}

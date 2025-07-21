@@ -7,7 +7,20 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Saisie des Présences</h1>
         <div class="flex space-x-2">
-            <a href="{{ url_for('presence.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+            <a href="{{ url_for('presence.saisie', date=prev_date, classe_id=cours.classe_id, cours_id=cours.id) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                <i class="fas fa-chevron-left"></i> Jour précédent
+            </a>
+            <a href="{{ url_for('presence.saisie', date=next_date, classe_id=cours.classe_id, cours_id=cours.id) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                Jour suivant <i class="fas fa-chevron-right"></i>
+            </a>
+            <form action="{{ url_for('presence.delete_batch_presence') }}" method="POST" class="inline" onsubmit="return confirm('Attention! Vous êtes sur le point de supprimer toutes les présences pour cette date et ce cours. Cette action est irréversible. Voulez-vous continuer?');">
+                <input type="hidden" name="date" value="{{ date }}">
+                <input type="hidden" name="cours_id" value="{{ cours.id }}">
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    <i class="fas fa-trash"></i> Supprimer tout
+                </button>
+            </form>
+            <a href="{{ url_for('presence.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Retour
             </a>
         </div>

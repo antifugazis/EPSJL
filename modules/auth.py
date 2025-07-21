@@ -86,3 +86,25 @@ def register():
         return redirect(url_for('auth.login'))
             
     return render_template('auth/register.html')
+
+@auth_blueprint.route('/users')
+@login_required
+def users():
+    if current_user.role != 'admin':
+        flash('Accès non autorisé.', 'danger')
+        return redirect(url_for('accueil'))
+    users = User.query.all()
+    return render_template('admin/users.html', users=users)
+
+# --- Admin Required Decorator ---
+from functools import wraps
+from flask import abort
+from flask_login import current_user
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or getattr(current_user, 'role', None) != 'admin':
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
