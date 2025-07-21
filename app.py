@@ -102,6 +102,10 @@ def gallery():
 def temoignages():
     return render_template('website/temoignages.html')
 
+@app.route('/credits')
+def credits():
+    return render_template('credits.html')
+
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
