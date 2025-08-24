@@ -315,49 +315,61 @@
                            </div>
                         </a>
                      </div>
-                     <nav class="hidden lg:flex lg:items-center lg:space-x-6">
-                        <a href="{{ url_for('accueil') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Accueil</a>
-                        <a href="{{ url_for('a_propos') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">À Propos</a>
-                        <a href="{{ url_for('programmes') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Programmes</a>
-                        <a href="{{ url_for('equipe') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Équipe</a>
-                        <a href="{{ url_for('admission') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Admission</a>
-                        <a href="{{ url_for('evenements') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Événements</a>
-                        <a href="{{ url_for('gallery') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Galerie</a>
-                        <a href="{{ url_for('temoignages') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Témoignages</a>
-                        <a href="{{ url_for('contact') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Contact</a>
-                        <a href="{{ url_for('inscriptions.formulaire') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Inscription</a>
-                        
-                        {% if session.get('user_id') %}
-                            <div class="relative group">
-                                <button class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF]">
-                                    {{ session.get('user_name', 'Utilisateur') }}
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
-                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                                    {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
-                                        <a href="{{ url_for('eleves.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Élèves</a>
-                                        <a href="{{ url_for('cours.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cours</a>
-                                        <a href="{{ url_for('notes.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notes</a>
-                                        <a href="{{ url_for('presence.saisie') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Présence</a>
-                                        <a href="{{ url_for('inscriptions.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inscriptions</a>
-                                    {% endif %}
-                                    {% if session.get('user_role') in ['admin', 'directeur'] %}
-                                        <a href="{{ url_for('finances.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Finances</a>
-                                        <a href="{{ url_for('rapports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rapports</a>
-                                        <a href="{{ url_for('communication.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Annonces</a>
-                                        <a href="{{ url_for('admin_contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages Contact</a>
-                                    {% endif %}
-                                    <div class="border-t border-gray-100 my-1"></div>
-                                    <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Déconnexion</a>
-                                </div>
-                            </div>
-                        {% else %}
-                            <a href="{{ url_for('auth.login') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Connexion</a>
-                            <a href="{{ url_for('auth.register') }}" class="btn-primary rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300">S'inscrire</a>
-                        {% endif %}
-                        </nav>
+                     <nav class="hidden lg:flex lg:items-center lg:space-x-4">
+                       <a href="{{ url_for('accueil') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Accueil</a>
+                       <a href="{{ url_for('a_propos') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">À Propos</a>
+                       <a href="{{ url_for('programmes') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Programmes</a>
+                       <a href="{{ url_for('equipe') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Équipe</a>
+                       <a href="{{ url_for('admission') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Admission</a>
+                       <a href="{{ url_for('evenements') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Événements</a>
+                       <a href="{{ url_for('gallery') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Galerie</a>
+                       
+                       <!-- Dropdown for additional links -->
+                       <div class="relative group">
+                           <button class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF]">
+                               Plus
+                               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                               </svg>
+                           </button>
+                           <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                               <a href="{{ url_for('temoignages') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Témoignages</a>
+                               <a href="{{ url_for('contact') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Contact</a>
+                               <a href="{{ url_for('inscriptions.formulaire') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inscription</a>
+                           </div>
+                       </div>
+                       
+                       {% if session.get('user_id') %}
+                           <div class="relative group">
+                               <button class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF]">
+                                   {{ session.get('user_name', 'Utilisateur') }}
+                                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                   </svg>
+                               </button>
+                               <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                                   {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
+                                       <a href="{{ url_for('eleves.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Élèves</a>
+                                       <a href="{{ url_for('cours.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cours</a>
+                                       <a href="{{ url_for('notes.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notes</a>
+                                       <a href="{{ url_for('presence.saisie') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Présence</a>
+                                       <a href="{{ url_for('inscriptions.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inscriptions</a>
+                                   {% endif %}
+                                   {% if session.get('user_role') in ['admin', 'directeur'] %}
+                                       <a href="{{ url_for('finances.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Finances</a>
+                                       <a href="{{ url_for('rapports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rapports</a>
+                                       <a href="{{ url_for('communication.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Annonces</a>
+                                       <a href="{{ url_for('admin_contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages Contact</a>
+                                   {% endif %}
+                                   <div class="border-t border-gray-100 my-1"></div>
+                                   <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Déconnexion</a>
+                               </div>
+                           </div>
+                       {% else %}
+                           <a href="{{ url_for('auth.login') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Connexion</a>
+                           <a href="{{ url_for('auth.register') }}" class="btn-primary rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300">S'inscrire</a>
+                       {% endif %}
+                       </nav>
                      <div class="flex lg:hidden">
                         <button type="button" id="mobile-menu-button" class="inline-flex items-center justify-center rounded-md p-2 text-black hover:bg-[#00AEEF]/10">
                            <span class="sr-only">Open main menu</span>

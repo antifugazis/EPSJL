@@ -1,0 +1,9 @@
+{
+  "recipients": [
+    {
+      "name": "Recipient 1",
+      "phone": "+50941877146",
+      "active": true
+    }
+  ]
+}

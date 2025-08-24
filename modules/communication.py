@@ -1,7 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session, jsonify
-from flask_login import login_required
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from datetime import date, datetime
 from models import Annonce, Document, db
-from datetime import datetime, date
+from flask_login import login_required
+import os
+import uuid
+from modules.whatsapp_notifications import send_announcement_to_whatsapp
 
 communication_blueprint = Blueprint('communication', __name__, url_prefix='/communication')
 
@@ -100,7 +103,20 @@ def ajouter_annonce():
         )
         db.session.add(annonce)
         db.session.commit()
-        flash('Annonce ajoutée avec succès!', 'success')
+        
+        # Send WhatsApp notification for public announcements
+        if public:
+            try:
+                result = send_announcement_to_whatsapp(annonce)
+                if result.get('error'):
+                    flash(f'Annonce ajoutée, mais erreur lors de l\'envoi des notifications WhatsApp: {result["error"]}', 'warning')
+                else:
+                    flash('Annonce ajoutée avec succès et notifications WhatsApp envoyées!', 'success')
+            except Exception as e:
+                flash(f'Annonce ajoutée, mais erreur lors de l\'envoi des notifications WhatsApp: {str(e)}', 'warning')
+        else:
+            flash('Annonce ajoutée avec succès!', 'success')
+            
         return redirect(url_for('communication.annonces'))
     return render_template('communication/ajouter_annonce.html')
 
@@ -115,10 +131,24 @@ def modifier_annonce(annonce_id):
         annonce.titre = request.form['titre']
         annonce.contenu = request.form['contenu']
         annonce.date_expiration = request.form.get('date_expiration') or None
+        was_public = annonce.public
         annonce.public = int(request.form.get('public', 0))
         annonce.important = int(request.form.get('important', 0))
         db.session.commit()
-        flash('Annonce modifiée avec succès!', 'success')
+        
+        # Send WhatsApp notification if the announcement wasn't public before but is now
+        if not was_public and annonce.public:
+            try:
+                result = send_announcement_to_whatsapp(annonce)
+                if result.get('error'):
+                    flash(f'Annonce modifiée, mais erreur lors de l\'envoi des notifications WhatsApp: {result["error"]}', 'warning')
+                else:
+                    flash('Annonce modifiée avec succès et notifications WhatsApp envoyées!', 'success')
+            except Exception as e:
+                flash(f'Annonce modifiée, mais erreur lors de l\'envoi des notifications WhatsApp: {str(e)}', 'warning')
+        else:
+            flash('Annonce modifiée avec succès!', 'success')
+            
         return redirect(url_for('communication.annonces'))
     return render_template('communication/modifier_annonce.html', annonce=annonce)
 
