@@ -104,6 +104,10 @@ def gallery():
 def temoignages():
     return render_template('website/temoignages.html')
 
+@app.route('/payment')
+def payment():
+    return render_template('website/payment.html')
+
 @app.route('/credits')
 def credits():
     return render_template('credits.html')

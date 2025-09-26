@@ -2,6 +2,8 @@
    <head>
    
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="/static/assets/logo.jpg" type="image/jpeg">
+      <title>{% block title %}École Presbytérale Saint Joseph de L'Asile (EPSJA){% endblock %}</title>
       <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
       <!-- AOS Animation -->
       <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -319,10 +321,8 @@
                        <a href="{{ url_for('accueil') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Accueil</a>
                        <a href="{{ url_for('a_propos') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">À Propos</a>
                        <a href="{{ url_for('programmes') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Programmes</a>
-                       <a href="{{ url_for('equipe') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Équipe</a>
                        <a href="{{ url_for('admission') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Admission</a>
-                       <a href="{{ url_for('evenements') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Événements</a>
-                       <a href="{{ url_for('gallery') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Galerie</a>
+                       <a href="{{ url_for('evenements') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Actualités</a>
                        
                        <!-- Dropdown for additional links -->
                        <div class="relative group">
@@ -333,8 +333,8 @@
                                </svg>
                            </button>
                            <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                               <a href="{{ url_for('temoignages') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Témoignages</a>
                                <a href="{{ url_for('contact') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Contact</a>
+                               <a href="{{ url_for('payment') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Paiement</a>
                                <a href="{{ url_for('inscriptions.formulaire') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inscription</a>
                            </div>
                        </div>
@@ -367,7 +367,6 @@
                            </div>
                        {% else %}
                            <a href="{{ url_for('auth.login') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Connexion</a>
-                           <a href="{{ url_for('auth.register') }}" class="btn-primary rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300">S'inscrire</a>
                        {% endif %}
                        </nav>
                      <div class="flex lg:hidden">
@@ -390,12 +389,10 @@
                             <a href="{{ url_for('accueil') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Accueil</a>
                             <a href="{{ url_for('a_propos') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">À Propos</a>
                             <a href="{{ url_for('programmes') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Programmes</a>
-                            <a href="{{ url_for('equipe') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Équipe</a>
                             <a href="{{ url_for('admission') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Admission</a>
-                            <a href="{{ url_for('evenements') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Événements</a>
-                            <a href="{{ url_for('gallery') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Galerie</a>
-                            <a href="{{ url_for('temoignages') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Témoignages</a>
+                            <a href="{{ url_for('evenements') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Actualités</a>
                             <a href="{{ url_for('contact') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Contact</a>
+                            <a href="{{ url_for('payment') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Paiement</a>
                             <a href="{{ url_for('inscriptions.formulaire') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Inscription</a>
                         </div>
                         
@@ -432,7 +429,6 @@
                         {% else %}
                             <div class="border-t border-gray-200 my-2 pt-2">
                                 <a href="{{ url_for('auth.login') }}" class="block px-4 py-3 text-base font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded-md transition-colors">Connexion</a>
-                                <a href="{{ url_for('auth.register') }}" class="block px-4 py-3 mt-2 text-base font-medium text-white bg-[#00AEEF] hover:bg-[#0098d1] rounded-md transition-colors text-center">S'inscrire</a>
                             </div>
                         {% endif %}
                     </div>
@@ -475,20 +471,17 @@
                      <div>
                         <h3 class="text-base font-medium text-white">Liens Rapides</h3>
                         <ul class="mt-4 space-y-2">
-                           <li><a href="#about" class="text-sm text-gray-300 hover:text-[#00AEEF]">À Propos</a></li>
-                           <li><a href="#academics" class="text-sm text-gray-300 hover:text-[#00AEEF]">Programmes</a></li>
-                           <li><a href="#faculty" class="text-sm text-gray-300 hover:text-[#00AEEF]">Notre Équipe</a></li>
-                           <li><a href="#events" class="text-sm text-gray-300 hover:text-[#00AEEF]">Événements</a></li>
-                           <li><a href="#gallery" class="text-sm text-gray-300 hover:text-[#00AEEF]">Galerie</a></li>
+                           <li><a href="{{ url_for('a_propos') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">À Propos</a></li>
+                           <li><a href="{{ url_for('programmes') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Programmes</a></li>
+                           <li><a href="{{ url_for('evenements') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Actualités</a></li>
+                           <li><a href="{{ url_for('contact') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Contact</a></li>
                         </ul>
                      </div>
                      <div>
                         <h3 class="text-base font-medium text-white">Admissions</h3>
                         <ul class="mt-4 space-y-2">
-                           <li><a href="#admissions" class="text-sm text-gray-300 hover:text-[#00AEEF]">Processus d'Admission</a></li>
-                           <li><a href="#" class="text-sm text-gray-300 hover:text-[#00AEEF]">Frais de Scolarité</a></li>
-                           <li><a href="#" class="text-sm text-gray-300 hover:text-[#00AEEF]">Bourses</a></li>
-                           <li><a href="#" class="text-sm text-gray-300 hover:text-[#00AEEF]">FAQ</a></li>
+                           <li><a href="{{ url_for('admission') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Nous Rejoindre</a></li>
+                           <li><a href="{{ url_for('admission') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Admissions</a></li>
                         </ul>
                      </div>
                      <div>
@@ -499,13 +492,20 @@
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                               </svg>
-                              <span class="ml-2 text-sm text-gray-300">123 Rue Principale, L'Asile, Haïti</span>
+                              <span class="ml-2 text-sm text-gray-300">Rue Calvaire #1, Centre-ville, l'Asile, NIPPES, Haïti</span>
+                           </li>
+                           <li class="flex items-start">
+                              <svg class="mt-1 h-5 w-5 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                              </svg>
+                              <span class="ml-2 text-sm text-gray-300">Code postal HT 7540</span>
                            </li>
                            <li class="flex items-start">
                               <svg class="mt-1 h-5 w-5 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                               </svg>
-                              <span class="ml-2 text-sm text-gray-300">+509 1234-5678</span>
+                              <span class="ml-2 text-sm text-gray-300">+509 4892-3158</span>
                            </li>
                            <li class="flex items-start">
                               <svg class="mt-1 h-5 w-5 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -516,11 +516,31 @@
                         </ul>
                      </div>
                   </div>
-                  <div class="mt-12 border-t border-gray-800 pt-8">
+                  <div class="mt-8 border-t border-gray-800 pt-8">
+                     <div class="mb-8">
+                        <h3 class="text-base font-medium text-white mb-4">Newsletter</h3>
+                        <p class="text-sm text-gray-300 mb-4">Inscrivez-vous à notre newsletter pour recevoir les dernières actualités de l'école</p>
+                        <form id="newsletter-form" class="flex flex-col sm:flex-row gap-2">
+                           <input type="email" placeholder="Votre adresse email" required class="px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00AEEF] flex-grow">
+                           <button type="submit" class="px-4 py-2 bg-[#00AEEF] text-white rounded-md hover:bg-[#0098d1] transition-colors">S'inscrire</button>
+                        </form>
+                     </div>
                      <p class="text-center text-sm text-gray-400">© 2025 École Presbytérale Saint Joseph de L'Asile. Tous droits réservés. 
                         <a href="{{ url_for('credits') }}" class="text-[#00AEEF] hover:underline ml-2">Crédits</a>
                      </p>
                   </div>
+                  
+                  <script>
+                     document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        const email = this.querySelector('input[type="email"]').value;
+                        
+                        // Here you would normally send the email to your backend
+                        // For now, we'll just show a success message
+                        alert('Merci de vous être inscrit à notre newsletter avec l\'adresse : ' + email);
+                        this.reset();
+                     });
+                  </script>
                </div>
             </footer>
          

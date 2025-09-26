@@ -1,18 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
-<section id="events" class="py-20 bg-white">
+<section id="actualites" class="py-20 bg-white">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
        <div class="text-center">
-          <h2 class="text-base font-semibold uppercase tracking-wide text-[#00AEEF]">Événements</h2>
-          <p class="mt-2 text-3xl font-bold tracking-tight text-black sm:text-4xl">Calendrier Scolaire</p>
-          <p class="mx-auto mt-5 max-w-prose text-lg text-gray-600">Restez informé des événements importants et des activités à venir à l'École Presbytérale Saint Joseph de L'Asile.</p>
+          <h2 class="text-base font-semibold uppercase tracking-wide text-[#00AEEF]">Actualités</h2>
+          <p class="mt-2 text-3xl font-bold tracking-tight text-black sm:text-4xl">Toute l'actualité de l'école</p>
+          <p class="mx-auto mt-5 max-w-prose text-lg text-gray-600">Restez informé des événements, annonces et activités à l'École Presbytérale Saint Joseph de L'Asile.</p>
        </div>
-       <div class="mt-16">
-          <div class="grid grid-cols-1 gap-8 md:grid-cols-2" data-aos="fade-up" data-aos-delay="200">
-             <div class="flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                <div class="w-2 bg-[#00AEEF]"></div>
+       <!-- Search and filters -->
+       <div class="mt-10">
+          <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+             <div class="w-full md:w-1/2 mb-4 md:mb-0">
+                <div class="relative">
+                   <input type="text" id="search-input" placeholder="Rechercher par titre..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00AEEF]">
+                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                      </svg>
+                   </div>
+                </div>
+             </div>
+             <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
+                <button class="filter-btn active px-3 py-1 text-sm rounded-full bg-[#00AEEF] text-white" data-filter="all">Tous <span class="count">(4)</span></button>
+                <button class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-filter="recent">Ajoutés récemment</button>
+                <button class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-filter="upcoming">À venir</button>
+                <button class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-filter="past">Passés</button>
+             </div>
+          </div>
+          
+          <!-- Category filters -->
+          <div class="flex flex-wrap justify-center gap-2 mb-8">
+             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="vie-scolaire">Vie scolaire <span class="count">(1)</span></button>
+             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="annonces">Annonces officielles <span class="count">(1)</span></button>
+             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="culture">Culture et foi <span class="count">(1)</span></button>
+             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="celebrations">Célébrations religieuses <span class="count">(1)</span></button>
+          </div>
+       </div>
+       
+       <div class="mt-8">
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3" data-aos="fade-up" data-aos-delay="200">
+             <div class="card flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-300" data-category="vie-scolaire" data-date="2023-09-15" data-filter="upcoming">
+                <div class="relative overflow-hidden h-48">
+                   <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Journée Portes Ouvertes" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                   <div class="absolute top-0 right-0 mt-2 mr-2">
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Vie scolaire</span>
+                   </div>
+                </div>
                 <div class="flex-1 p-6">
-                   <h3 class="text-lg font-bold text-black">Journée Portes Ouvertes</h3>
+                   <h3 class="text-lg font-bold text-black hover:text-[#00AEEF] transition-colors">Journée Portes Ouvertes</h3>
                    <div class="mt-2 flex items-center text-sm text-gray-500">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-1.5 h-4 w-4 text-[#00AEEF]">
                          <path d="M8 2v4"></path>
@@ -22,20 +57,26 @@
                       </svg>
                       15 Septembre 2023
                    </div>
-                   <div class="mt-1 flex items-center text-sm text-gray-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock mr-1.5 h-4 w-4 text-[#00AEEF]">
-                         <circle cx="12" cy="12" r="10"></circle>
-                         <polyline points="12 6 12 12 16 14"></polyline>
-                      </svg>
-                      9:00 - 14:00
+                   <p class="mt-3 text-gray-600 line-clamp-3">Venez découvrir notre campus, rencontrer nos enseignants et en savoir plus sur nos programmes académiques.</p>
+                   <div class="mt-4">
+                      <a href="#" class="inline-flex items-center text-sm font-medium text-[#00AEEF] hover:text-[#0098d1]">
+                         En savoir plus
+                         <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                         </svg>
+                      </a>
                    </div>
-                   <p class="mt-3 text-gray-600">Venez découvrir notre campus, rencontrer nos enseignants et en savoir plus sur nos programmes académiques.</p>
                 </div>
              </div>
-             <div class="flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                <div class="w-2 bg-[#00AEEF]"></div>
+             <div class="card flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-300" data-category="celebrations" data-date="2023-03-19" data-filter="past">
+                <div class="relative overflow-hidden h-48">
+                   <img src="https://images.unsplash.com/photo-1601274559113-c9a4593a6b1c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Célébration de la Saint Joseph" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                   <div class="absolute top-0 right-0 mt-2 mr-2">
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Célébrations religieuses</span>
+                   </div>
+                </div>
                 <div class="flex-1 p-6">
-                   <h3 class="text-lg font-bold text-black">Célébration de la Saint Joseph</h3>
+                   <h3 class="text-lg font-bold text-black hover:text-[#00AEEF] transition-colors">Célébration de la Saint Joseph</h3>
                    <div class="mt-2 flex items-center text-sm text-gray-500">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-1.5 h-4 w-4 text-[#00AEEF]">
                          <path d="M8 2v4"></path>
@@ -45,20 +86,26 @@
                       </svg>
                       19 Mars 2023
                    </div>
-                   <div class="mt-1 flex items-center text-sm text-gray-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock mr-1.5 h-4 w-4 text-[#00AEEF]">
-                         <circle cx="12" cy="12" r="10"></circle>
-                         <polyline points="12 6 12 12 16 14"></polyline>
-                      </svg>
-                      10:00 - 12:00
+                   <p class="mt-3 text-gray-600 line-clamp-3">Une messe spéciale suivie de festivités pour honorer notre saint patron. Venez participer à cette journée de célébration et de recueillement.</p>
+                   <div class="mt-4">
+                      <a href="#" class="inline-flex items-center text-sm font-medium text-[#00AEEF] hover:text-[#0098d1]">
+                         En savoir plus
+                         <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                         </svg>
+                      </a>
                    </div>
-                   <p class="mt-3 text-gray-600">Une messe spéciale suivie de festivités pour honorer notre saint patron.</p>
                 </div>
              </div>
-             <div class="flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                <div class="w-2 bg-[#00AEEF]"></div>
+             <div class="card flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-300" data-category="annonces" data-date="2023-10-05" data-filter="upcoming">
+                <div class="relative overflow-hidden h-48">
+                   <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Réunion Parents-Enseignants" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                   <div class="absolute top-0 right-0 mt-2 mr-2">
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Annonces officielles</span>
+                   </div>
+                </div>
                 <div class="flex-1 p-6">
-                   <h3 class="text-lg font-bold text-black">Réunion Parents-Enseignants</h3>
+                   <h3 class="text-lg font-bold text-black hover:text-[#00AEEF] transition-colors">Réunion Parents-Enseignants</h3>
                    <div class="mt-2 flex items-center text-sm text-gray-500">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-1.5 h-4 w-4 text-[#00AEEF]">
                          <path d="M8 2v4"></path>
@@ -68,20 +115,26 @@
                       </svg>
                       5 Octobre 2023
                    </div>
-                   <div class="mt-1 flex items-center text-sm text-gray-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock mr-1.5 h-4 w-4 text-[#00AEEF]">
-                         <circle cx="12" cy="12" r="10"></circle>
-                         <polyline points="12 6 12 12 16 14"></polyline>
-                      </svg>
-                      16:00 - 19:00
+                   <p class="mt-3 text-gray-600 line-clamp-3">Une opportunité pour les parents de discuter des progrès de leurs enfants avec les enseignants. Venez nombreux pour échanger sur l'avenir de vos enfants.</p>
+                   <div class="mt-4">
+                      <a href="#" class="inline-flex items-center text-sm font-medium text-[#00AEEF] hover:text-[#0098d1]">
+                         En savoir plus
+                         <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                         </svg>
+                      </a>
                    </div>
-                   <p class="mt-3 text-gray-600">Une opportunité pour les parents de discuter des progrès de leurs enfants avec les enseignants.</p>
                 </div>
              </div>
-             <div class="flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                <div class="w-2 bg-[#00AEEF]"></div>
+             <div class="card flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-300" data-category="culture" data-date="2023-12-15" data-filter="upcoming">
+                <div class="relative overflow-hidden h-48">
+                   <img src="https://images.unsplash.com/photo-1511735111819-9a3f7709049c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Concert de Noël" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                   <div class="absolute top-0 right-0 mt-2 mr-2">
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Culture et foi</span>
+                   </div>
+                </div>
                 <div class="flex-1 p-6">
-                   <h3 class="text-lg font-bold text-black">Concert de Noël</h3>
+                   <h3 class="text-lg font-bold text-black hover:text-[#00AEEF] transition-colors">Concert de Noël</h3>
                    <div class="mt-2 flex items-center text-sm text-gray-500">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-1.5 h-4 w-4 text-[#00AEEF]">
                          <path d="M8 2v4"></path>
@@ -91,21 +144,22 @@
                       </svg>
                       15 Décembre 2023
                    </div>
-                   <div class="mt-1 flex items-center text-sm text-gray-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock mr-1.5 h-4 w-4 text-[#00AEEF]">
-                         <circle cx="12" cy="12" r="10"></circle>
-                         <polyline points="12 6 12 12 16 14"></polyline>
-                      </svg>
-                      18:00 - 20:00
+                   <p class="mt-3 text-gray-600 line-clamp-3">Nos élèves présentent leur talent musical lors de notre concert annuel de Noël. Venez découvrir les performances préparées avec passion par nos élèves.</p>
+                   <div class="mt-4">
+                      <a href="#" class="inline-flex items-center text-sm font-medium text-[#00AEEF] hover:text-[#0098d1]">
+                         En savoir plus
+                         <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                         </svg>
+                      </a>
                    </div>
-                   <p class="mt-3 text-gray-600">Nos élèves présentent leur talent musical lors de notre concert annuel de Noël.</p>
                 </div>
              </div>
           </div>
        </div>
        <div class="mt-16 text-center">
           <a href="#" class="inline-flex items-center rounded-md bg-[#00AEEF] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#0098d1]">
-             Voir Tous les Événements
+             Voir Toutes les Actualités
              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ml-2 h-5 w-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"></path>
              </svg>
@@ -113,4 +167,97 @@
        </div>
     </div>
  </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+      // Get all filter buttons
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      const searchInput = document.getElementById('search-input');
+      const cards = document.querySelectorAll('.card');
+      
+      // Current active filters
+      let activeFilter = 'all';
+      let activeCategory = null;
+      let searchTerm = '';
+      
+      // Filter cards based on current criteria
+      function filterCards() {
+         cards.forEach(card => {
+            const cardCategory = card.dataset.category;
+            const cardDate = card.dataset.date;
+            const cardFilter = card.dataset.filter;
+            const cardTitle = card.querySelector('h3').textContent.toLowerCase();
+            
+            // Check if card matches all active filters
+            const matchesFilter = activeFilter === 'all' || cardFilter === activeFilter;
+            const matchesCategory = !activeCategory || cardCategory === activeCategory;
+            const matchesSearch = !searchTerm || cardTitle.includes(searchTerm);
+            
+            // Show/hide card based on filter matches
+            if (matchesFilter && matchesCategory && matchesSearch) {
+               card.style.display = 'flex';
+            } else {
+               card.style.display = 'none';
+            }
+         });
+      }
+      
+      // Handle filter button clicks
+      filterBtns.forEach(btn => {
+         btn.addEventListener('click', function() {
+            // Remove active class from all filter buttons
+            filterBtns.forEach(b => b.classList.remove('active', 'bg-[#00AEEF]', 'text-white'));
+            filterBtns.forEach(b => b.classList.add('bg-gray-200', 'text-gray-700'));
+            
+            // Add active class to clicked button
+            this.classList.add('active', 'bg-[#00AEEF]', 'text-white');
+            this.classList.remove('bg-gray-200', 'text-gray-700');
+            
+            // Update active filter
+            activeFilter = this.dataset.filter;
+            
+            // Apply filters
+            filterCards();
+         });
+      });
+      
+      // Handle category button clicks
+      categoryBtns.forEach(btn => {
+         btn.addEventListener('click', function() {
+            // If already active, deactivate
+            if (this.classList.contains('active')) {
+               this.classList.remove('active', 'bg-[#00AEEF]', 'text-white');
+               this.classList.add('bg-gray-200', 'text-gray-700');
+               activeCategory = null;
+            } else {
+               // Remove active class from all category buttons
+               categoryBtns.forEach(b => b.classList.remove('active', 'bg-[#00AEEF]', 'text-white'));
+               categoryBtns.forEach(b => b.classList.add('bg-gray-200', 'text-gray-700'));
+               
+               // Add active class to clicked button
+               this.classList.add('active', 'bg-[#00AEEF]', 'text-white');
+               this.classList.remove('bg-gray-200', 'text-gray-700');
+               
+               // Update active category
+               activeCategory = this.dataset.category;
+            }
+            
+            // Apply filters
+            filterCards();
+         });
+      });
+      
+      // Handle search input
+      searchInput.addEventListener('input', function() {
+         searchTerm = this.value.toLowerCase().trim();
+         filterCards();
+      });
+      
+      // Initialize with default filters
+      filterCards();
+   });
+</script>
 {% endblock %}

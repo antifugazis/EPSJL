@@ -5,9 +5,9 @@
     <div class="max-w-4xl mx-auto">
         <!-- En-tête de la page -->
         <div class="text-center mb-12" data-aos="fade-up">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Inscription en Ligne</h1>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Demande d'Admission</h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Remplissez le formulaire ci-dessous pour inscrire votre enfant à l'École Père Lucson Siméon.
+                Remplissez le formulaire ci-dessous pour faire une demande d'admission à l'École Presbytérale Saint Joseph de L'Asile.
             </p>
             <div class="mt-4 text-sm text-gray-500">
                 <p>Tous les champs marqués d'un astérisque (*) sont obligatoires.</p>
@@ -46,38 +46,36 @@
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="lieu_naissance" class="block text-sm font-medium text-gray-700">Lieu de naissance *</label>
-                            <div class="mt-1">
-                                <input type="text" name="lieu_naissance" id="lieu_naissance" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
-                        </div>
-
-                        <div class="sm:col-span-3">
                             <label for="genre" class="block text-sm font-medium text-gray-700">Genre *</label>
                             <div class="mt-1">
                                 <select id="genre" name="genre" required
                                     class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                    <option value="">Sélectionnez un genre</option>
+                                    <option value="">Sélectionnez</option>
                                     <option value="masculin">Masculin</option>
                                     <option value="feminin">Féminin</option>
-                                    <option value="autre">Autre</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="sm:col-span-3">
+                        <div class="sm:col-span-6">
                             <label for="niveau" class="block text-sm font-medium text-gray-700">Niveau demandé *</label>
                             <div class="mt-1">
                                 <select id="niveau" name="niveau" required
                                     class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                                     <option value="">Sélectionnez un niveau</option>
-                                    <option value="maternelle">Maternelle</option>
-                                    <option value="preparatoire">Préparatoire</option>
-                                    <option value="elementaire">Élémentaire</option>
-                                    <option value="moyen">Moyen</option>
-                                    <option value="secondaire">Secondaire</option>
-                                    <option value="philo">Philo</option>
+                                    <optgroup label="Préscolaire">
+                                        <option value="petite_section">Petite Section</option>
+                                        <option value="moyenne_section">Moyenne Section</option>
+                                        <option value="grande_section">Grande Section</option>
+                                    </optgroup>
+                                    <optgroup label="Fondamental">
+                                        <option value="1AF">1ère Année Fondamentale (1e A.F.)</option>
+                                        <option value="2AF">2e A.F.</option>
+                                        <option value="3AF">3e A.F.</option>
+                                        <option value="4AF">4e A.F.</option>
+                                        <option value="5AF">5e A.F.</option>
+                                        <option value="6AF">6e A.F.</option>
+                                    </optgroup>
                                 </select>
                             </div>
                         </div>
@@ -86,92 +84,44 @@
 
                 <!-- Informations des parents -->
                 <div class="pt-8 border-t border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations des parents / tuteurs</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations du parent / tuteur</h3>
                     
-                    <!-- Parent 1 -->
-                    <div class="mb-8">
-                        <h4 class="text-md font-medium text-gray-700 mb-3">Parent / Tuteur 1 *</h4>
-                        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                            <div class="sm:col-span-3">
-                                <label for="parent1_nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
-                                <div class="mt-1">
-                                    <input type="text" name="parent1_nom" id="parent1_nom" required
-                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                </div>
-                            </div>
-
-                            <div class="sm:col-span-3">
-                                <label for="parent1_lien" class="block text-sm font-medium text-gray-700">Lien de parenté *</label>
-                                <div class="mt-1">
-                                    <select id="parent1_lien" name="parent1_lien" required
-                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                        <option value="">Sélectionnez</option>
-                                        <option value="pere">Père</option>
-                                        <option value="mere">Mère</option>
-                                        <option value="tuteur">Tuteur légal</option>
-                                        <option value="autre">Autre</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="sm:col-span-3">
-                                <label for="parent1_telephone" class="block text-sm font-medium text-gray-700">Téléphone *</label>
-                                <div class="mt-1">
-                                    <input type="tel" name="parent1_telephone" id="parent1_telephone" required
-                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                </div>
-                            </div>
-
-                            <div class="sm:col-span-3">
-                                <label for="parent1_email" class="block text-sm font-medium text-gray-700">Email *</label>
-                                <div class="mt-1">
-                                    <input type="email" name="parent1_email" id="parent1_email" required
-                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                </div>
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-6">
+                            <label for="parent1_nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
+                            <div class="mt-1">
+                                <input type="text" name="parent1_nom" id="parent1_nom" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Parent 2 -->
-                    <div>
-                        <h4 class="text-md font-medium text-gray-700 mb-3">Parent / Tuteur 2</h4>
-                        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                            <div class="sm:col-span-3">
-                                <label for="parent2_nom" class="block text-sm font-medium text-gray-700">Nom complet</label>
-                                <div class="mt-1">
-                                    <input type="text" name="parent2_nom" id="parent2_nom"
-                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                </div>
+                        <div class="sm:col-span-3">
+                            <label for="parent1_lien" class="block text-sm font-medium text-gray-700">Lien de parenté *</label>
+                            <div class="mt-1">
+                                <select id="parent1_lien" name="parent1_lien" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                    <option value="">Sélectionnez</option>
+                                    <option value="pere">Père</option>
+                                    <option value="mere">Mère</option>
+                                    <option value="tuteur">Tuteur légal</option>
+                                </select>
                             </div>
+                        </div>
 
-                            <div class="sm:col-span-3">
-                                <label for="parent2_lien" class="block text-sm font-medium text-gray-700">Lien de parenté</label>
-                                <div class="mt-1">
-                                    <select id="parent2_lien" name="parent2_lien"
-                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                        <option value="">Sélectionnez</option>
-                                        <option value="pere">Père</option>
-                                        <option value="mere">Mère</option>
-                                        <option value="tuteur">Tuteur légal</option>
-                                        <option value="autre">Autre</option>
-                                    </select>
-                                </div>
+                        <div class="sm:col-span-3">
+                            <label for="parent1_telephone" class="block text-sm font-medium text-gray-700">Téléphone *</label>
+                            <div class="mt-1">
+                                <input type="tel" name="parent1_telephone" id="parent1_telephone" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
+                                    placeholder="+509 XXXX-XXXX">
                             </div>
+                        </div>
 
-                            <div class="sm:col-span-3">
-                                <label for="parent2_telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
-                                <div class="mt-1">
-                                    <input type="tel" name="parent2_telephone" id="parent2_telephone"
-                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                </div>
-                            </div>
-
-                            <div class="sm:col-span-3">
-                                <label for="parent2_email" class="block text-sm font-medium text-gray-700">Email</label>
-                                <div class="mt-1">
-                                    <input type="email" name="parent2_email" id="parent2_email"
-                                        class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                </div>
+                        <div class="sm:col-span-6">
+                            <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse *</label>
+                            <div class="mt-1">
+                                <input type="text" name="adresse" id="adresse" required
+                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                             </div>
                         </div>
                     </div>
@@ -182,18 +132,10 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Informations complémentaires</h3>
                     
                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                        <div class="sm:col-span-6">
-                            <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse complète *</label>
-                            <div class="mt-1">
-                                <input type="text" name="adresse" id="adresse" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
-                        </div>
-
                         <div class="sm:col-span-3">
                             <label for="ville" class="block text-sm font-medium text-gray-700">Ville *</label>
                             <div class="mt-1">
-                                <input type="text" name="ville" id="ville" required
+                                <input type="text" name="ville" id="ville" value="L'Asile" required
                                     class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                             </div>
                         </div>
@@ -208,7 +150,7 @@
 
                         <div class="sm:col-span-6">
                             <label class="block text-sm font-medium text-gray-700">Langues parlées à la maison *</label>
-                            <div class="mt-2 space-y-2">
+                            <div class="mt-2 flex flex-wrap gap-4">
                                 <div class="flex items-center">
                                     <input id="langue_creole" name="langues[]" type="checkbox" value="creole" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                     <label for="langue_creole" class="ml-2 block text-sm text-gray-700">Créole</label>
@@ -229,9 +171,9 @@
                         </div>
 
                         <div class="sm:col-span-6">
-                            <label for="commentaires" class="block text-sm font-medium text-gray-700">Commentaires ou informations supplémentaires</label>
+                            <label for="commentaires" class="block text-sm font-medium text-gray-700">Informations supplémentaires</label>
                             <div class="mt-1">
-                                <textarea id="commentaires" name="commentaires" rows="3"
+                                <textarea id="commentaires" name="commentaires" rows="3" placeholder="Informations médicales, besoins spéciaux, etc."
                                     class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"></textarea>
                             </div>
                         </div>
@@ -246,26 +188,20 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Acte de naissance *</label>
-                            <div class="mt-1 flex items-center">
+                            <div class="mt-1">
                                 <input type="file" name="acte_naissance" id="acte_naissance" required
                                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             </div>
+                            <p class="mt-1 text-xs text-gray-500">Format PDF, JPG ou PNG. Taille maximale: 5MB.</p>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Bulletins de notes (si disponible)</label>
-                            <div class="mt-1 flex items-center">
-                                <input type="file" name="bulletins_notes" id="bulletins_notes" multiple
+                            <label class="block text-sm font-medium text-gray-700">Photo d'identité *</label>
+                            <div class="mt-1">
+                                <input type="file" name="photo_identite" id="photo_identite" accept="image/*" required
                                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Photo d'identité</label>
-                            <div class="mt-1 flex items-center">
-                                <input type="file" name="photo_identite" id="photo_identite" accept="image/*"
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Format JPG ou PNG. Taille maximale: 2MB.</p>
                         </div>
                     </div>
                 </div>
@@ -279,7 +215,7 @@
                         </div>
                         <div class="ml-3 text-sm">
                             <label for="confirmation" class="font-medium text-gray-700">Je certifie que les informations fournies sont exactes et complètes. *</label>
-                            <p class="text-gray-500">En cochant cette case, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.</p>
+                            <p class="text-gray-500">En cochant cette case, vous acceptez les conditions d'admission de l'école.</p>
                         </div>
                     </div>
                 </div>
@@ -287,8 +223,8 @@
                 <!-- Bouton de soumission -->
                 <div class="pt-5">
                     <button type="submit"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Soumettre la demande d'inscription
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-[#00AEEF] hover:bg-[#0098d1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00AEEF]">
+                        Soumettre la demande d'admission
                     </button>
                 </div>
             </form>
@@ -296,8 +232,8 @@
 
         <!-- Informations supplémentaires -->
         <div class="mt-8 text-center text-sm text-gray-500">
-            <p>Pour toute question ou assistance, n'hésitez pas à <a href="{{ url_for('contact') }}" class="font-medium text-blue-600 hover:text-blue-500">nous contacter</a>.</p>
-            <p class="mt-2">Notre équipe vous répondra dans les plus brefs délais.</p>
+            <p>Pour toute question ou assistance, n'hésitez pas à <a href="{{ url_for('contact') }}" class="font-medium text-[#00AEEF] hover:text-[#0098d1]">nous contacter</a>.</p>
+            <p class="mt-2">Téléphone: <span class="font-medium">+509 4892-3158</span> | Email: <span class="font-medium">simeonlucson@gmail.com</span></p>
         </div>
     </div>
 </div>
