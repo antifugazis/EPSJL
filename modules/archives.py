@@ -13,13 +13,14 @@ import mimetypes
 from io import BytesIO
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.lib import colors
-from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from docx import Document as DocxDocument
-from docx.shared import Inches, Pt, RGBColor
+# PDF and DOCX exports disabled due to Linux compatibility issues
+# from reportlab.lib.pagesizes import letter, A4
+# from reportlab.lib import colors
+# from reportlab.lib.units import inch
+# from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+# from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+# from docx import Document as DocxDocument
+# from docx.shared import Inches, Pt, RGBColor
 
 archives_blueprint = Blueprint('archives', __name__, url_prefix='/archives')
 
@@ -422,73 +423,12 @@ def telecharger(fichier_id):
     return send_file(fichier.fichier_path, as_attachment=True, download_name=fichier.nom_document)
 
 # Routes d'export
-@archives_blueprint.route('/export/pdf')
-@login_required
-def export_pdf():
-    filtre = request.args.get('filtre', 'tous')
-    
-    # Récupérer les dossiers selon le filtre
-    query = ArchiveDossier.query.filter_by(supprime=False)
-    
-    if filtre == 'recent':
-        one_month_ago = datetime.utcnow() - timedelta(days=30)
-        query = query.filter(ArchiveDossier.date_creation >= one_month_ago)
-    elif filtre == 'modifies':
-        one_month_ago = datetime.utcnow() - timedelta(days=30)
-        query = query.filter(ArchiveDossier.date_modification >= one_month_ago)
-    elif filtre == 'confidentiel':
-        query = query.filter_by(confidentiel=True)
-    
-    dossiers = query.order_by(ArchiveDossier.date_creation.desc()).all()
-    
-    # Créer le PDF
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4)
-    elements = []
-    
-    styles = getSampleStyleSheet()
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=24,
-        textColor=colors.HexColor('#00AEEF'),
-        spaceAfter=30,
-        alignment=1
-    )
-    
-    # Titre
-    elements.append(Paragraph("Archives - École Presbytérale Saint Joseph de L'Asile", title_style))
-    elements.append(Spacer(1, 0.3*inch))
-    
-    # Tableau des données
-    data = [['Nom du Dossier', 'Date de Création', 'Nb Fichiers', 'Confidentiel', 'Créé par']]
-    
-    for dossier in dossiers:
-        data.append([
-            dossier.nom,
-            dossier.date_creation.strftime('%d/%m/%Y') if dossier.date_creation else 'N/A',
-            str(dossier.nombre_fichiers),
-            'Oui' if dossier.confidentiel else 'Non',
-            dossier.createur.username if dossier.createur else 'N/A'
-        ])
-    
-    table = Table(data, colWidths=[2.5*inch, 1.2*inch, 0.8*inch, 1*inch, 1.2*inch])
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#00AEEF')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-    ]))
-    
-    elements.append(table)
-    doc.build(elements)
-    
-    buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name='archives.pdf', mimetype='application/pdf')
+# PDF export disabled due to Linux compatibility issues with reportlab
+# @archives_blueprint.route('/export/pdf')
+# @login_required
+# def export_pdf():
+#     flash('Export PDF temporairement désactivé. Utilisez Excel à la place.', 'warning')
+#     return redirect(url_for('archives.index'))
 
 @archives_blueprint.route('/export/excel')
 @login_required
@@ -556,62 +496,12 @@ def export_excel():
     return send_file(buffer, as_attachment=True, download_name='archives.xlsx', 
                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
-@archives_blueprint.route('/export/docx')
-@login_required
-def export_docx():
-    filtre = request.args.get('filtre', 'tous')
-    
-    # Récupérer les dossiers selon le filtre
-    query = ArchiveDossier.query.filter_by(supprime=False)
-    
-    if filtre == 'recent':
-        one_month_ago = datetime.utcnow() - timedelta(days=30)
-        query = query.filter(ArchiveDossier.date_creation >= one_month_ago)
-    elif filtre == 'modifies':
-        one_month_ago = datetime.utcnow() - timedelta(days=30)
-        query = query.filter(ArchiveDossier.date_modification >= one_month_ago)
-    elif filtre == 'confidentiel':
-        query = query.filter_by(confidentiel=True)
-    
-    dossiers = query.order_by(ArchiveDossier.date_creation.desc()).all()
-    
-    # Créer le document
-    doc = DocxDocument()
-    
-    # Titre
-    title = doc.add_heading('Archives - École Presbytérale Saint Joseph de L\'Asile', 0)
-    title.alignment = 1  # Centré
-    
-    # Tableau
-    table = doc.add_table(rows=1, cols=5)
-    table.style = 'Light Grid Accent 1'
-    
-    # En-têtes
-    headers = ['Nom du Dossier', 'Date de Création', 'Nb Fichiers', 'Confidentiel', 'Créé par']
-    header_cells = table.rows[0].cells
-    for i, header in enumerate(headers):
-        header_cells[i].text = header
-        # Mettre en gras
-        for paragraph in header_cells[i].paragraphs:
-            for run in paragraph.runs:
-                run.font.bold = True
-    
-    # Données
-    for dossier in dossiers:
-        row_cells = table.add_row().cells
-        row_cells[0].text = dossier.nom
-        row_cells[1].text = dossier.date_creation.strftime('%d/%m/%Y') if dossier.date_creation else 'N/A'
-        row_cells[2].text = str(dossier.nombre_fichiers)
-        row_cells[3].text = 'Oui' if dossier.confidentiel else 'Non'
-        row_cells[4].text = dossier.createur.username if dossier.createur else 'N/A'
-    
-    # Sauvegarder dans un buffer
-    buffer = BytesIO()
-    doc.save(buffer)
-    buffer.seek(0)
-    
-    return send_file(buffer, as_attachment=True, download_name='archives.docx',
-                    mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+# DOCX export disabled due to Linux compatibility issues with python-docx
+# @archives_blueprint.route('/export/docx')
+# @login_required
+# def export_docx():
+#     flash('Export DOCX temporairement désactivé. Utilisez Excel à la place.', 'warning')
+#     return redirect(url_for('archives.index'))
 
 # Nettoyage automatique de la corbeille (à appeler périodiquement)
 def nettoyer_corbeille():
