@@ -320,3 +320,72 @@ class News(db.Model):
     
     def __repr__(self):
         return f'<News {self.id}: {self.content[:30]}...>'
+
+# Archive Dossier model (pour la gestion des dossiers d'archives)
+class ArchiveDossier(db.Model):
+    __tablename__ = 'archive_dossiers'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    photo_couverture = db.Column(db.String(255))
+    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    nombre_fichiers = db.Column(db.Integer, default=0)
+    informations_supplementaires = db.Column(db.Text)
+    sauvegarde_serveur = db.Column(db.Boolean, default=True)  # True = serveur, False = local
+    confidentiel = db.Column(db.Boolean, default=False)
+    code_pin = db.Column(db.String(255))  # Hashé si confidentiel
+    cree_par = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    date_modification = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    supprime = db.Column(db.Boolean, default=False)
+    date_suppression = db.Column(db.DateTime)
+    
+    # Relationships
+    createur = db.relationship('User', backref=db.backref('archive_dossiers', lazy=True))
+    fichiers = db.relationship('ArchiveFichier', backref='dossier', lazy=True, cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'<ArchiveDossier {self.nom}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nom': self.nom,
+            'photo_couverture': self.photo_couverture,
+            'date_creation': self.date_creation.strftime('%Y-%m-%d %H:%M') if self.date_creation else None,
+            'nombre_fichiers': self.nombre_fichiers,
+            'informations_supplementaires': self.informations_supplementaires,
+            'sauvegarde_serveur': self.sauvegarde_serveur,
+            'confidentiel': self.confidentiel,
+            'date_modification': self.date_modification.strftime('%Y-%m-%d %H:%M') if self.date_modification else None,
+            'createur': self.createur.username if self.createur else None
+        }
+
+# Archive Fichier model (pour les fichiers dans les dossiers)
+class ArchiveFichier(db.Model):
+    __tablename__ = 'archive_fichiers'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    dossier_id = db.Column(db.Integer, db.ForeignKey('archive_dossiers.id'), nullable=False)
+    nom_document = db.Column(db.String(200), nullable=False)
+    photo_couverture = db.Column(db.String(255))
+    date_ajout = db.Column(db.DateTime, default=datetime.utcnow)
+    fichier_path = db.Column(db.String(500), nullable=False)  # Chemin du fichier
+    fichier_type = db.Column(db.String(50))  # Extension du fichier (pdf, docx, mp3, etc.)
+    fichier_taille = db.Column(db.Integer)  # Taille en bytes
+    note_additionnelle = db.Column(db.Text)
+    
+    def __repr__(self):
+        return f'<ArchiveFichier {self.nom_document}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'dossier_id': self.dossier_id,
+            'nom_document': self.nom_document,
+            'photo_couverture': self.photo_couverture,
+            'date_ajout': self.date_ajout.strftime('%Y-%m-%d %H:%M') if self.date_ajout else None,
+            'fichier_path': self.fichier_path,
+            'fichier_type': self.fichier_type,
+            'fichier_taille': self.fichier_taille,
+            'note_additionnelle': self.note_additionnelle
+        }

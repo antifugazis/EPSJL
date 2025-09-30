@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un Dossier - Archives{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <!-- En-tête -->
+        <div class="mb-8">
+            <a href="{{ url_for('archives.index') }}" class="inline-flex items-center text-[#00AEEF] hover:text-[#0098d1] mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Retour aux archives
+            </a>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Nouveau Dossier d'Archives</h1>
+            <p class="text-gray-600">Créez un nouveau dossier pour organiser vos documents</p>
+        </div>
+
+        <!-- Formulaire -->
+        <form method="POST" enctype="multipart/form-data" id="archiveForm" class="bg-white rounded-lg shadow-sm p-6">
+            <!-- Informations du dossier -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Informations du Dossier</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Nom du dossier <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nom" required 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-transparent">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Photo de couverture
+                        </label>
+                        <input type="file" name="photo_couverture" accept="image/*" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-transparent">
+                        <p class="text-xs text-gray-500 mt-1">Image qui apparaîtra comme miniature du dossier</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Nombre de fichiers <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" name="nombre_fichiers" id="nombreFichiers" min="0" value="0" required 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-transparent"
+                               onchange="genererChampsFichiers()">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Date de création
+                        </label>
+                        <input type="text" value="{{ now.strftime('%d/%m/%Y') }}" disabled 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Informations supplémentaires
+                        </label>
+                        <textarea name="informations_supplementaires" rows="3" 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-transparent"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Options de sauvegarde -->
+            <div class="mb-6 border-t pt-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Options de Sauvegarde</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Emplacement de sauvegarde</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="sauvegarde_serveur" value="true" checked class="mr-2">
+                                <span class="text-sm">Serveur (en ligne)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="sauvegarde_serveur" value="false" class="mr-2">
+                                <span class="text-sm">Local (appareil uniquement)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="confidentielCheck" name="confidentiel_check" class="mr-2" onchange="togglePinSection()">
+                            <span class="text-sm font-medium text-gray-700">Dossier confidentiel (protégé par code PIN)</span>
+                        </label>
+                    </div>
+
+                    <div id="pinSection" class="hidden pl-6 border-l-4 border-red-500">
+                        <input type="hidden" name="confidentiel" id="confidentielValue" value="false">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Code PIN <span class="text-red-500">*</span>
+                        </label>
+                        <input type="password" name="code_pin" id="codePin" minlength="4" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                        <p class="text-xs text-gray-500 mt-1">Minimum 4 caractères. Ce code sera requis pour accéder au dossier.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section des fichiers (générée dynamiquement) -->
+            <div id="fichiersSection" class="mb-6 border-t pt-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Fichiers du Dossier</h2>
+                <div id="fichiersContainer">
+                    <p class="text-gray-500 text-sm">Indiquez le nombre de fichiers ci-dessus pour commencer</p>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="flex gap-4 justify-end border-t pt-6">
+                <a href="{{ url_for('archives.index') }}" 
+                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    Annuler
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-[#00AEEF] text-white rounded-lg hover:bg-[#0098d1] transition-colors">
+                    Enregistrer le Dossier
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function togglePinSection() {
+    const checkbox = document.getElementById('confidentielCheck');
+    const pinSection = document.getElementById('pinSection');
+    const confidentielValue = document.getElementById('confidentielValue');
+    const codePin = document.getElementById('codePin');
+    
+    if (checkbox.checked) {
+        pinSection.classList.remove('hidden');
+        confidentielValue.value = 'true';
+        codePin.required = true;
+    } else {
+        pinSection.classList.add('hidden');
+        confidentielValue.value = 'false';
+        codePin.required = false;
+        codePin.value = '';
+    }
+}
+
+function genererChampsFichiers() {
+    const nombre = parseInt(document.getElementById('nombreFichiers').value) || 0;
+    const container = document.getElementById('fichiersContainer');
+    
+    if (nombre === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-sm">Indiquez le nombre de fichiers ci-dessus pour commencer</p>';
+        return;
+    }
+    
+    let html = '';
+    for (let i = 0; i < nombre; i++) {
+        html += `
+            <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <h3 class="font-semibold text-gray-900 mb-3">Fichier ${i + 1}</h3>
+                
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Nom du document <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="fichier_${i}_nom" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Photo de couverture
+                        </label>
+                        <input type="file" name="fichier_${i}_photo" accept="image/*" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-transparent text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Fichier <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" name="fichier_${i}_document" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-transparent text-sm">
+                        <p class="text-xs text-gray-500 mt-1">Tous formats acceptés (PDF, DOCX, MP3, MP4, etc.)</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Note additionnelle
+                        </label>
+                        <textarea name="fichier_${i}_note" rows="2" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-transparent text-sm"></textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html;
+}
+
+// Validation du formulaire
+document.getElementById('archiveForm').addEventListener('submit', function(e) {
+    const confidentiel = document.getElementById('confidentielCheck').checked;
+    const codePin = document.getElementById('codePin').value;
+    
+    if (confidentiel && !codePin) {
+        e.preventDefault();
+        alert('Veuillez entrer un code PIN pour le dossier confidentiel');
+        return false;
+    }
+    
+    if (confidentiel && codePin.length < 4) {
+        e.preventDefault();
+        alert('Le code PIN doit contenir au moins 4 caractères');
+        return false;
+    }
+});
+</script>
+{% endblock %}

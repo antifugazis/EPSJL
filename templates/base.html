@@ -359,6 +359,7 @@
                                        <a href="{{ url_for('finances.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Finances</a>
                                        <a href="{{ url_for('rapports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rapports</a>
                                        <a href="{{ url_for('communication.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Annonces</a>
+                                       <a href="{{ url_for('archives.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Archives</a>
                                        <a href="{{ url_for('admin_contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages Contact</a>
                                    {% endif %}
                                    <div class="border-t border-gray-100 my-1"></div>
@@ -415,6 +416,7 @@
                                         {% if session.get('user_role') in ['admin', 'directeur'] %}
                                             <a href="{{ url_for('finances.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Finances</a>
                                             <a href="{{ url_for('rapports.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Rapports</a>
+                                            <a href="{{ url_for('archives.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Archives</a>
                                             <a href="{{ url_for('admin_contacts') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Messages</a>
                                         {% endif %}
                                         
