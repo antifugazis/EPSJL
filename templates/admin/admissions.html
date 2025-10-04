@@ -1,0 +1,161 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestion des Admissions - Administration{% endblock %}
+
+{% block breadcrumb_items %}
+<li>
+    <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-500">Inscriptions</span>
+    </div>
+</li>
+<li>
+    <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-700">Demandes</span>
+    </div>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+    <!-- En-tête -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Gestion des Admissions</h1>
+            <p class="text-gray-600 mt-1">Consultez et gérez les demandes d'inscription</p>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="bg-white rounded-lg shadow p-4 stat-card">
+            <p class="text-sm text-gray-600">Total</p>
+            <p class="text-2xl font-bold text-gray-800">{{ stats.total }}</p>
+        </div>
+        <div class="bg-yellow-50 rounded-lg shadow p-4 stat-card">
+            <p class="text-sm text-yellow-700">En attente</p>
+            <p class="text-2xl font-bold text-yellow-800">{{ stats.en_attente }}</p>
+        </div>
+        <div class="bg-green-50 rounded-lg shadow p-4 stat-card">
+            <p class="text-sm text-green-700">Approuvées</p>
+            <p class="text-2xl font-bold text-green-800">{{ stats.approuvee }}</p>
+        </div>
+        <div class="bg-red-50 rounded-lg shadow p-4 stat-card">
+            <p class="text-sm text-red-700">Rejetées</p>
+            <p class="text-2xl font-bold text-red-800">{{ stats.rejetee }}</p>
+        </div>
+        <div class="bg-blue-50 rounded-lg shadow p-4 stat-card">
+            <p class="text-sm text-blue-700">Complétées</p>
+            <p class="text-2xl font-bold text-blue-800">{{ stats.completee }}</p>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ url_for('admin.admissions', statut='tous') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'tous' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Tous
+            </a>
+            <a href="{{ url_for('admin.admissions', statut='en_attente') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'en_attente' %}bg-yellow-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                En attente
+            </a>
+            <a href="{{ url_for('admin.admissions', statut='approuvee') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'approuvee' %}bg-green-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Approuvées
+            </a>
+            <a href="{{ url_for('admin.admissions', statut='rejetee') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'rejetee' %}bg-red-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Rejetées
+            </a>
+            <a href="{{ url_for('admin.admissions', statut='completee') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'completee' %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Complétées
+            </a>
+        </div>
+    </div>
+
+    <!-- Liste des inscriptions -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        {% if inscriptions %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de naissance</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau demandé</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parent</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de soumission</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for inscription in inscriptions %}
+                    <tr class="hover:bg-gray-50 transition-colors table-row">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if inscription.statut == 'en_attente' %}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">En attente</span>
+                            {% elif inscription.statut == 'approuvee' %}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Approuvée</span>
+                            {% elif inscription.statut == 'rejetee' %}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Rejetée</span>
+                            {% elif inscription.statut == 'completee' %}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Complétée</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ inscription.prenom_eleve }} {{ inscription.nom_eleve }}</div>
+                            <div class="text-sm text-gray-500">{{ inscription.genre }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ inscription.date_naissance.strftime('%d/%m/%Y') }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ inscription.niveau_demande }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">{{ inscription.parent1_nom }}</div>
+                            <div class="text-sm text-gray-500">{{ inscription.parent1_telephone }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ inscription.date_soumission.strftime('%d/%m/%Y %H:%M') }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex gap-2">
+                                <a href="{{ url_for('admin.view_admission', id=inscription.id) }}" 
+                                   class="text-blue-600 hover:text-blue-900 transition-colors">
+                                    Voir
+                                </a>
+                                <button onclick="deleteAdmission({{ inscription.id }})" 
+                                        class="text-red-600 hover:text-red-900 transition-colors">
+                                    Supprimer
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-12 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune inscription</h3>
+            <p class="mt-1 text-sm text-gray-500">Aucune inscription ne correspond aux critères sélectionnés.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

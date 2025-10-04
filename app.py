@@ -26,6 +26,7 @@ from modules.inscriptions import inscriptions_blueprint
 from modules.news import news_blueprint
 from modules.whatsapp_management import whatsapp_management_blueprint
 from modules.archives import archives_blueprint
+from modules.admin import admin_blueprint
 
 # Configuration
 from config import Config
@@ -58,6 +59,7 @@ app.register_blueprint(inscriptions_blueprint)
 app.register_blueprint(news_blueprint)
 app.register_blueprint(whatsapp_management_blueprint)
 app.register_blueprint(archives_blueprint)
+app.register_blueprint(admin_blueprint)
 
 # Home route
 @app.route('/')

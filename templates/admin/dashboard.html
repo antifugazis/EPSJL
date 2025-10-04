@@ -1,0 +1,327 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Dashboard - Administration{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+    <!-- En-tête -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Tableau de bord</h1>
+            <p class="text-gray-600 mt-1">Bienvenue, {{ current_user.prenom }} {{ current_user.nom }}</p>
+        </div>
+        <div class="text-right">
+            <p class="text-sm text-gray-500">Dernière connexion</p>
+            <p class="text-lg font-semibold text-gray-800">{{ datetime.now().strftime('%d/%m/%Y %H:%M') }}</p>
+        </div>
+    </div>
+
+    <!-- Cartes de statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Contacts -->
+        <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
+             onclick="window.location.href='{{ url_for('admin.formulaires', type='contacts') }}'">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-medium">Messages</p>
+                    <p class="text-3xl font-bold mt-2">{{ stats.contacts_total }}</p>
+                    <p class="text-blue-100 text-xs mt-1">{{ stats.contacts_non_lus }} non lus</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inscriptions -->
+        <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
+             onclick="window.location.href='{{ url_for('admin.admissions') }}'">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-purple-100 text-sm font-medium">Inscriptions</p>
+                    <p class="text-3xl font-bold mt-2">{{ stats.inscriptions_total }}</p>
+                    <p class="text-purple-100 text-xs mt-1">{{ stats.inscriptions_en_attente }} en attente</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Annonces -->
+        <div class="stat-card bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
+             onclick="window.location.href='{{ url_for('admin.contenu', type='annonces') }}'">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-100 text-sm font-medium">Annonces</p>
+                    <p class="text-3xl font-bold mt-2">{{ stats.annonces_actives }}</p>
+                    <p class="text-green-100 text-xs mt-1">Actives</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Élèves -->
+        <div class="stat-card bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
+             onclick="window.location.href='{{ url_for('eleves.liste') }}'">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-orange-100 text-sm font-medium">Élèves</p>
+                    <p class="text-3xl font-bold mt-2">{{ stats.eleves_actifs }}</p>
+                    <p class="text-orange-100 text-xs mt-1">Actifs</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grille de contenu -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Derniers contacts -->
+        <div class="bg-white rounded-xl shadow-lg p-6 content-card">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Derniers messages</h2>
+                <a href="{{ url_for('admin.formulaires', type='contacts') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    Voir tout →
+                </a>
+            </div>
+            <div class="space-y-3">
+                {% if derniers_contacts %}
+                    {% for contact in derniers_contacts %}
+                    <div class="contact-item p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                         onclick="window.location.href='{{ url_for('admin.view_contact', id=contact.id) }}'">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <p class="font-semibold text-gray-800">{{ contact.nom }}</p>
+                                    {% if not contact.lu %}
+                                    <span class="px-2 py-1 bg-blue-500 text-white text-xs rounded-full">Nouveau</span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">{{ contact.sujet }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ contact.date_envoi.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                {% if contact.traite %}
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-gray-500 text-center py-8">Aucun message récent</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Dernières inscriptions -->
+        <div class="bg-white rounded-xl shadow-lg p-6 content-card">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Dernières inscriptions</h2>
+                <a href="{{ url_for('admin.admissions') }}" class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+                    Voir tout →
+                </a>
+            </div>
+            <div class="space-y-3">
+                {% if dernieres_inscriptions %}
+                    {% for inscription in dernieres_inscriptions %}
+                    <div class="inscription-item p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                         onclick="window.location.href='{{ url_for('admin.view_admission', id=inscription.id) }}'">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">{{ inscription.prenom_eleve }} {{ inscription.nom_eleve }}</p>
+                                <p class="text-sm text-gray-600 mt-1">{{ inscription.niveau_demande }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ inscription.date_soumission.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                            <div>
+                                {% if inscription.statut == 'en_attente' %}
+                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full font-medium">En attente</span>
+                                {% elif inscription.statut == 'approuvee' %}
+                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">Approuvée</span>
+                                {% elif inscription.statut == 'rejetee' %}
+                                <span class="px-3 py-1 bg-red-100 text-red-800 text-xs rounded-full font-medium">Rejetée</span>
+                                {% elif inscription.statut == 'completee' %}
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">Complétée</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-gray-500 text-center py-8">Aucune inscription récente</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation par sections -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Site Web -->
+        <div class="bg-white rounded-xl shadow-lg p-6 section-card">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Site Web</h3>
+            </div>
+            <div class="space-y-2">
+                <a href="{{ url_for('admin.formulaires', type='contacts') }}" class="block p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Messages de contact</p>
+                    <p class="text-sm text-gray-600">{{ stats.contacts_non_lus }} non lus</p>
+                </a>
+                <a href="{{ url_for('admin.contenu', type='annonces') }}" class="block p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Annonces</p>
+                    <p class="text-sm text-gray-600">{{ stats.annonces_actives }} actives</p>
+                </a>
+                <a href="{{ url_for('admin.contenu', type='actualites') }}" class="block p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Actualités</p>
+                    <p class="text-sm text-gray-600">{{ stats.news_actives }} actives</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Inscriptions -->
+        <div class="bg-white rounded-xl shadow-lg p-6 section-card">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Inscriptions</h3>
+            </div>
+            <div class="space-y-2">
+                <a href="{{ url_for('admin.admissions', statut='en_attente') }}" class="block p-3 bg-gray-50 hover:bg-purple-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">En attente</p>
+                    <p class="text-sm text-gray-600">{{ stats.inscriptions_en_attente }} demandes</p>
+                </a>
+                <a href="{{ url_for('admin.admissions') }}" class="block p-3 bg-gray-50 hover:bg-purple-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Toutes les demandes</p>
+                    <p class="text-sm text-gray-600">{{ stats.inscriptions_total }} au total</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Gestion Scolaire -->
+        <div class="bg-white rounded-xl shadow-lg p-6 section-card">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Gestion Scolaire</h3>
+            </div>
+            <div class="space-y-2">
+                <a href="{{ url_for('eleves.liste') }}" class="block p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Élèves</p>
+                    <p class="text-sm text-gray-600">{{ stats.eleves_actifs }} actifs</p>
+                </a>
+                <a href="{{ url_for('cours.liste') }}" class="block p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Cours</p>
+                    <p class="text-sm text-gray-600">Gérer les cours</p>
+                </a>
+                <a href="{{ url_for('presence.index') }}" class="block p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Présences</p>
+                    <p class="text-sm text-gray-600">Suivi quotidien</p>
+                </a>
+                <a href="{{ url_for('notes.index') }}" class="block p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Notes</p>
+                    <p class="text-sm text-gray-600">Évaluations</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Finances -->
+        <div class="bg-white rounded-xl shadow-lg p-6 section-card">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Finances</h3>
+            </div>
+            <div class="space-y-2">
+                <a href="{{ url_for('admin.paiements') }}" class="block p-3 bg-gray-50 hover:bg-yellow-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Paiements</p>
+                    <p class="text-sm text-gray-600">Historique</p>
+                </a>
+                <a href="{{ url_for('finances.index') }}" class="block p-3 bg-gray-50 hover:bg-yellow-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Tableau de bord</p>
+                    <p class="text-sm text-gray-600">Vue d'ensemble</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Outils -->
+        <div class="bg-white rounded-xl shadow-lg p-6 section-card">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Outils</h3>
+            </div>
+            <div class="space-y-2">
+                <a href="{{ url_for('calendrier.index') }}" class="block p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Calendrier</p>
+                    <p class="text-sm text-gray-600">Événements</p>
+                </a>
+                <a href="{{ url_for('archives.index') }}" class="block p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Archives</p>
+                    <p class="text-sm text-gray-600">Documents</p>
+                </a>
+                <a href="{{ url_for('rapports.index') }}" class="block p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Rapports</p>
+                    <p class="text-sm text-gray-600">Statistiques</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="bg-white rounded-xl shadow-lg p-6 section-card">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Actions Rapides</h3>
+            </div>
+            <div class="space-y-2">
+                <a href="{{ url_for('admin.nouvelle_annonce') }}" class="block p-3 bg-gray-50 hover:bg-red-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">+ Nouvelle annonce</p>
+                </a>
+                <a href="{{ url_for('admin.nouvelle_actualite') }}" class="block p-3 bg-gray-50 hover:bg-red-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">+ Nouvelle actualité</p>
+                </a>
+                <a href="{{ url_for('eleves.ajouter') }}" class="block p-3 bg-gray-50 hover:bg-red-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">+ Nouvel élève</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

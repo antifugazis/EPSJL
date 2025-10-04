@@ -1,0 +1,141 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Formulaires - Administration{% endblock %}
+
+{% block breadcrumb_items %}
+<li>
+    <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-500">Site Web</span>
+    </div>
+</li>
+<li>
+    <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-700">Messages</span>
+    </div>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+    <!-- En-tête -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Gestion des Formulaires</h1>
+            <p class="text-gray-600 mt-1">Consultez et gérez tous les formulaires reçus</p>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex flex-wrap gap-4">
+            <!-- Type de formulaire -->
+            <div class="flex gap-2">
+                <a href="{{ url_for('admin.formulaires', type='contacts', statut=statut_actuel) }}" 
+                   class="px-4 py-2 rounded-lg font-medium transition-all {% if type_form == 'contacts' %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    Messages de contact
+                </a>
+            </div>
+
+            <div class="border-l border-gray-300"></div>
+
+            <!-- Statut -->
+            <div class="flex gap-2">
+                <a href="{{ url_for('admin.formulaires', type=type_form, statut='tous') }}" 
+                   class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'tous' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    Tous
+                </a>
+                <a href="{{ url_for('admin.formulaires', type=type_form, statut='non_lu') }}" 
+                   class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'non_lu' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    Non lus
+                </a>
+                <a href="{{ url_for('admin.formulaires', type=type_form, statut='non_traite') }}" 
+                   class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'non_traite' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    Non traités
+                </a>
+                <a href="{{ url_for('admin.formulaires', type=type_form, statut='traite') }}" 
+                   class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'traite' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    Traités
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des formulaires -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        {% if items %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sujet</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for item in items %}
+                    <tr class="hover:bg-gray-50 transition-colors table-row">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex gap-2">
+                                {% if not item.lu %}
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Non lu</span>
+                                {% endif %}
+                                {% if item.traite %}
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Traité</span>
+                                {% else %}
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">En attente</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ item.nom }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ item.email }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">{{ item.sujet }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ item.date_envoi.strftime('%d/%m/%Y %H:%M') }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex gap-2">
+                                <a href="{{ url_for('admin.view_contact', id=item.id) }}" 
+                                   class="text-blue-600 hover:text-blue-900 transition-colors">
+                                    Voir
+                                </a>
+                                <button onclick="deleteContact({{ item.id }})" 
+                                        class="text-red-600 hover:text-red-900 transition-colors">
+                                    Supprimer
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-12 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun formulaire</h3>
+            <p class="mt-1 text-sm text-gray-500">Aucun formulaire ne correspond aux critères sélectionnés.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

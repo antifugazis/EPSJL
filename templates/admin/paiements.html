@@ -1,0 +1,141 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestion des Paiements - Administration{% endblock %}
+
+{% block breadcrumb_items %}
+<li>
+    <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-500">Finances</span>
+    </div>
+</li>
+<li>
+    <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-700">Paiements</span>
+    </div>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+    <!-- En-tête -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Gestion des Paiements</h1>
+            <p class="text-gray-600 mt-1">Consultez l'historique des paiements</p>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6 stat-card">
+            <p class="text-blue-100 text-sm font-medium">Total des paiements</p>
+            <p class="text-3xl font-bold mt-2">{{ stats.total }}</p>
+        </div>
+        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl shadow-lg p-6 stat-card">
+            <p class="text-green-100 text-sm font-medium">Montant total</p>
+            <p class="text-3xl font-bold mt-2">{{ "{:,.0f}".format(stats.montant_total) }} HTG</p>
+        </div>
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl shadow-lg p-6 stat-card">
+            <p class="text-purple-100 text-sm font-medium">Espèces</p>
+            <p class="text-3xl font-bold mt-2">{{ stats.especes }}</p>
+        </div>
+        <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl shadow-lg p-6 stat-card">
+            <p class="text-orange-100 text-sm font-medium">Chèques/Virements</p>
+            <p class="text-3xl font-bold mt-2">{{ stats.cheque + stats.virement }}</p>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ url_for('admin.paiements', methode='tous') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if methode_actuelle == 'tous' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Tous
+            </a>
+            <a href="{{ url_for('admin.paiements', methode='espèces') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if methode_actuelle == 'espèces' %}bg-green-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Espèces
+            </a>
+            <a href="{{ url_for('admin.paiements', methode='chèque') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if methode_actuelle == 'chèque' %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Chèques
+            </a>
+            <a href="{{ url_for('admin.paiements', methode='virement') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if methode_actuelle == 'virement' %}bg-indigo-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Virements
+            </a>
+        </div>
+    </div>
+
+    <!-- Liste des paiements -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        {% if paiements %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type de frais</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Méthode</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Référence</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reçu par</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for paiement in paiements %}
+                    <tr class="hover:bg-gray-50 transition-colors table-row">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ paiement.date.strftime('%d/%m/%Y') }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ paiement.eleve.nom }} {{ paiement.eleve.prenom }}</div>
+                            <div class="text-sm text-gray-500">{{ paiement.eleve.matricule }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ paiement.frais.type }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-bold text-green-600">{{ "{:,.0f}".format(paiement.montant) }} HTG</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if paiement.methode == 'espèces' %}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Espèces</span>
+                            {% elif paiement.methode == 'chèque' %}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Chèque</span>
+                            {% elif paiement.methode == 'virement' %}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800">Virement</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ paiement.reference or '-' }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ paiement.recepteur.nom }} {{ paiement.recepteur.prenom }}</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-12 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun paiement</h3>
+            <p class="mt-1 text-sm text-gray-500">Aucun paiement ne correspond aux critères sélectionnés.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}
