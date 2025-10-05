@@ -347,20 +347,9 @@
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                    </svg>
                                </button>
-                               <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                                   {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
-                                       <a href="{{ url_for('eleves.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Élèves</a>
-                                       <a href="{{ url_for('cours.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cours</a>
-                                       <a href="{{ url_for('notes.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notes</a>
-                                       <a href="{{ url_for('presence.saisie') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Présence</a>
-                                       <a href="{{ url_for('inscriptions.liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inscriptions</a>
-                                   {% endif %}
+                               <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block hover-delay-dropdown">
                                    {% if session.get('user_role') in ['admin', 'directeur'] %}
-                                       <a href="{{ url_for('finances.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Finances</a>
-                                       <a href="{{ url_for('rapports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rapports</a>
-                                       <a href="{{ url_for('communication.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Annonces</a>
-                                       <a href="{{ url_for('archives.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Archives</a>
-                                       <a href="{{ url_for('admin_contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages Contact</a>
+                                       <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard Admin</a>
                                    {% endif %}
                                    <div class="border-t border-gray-100 my-1"></div>
                                    <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Déconnexion</a>
@@ -411,13 +400,6 @@
                                             <a href="{{ url_for('notes.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Notes</a>
                                             <a href="{{ url_for('presence.saisie') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Présence</a>
                                             <a href="{{ url_for('inscriptions.liste') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Inscriptions</a>
-                                        {% endif %}
-                                        
-                                        {% if session.get('user_role') in ['admin', 'directeur'] %}
-                                            <a href="{{ url_for('finances.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Finances</a>
-                                            <a href="{{ url_for('rapports.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Rapports</a>
-                                            <a href="{{ url_for('archives.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Archives</a>
-                                            <a href="{{ url_for('admin_contacts') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Messages</a>
                                         {% endif %}
                                         
                                         <a href="{{ url_for('communication.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Annonces</a>
@@ -646,6 +628,41 @@
             });
          });
       </script>
+   <script>
+   // Enhanced dropdown with hover delay
+   document.addEventListener('DOMContentLoaded', function() {
+      const dropdowns = document.querySelectorAll('.hover-delay-dropdown');
+
+      dropdowns.forEach(dropdown => {
+         let hideTimeout;
+
+         // Show dropdown immediately on hover
+         dropdown.parentElement.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+            dropdown.style.display = 'block';
+         });
+
+         // Delay hiding when mouse leaves
+         dropdown.parentElement.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+               dropdown.style.display = 'none';
+            }, 300); // 300ms delay before hiding
+         });
+
+         // Keep dropdown visible when hovering over it
+         dropdown.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+         });
+
+         // Hide dropdown when mouse leaves the dropdown itself
+         dropdown.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+               dropdown.style.display = 'none';
+            }, 300); // 300ms delay
+         });
+      });
+   });
+   </script>
    {% block scripts %}{% endblock %}
    
    <script>
