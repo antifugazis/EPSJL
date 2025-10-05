@@ -87,24 +87,3 @@
     </div>
 </div>
 {% endblock %}
-
-{% block extra_js %}
-<script>
-    // Animations GSAP
-    gsap.from('.form-card', {
-        duration: 0.6,
-        y: 30,
-        opacity: 0,
-        ease: 'power3.out'
-    });
-
-    gsap.from('.form-card > form > *', {
-        duration: 0.5,
-        y: 20,
-        opacity: 0,
-        stagger: 0.1,
-        delay: 0.3,
-        ease: 'power2.out'
-    });
-</script>
-{% endblock %}

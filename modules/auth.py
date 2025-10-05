@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, abort
 from flask_bcrypt import Bcrypt
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User
@@ -43,49 +43,12 @@ def logout():
     flash('Vous avez été déconnecté.', 'info')
     return redirect(url_for('accueil'))
 
-@auth_blueprint.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        confirm = request.form.get('confirm')
-        nom = request.form.get('nom')
-        prenom = request.form.get('prenom')
-        role = 'parent'  # Default role
-        
-        if password != confirm:
-            flash('Les mots de passe ne correspondent pas.', 'danger')
-            return render_template('auth/register.html')
-        
-        # Check if username or email already exists
-        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
-        
-        if existing_user:
-            flash('Ce nom d\'utilisateur ou cet email est déjà utilisé.', 'danger')
-            return render_template('auth/register.html')
-        
-        # Generate password hash
-        password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-        
-        # Create new user
-        new_user = User(
-            username=username,
-            email=email,
-            password_hash=password_hash,
-            nom=nom,
-            prenom=prenom,
-            role=role
-        )
-        
-        # Add to database
-        db.session.add(new_user)
-        db.session.commit()
-        
-        flash('Inscription réussie! Vous pouvez maintenant vous connecter.', 'success')
-        return redirect(url_for('auth.login'))
-            
-    return render_template('auth/register.html')
+# @auth_blueprint.route('/register', methods=['GET', 'POST'])
+# def register():
+#     """Registration disabled as per requirements - authentication only"""
+#     # This route is disabled to comply with requirements
+#     # "Authentication uniquement, sans possibilité d'inscription ou de création de compte"
+#     abort(404)
 
 @auth_blueprint.route('/users')
 @login_required

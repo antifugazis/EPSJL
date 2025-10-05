@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion Admin - EPSJL</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -85,64 +84,6 @@
                 </button>
             </div>
         </form>
-
-        <!-- Lien retour -->
-        <div class="mt-6 text-center">
-            <a href="{{ url_for('accueil') }}" class="text-sm text-gray-600 hover:text-purple-600 transition-colors">
-                ← Retour au site
-            </a>
-        </div>
     </div>
-
-    <script>
-        // Animations GSAP
-        gsap.from('#loginCard', {
-            duration: 0.8,
-            y: -50,
-            opacity: 0,
-            ease: 'power3.out'
-        });
-
-        // Animation du formulaire
-        const form = document.getElementById('loginForm');
-        const inputs = form.querySelectorAll('input');
-
-        inputs.forEach((input, index) => {
-            gsap.from(input.parentElement, {
-                duration: 0.5,
-                x: -30,
-                opacity: 0,
-                delay: 0.3 + (index * 0.1),
-                ease: 'power2.out'
-            });
-
-            // Animation focus
-            input.addEventListener('focus', function() {
-                gsap.to(this, {
-                    duration: 0.3,
-                    scale: 1.02,
-                    ease: 'power2.out'
-                });
-            });
-
-            input.addEventListener('blur', function() {
-                gsap.to(this, {
-                    duration: 0.3,
-                    scale: 1,
-                    ease: 'power2.out'
-                });
-            });
-        });
-
-        // Animation du bouton
-        const submitBtn = form.querySelector('button[type="submit"]');
-        gsap.from(submitBtn, {
-            duration: 0.5,
-            y: 20,
-            opacity: 0,
-            delay: 0.6,
-            ease: 'power2.out'
-        });
-    </script>
 </body>
 </html>
