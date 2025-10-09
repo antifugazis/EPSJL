@@ -17,9 +17,9 @@
     </div>
 
     <!-- Cartes de statistiques -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Contacts -->
-        <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
+        <div class="stat-card bg-blue-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
              onclick="window.location.href='{{ url_for('admin.formulaires', type='contacts') }}'">
             <div class="flex items-center justify-between">
                 <div>
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Inscriptions -->
-        <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
+        <div class="stat-card bg-purple-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
              onclick="window.location.href='{{ url_for('admin.admissions') }}'">
             <div class="flex items-center justify-between">
                 <div>
@@ -53,7 +53,7 @@
         </div>
 
         <!-- Annonces -->
-        <div class="stat-card bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
+        <div class="stat-card bg-green-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
              onclick="window.location.href='{{ url_for('admin.contenu', type='annonces') }}'">
             <div class="flex items-center justify-between">
                 <div>
@@ -70,21 +70,7 @@
         </div>
 
         <!-- Élèves -->
-        <div class="stat-card bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
-             onclick="window.location.href='{{ url_for('eleves.liste') }}'">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-orange-100 text-sm font-medium">Élèves</p>
-                    <p class="text-3xl font-bold mt-2">{{ stats.eleves_actifs }}</p>
-                    <p class="text-orange-100 text-xs mt-1">Actifs</p>
-                </div>
-                <div class="bg-white bg-opacity-20 rounded-full p-4">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
+
     </div>
 
     <!-- Grille de contenu -->

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
             <main class="flex-grow">
-               <section class="hero-section gradient-bg text-white py-20 md:py-32 relative overflow-hidden">
+               <section class="hero-section bg-[#00AEEF] text-white py-20 md:py-32 relative overflow-hidden">
                   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                      <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
                         <div class="flex flex-col justify-center" data-aos="fade-right" data-aos-delay="200">
@@ -22,7 +22,7 @@
                      </svg>
                   </div>
                </section>
-               <section id="about" class="py-24 bg-gradient-to-b from-white to-gray-50">
+               <section id="about" class="py-24 bg-gray-50">
                   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                      <div class="text-center max-w-4xl mx-auto">
                         <span class="text-sm font-semibold uppercase tracking-wider text-[#00AEEF] inline-block mb-2">À propos de nous</span>
@@ -32,7 +32,7 @@
                      <div class="mt-20">
                         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                            <div class="rounded-xl bg-white p-8 shadow-xl card-hover transform transition-all duration-500 hover:-rotate-1 hover:shadow-2xl" data-aos="fade-right" data-aos-delay="200">
-                              <div class="w-16 h-1 bg-gradient-to-r from-[#00AEEF] to-[#0066CC] mb-6 rounded-full"></div>
+                              <div class="w-16 h-1 bg-[#00AEEF] mb-6 rounded-full"></div>
                               <h3 class="text-2xl font-bold text-gray-900 mb-4">Notre Mission</h3>
                               <div class="space-y-4 text-gray-700 leading-relaxed">
                                  <p>Notre mission est de former l'élève dans toutes les dimensions de sa personne : intellectuelle, affective, physique, morale et spirituelle. Mais l'école ne s'arrête pas à l'élève : elle implique également les parents, les enseignants, les responsables éducatifs et toute la communauté dans un travail collectif pour l'avenir des enfants.</p>
@@ -44,7 +44,7 @@
                                  </ul>
                               </div>
                            </div>
-                           <div class="rounded-xl bg-gradient-to-br from-[#00AEEF] to-[#0066CC] p-8 text-white shadow-xl card-hover transform transition-all duration-500 hover:rotate-1 hover:shadow-2xl" data-aos="fade-left" data-aos-delay="400">
+                           <div class="rounded-xl bg-[#00AEEF] p-8 text-white shadow-xl card-hover transform transition-all duration-500 hover:rotate-1 hover:shadow-2xl" data-aos="fade-left" data-aos-delay="400">
                               <div class="w-16 h-1 bg-yellow-300 mb-6 rounded-full"></div>
                               <h3 class="text-2xl font-bold text-white mb-4">Notre Vision</h3>
                               <div class="space-y-4 text-white/90 leading-relaxed">
@@ -214,7 +214,7 @@
                         </div>
                         <div class="counter-item" data-aos="fade-up" data-aos-delay="200">
                            <div class="text-4xl md:text-5xl font-bold mb-2">
-                              <span class="counter" data-target="{{ total_eleves }}">0</span>+
+                              <span class="counter" data-target="900">0</span>+
                            </div>
                            <p class="text-xl">Élèves</p>
                         </div>

@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "admin/base_admin.html" %}
 
 {% block title %}{{ dossier.nom }} - Archives{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="container mx-auto px-4 max-w-6xl">
+<div class="p-6">
+    <div class="max-w-6xl mx-auto">
         <!-- En-tête -->
         <div class="mb-8">
             <a href="{{ url_for('archives.index') }}" class="inline-flex items-center text-[#00AEEF] hover:text-[#0098d1] mb-4">

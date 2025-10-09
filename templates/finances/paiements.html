@@ -1,15 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'admin/base_admin.html' %}
 
 {% block title %}Paiements{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Paiements</h1>
-        <a href="{{ url_for('finances.ajouter_paiement') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Ajouter un paiement
-        </a>
-    </div>
+<div class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Paiements</h1>
+            <a href="{{ url_for('finances.ajouter_paiement') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Ajouter un paiement
+            </a>
+        </div>
 
     <!-- Filters -->
     <div class="bg-white shadow rounded-lg p-4 mb-6">
@@ -136,6 +137,7 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
     </div>
 </div>
 {% endblock %}

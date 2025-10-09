@@ -16,198 +16,298 @@
 
         <!-- Formulaire d'inscription -->
         <div class="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
-            <form id="inscriptionForm" class="mb-0 space-y-6" action="{{ url_for('inscriptions.formulaire') }}" method="POST" enctype="multipart/form-data">
-                <!-- Informations de l'élève -->
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations de l'élève</h3>
+            <form id="inscriptionForm" class="mb-0 space-y-8" action="{{ url_for('inscriptions.formulaire') }}" method="POST" enctype="multipart/form-data">
+                
+                <!-- PARTIE A - INFORMATION SUR L'ÉLÈVE -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">PARTIE A - INFORMATION SUR L'ÉLÈVE</h3>
                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                         <div class="sm:col-span-3">
-                            <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom *</label>
-                            <div class="mt-1">
-                                <input type="text" name="prenom" id="prenom" autocomplete="given-name" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
+                            <label for="eleve_nom" class="block text-sm font-medium text-gray-700">Nom *</label>
+                            <input type="text" name="eleve_nom" id="eleve_nom" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="nom" class="block text-sm font-medium text-gray-700">Nom *</label>
-                            <div class="mt-1">
-                                <input type="text" name="nom" id="nom" autocomplete="family-name" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
+                            <label for="eleve_prenom" class="block text-sm font-medium text-gray-700">Prénom *</label>
+                            <input type="text" name="eleve_prenom" id="eleve_prenom" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="date_naissance" class="block text-sm font-medium text-gray-700">Date de naissance *</label>
-                            <div class="mt-1">
-                                <input type="date" name="date_naissance" id="date_naissance" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
+                            <label for="eleve_sexe" class="block text-sm font-medium text-gray-700">Sexe *</label>
+                            <select id="eleve_sexe" name="eleve_sexe" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                <option value="">Sélectionnez</option>
+                                <option value="Masculin">Masculin</option>
+                                <option value="Féminin">Féminin</option>
+                            </select>
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="genre" class="block text-sm font-medium text-gray-700">Genre *</label>
-                            <div class="mt-1">
-                                <select id="genre" name="genre" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                    <option value="">Sélectionnez</option>
-                                    <option value="masculin">Masculin</option>
-                                    <option value="feminin">Féminin</option>
-                                </select>
-                            </div>
+                            <label for="eleve_date_naissance" class="block text-sm font-medium text-gray-700">Date de Naissance (J/M/A) *</label>
+                            <input type="date" name="eleve_date_naissance" id="eleve_date_naissance" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="eleve_commune_naissance" class="block text-sm font-medium text-gray-700">Commune de Naissance *</label>
+                            <input type="text" name="eleve_commune_naissance" id="eleve_commune_naissance" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="eleve_departement_naissance" class="block text-sm font-medium text-gray-700">Département de Naissance *</label>
+                            <input type="text" name="eleve_departement_naissance" id="eleve_departement_naissance" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
 
                         <div class="sm:col-span-6">
-                            <label for="niveau" class="block text-sm font-medium text-gray-700">Niveau demandé *</label>
-                            <div class="mt-1">
-                                <select id="niveau" name="niveau" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                    <option value="">Sélectionnez un niveau</option>
-                                    <optgroup label="Préscolaire">
-                                        <option value="petite_section">Petite Section</option>
-                                        <option value="moyenne_section">Moyenne Section</option>
-                                        <option value="grande_section">Grande Section</option>
-                                    </optgroup>
-                                    <optgroup label="Fondamental">
-                                        <option value="1AF">1ère Année Fondamentale (1e A.F.)</option>
-                                        <option value="2AF">2e A.F.</option>
-                                        <option value="3AF">3e A.F.</option>
-                                        <option value="4AF">4e A.F.</option>
-                                        <option value="5AF">5e A.F.</option>
-                                        <option value="6AF">6e A.F.</option>
-                                    </optgroup>
-                                </select>
-                            </div>
+                            <label for="eleve_lieu_naissance" class="block text-sm font-medium text-gray-700">Lieu de naissance *</label>
+                            <input type="text" name="eleve_lieu_naissance" id="eleve_lieu_naissance" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="eleve_handicape" class="block text-sm font-medium text-gray-700">Handicapé *</label>
+                            <select id="eleve_handicape" name="eleve_handicape" required onchange="toggleHandicapType(this)"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                <option value="">Sélectionnez</option>
+                                <option value="Non">Non</option>
+                                <option value="Oui">Oui</option>
+                            </select>
+                        </div>
+
+                        <div class="sm:col-span-3" id="handicap-type-container" style="display: none;">
+                            <label for="eleve_type_handicape" class="block text-sm font-medium text-gray-700">Type d'handicap</label>
+                            <select id="eleve_type_handicape" name="eleve_type_handicape"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                <option value="">Sélectionnez</option>
+                                <option value="Moteur">Moteur</option>
+                                <option value="Sensoriel">Sensoriel</option>
+                                <option value="Cognitif">Cognitif</option>
+                                <option value="Psychique">Psychique</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
-                <!-- Informations des parents -->
-                <div class="pt-8 border-t border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations du parent / tuteur</h3>
-                    
+                <!-- PARTIE B - ADRESSE DE L'ÉLÈVE -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">PARTIE B - ADRESSE DE L'ÉLÈVE</h3>
                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                         <div class="sm:col-span-6">
-                            <label for="parent1_nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
-                            <div class="mt-1">
-                                <input type="text" name="parent1_nom" id="parent1_nom" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
+                            <label for="eleve_adresse" class="block text-sm font-medium text-gray-700">Adresse *</label>
+                            <input type="text" name="eleve_adresse" id="eleve_adresse" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="parent1_lien" class="block text-sm font-medium text-gray-700">Lien de parenté *</label>
-                            <div class="mt-1">
-                                <select id="parent1_lien" name="parent1_lien" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                                    <option value="">Sélectionnez</option>
-                                    <option value="pere">Père</option>
-                                    <option value="mere">Mère</option>
-                                    <option value="tuteur">Tuteur légal</option>
-                                </select>
-                            </div>
+                            <label for="eleve_departement" class="block text-sm font-medium text-gray-700">Département *</label>
+                            <input type="text" name="eleve_departement" id="eleve_departement" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="parent1_telephone" class="block text-sm font-medium text-gray-700">Téléphone *</label>
-                            <div class="mt-1">
-                                <input type="tel" name="parent1_telephone" id="parent1_telephone" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
-                                    placeholder="+509 XXXX-XXXX">
-                            </div>
+                            <label for="eleve_commune" class="block text-sm font-medium text-gray-700">Commune *</label>
+                            <input type="text" name="eleve_commune" id="eleve_commune" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
 
                         <div class="sm:col-span-6">
-                            <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse *</label>
-                            <div class="mt-1">
-                                <input type="text" name="adresse" id="adresse" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
+                            <label for="eleve_section" class="block text-sm font-medium text-gray-700">Section communale/Ville/Quartier *</label>
+                            <input type="text" name="eleve_section" id="eleve_section" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
                     </div>
                 </div>
 
-                <!-- Informations complémentaires -->
-                <div class="pt-8 border-t border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations complémentaires</h3>
-                    
+                <!-- PARTIE C - INFORMATION SUR LA MÈRE -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">PARTIE C - INFORMATION SUR LA MÈRE DE L'ÉLÈVE</h3>
                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                         <div class="sm:col-span-3">
-                            <label for="ville" class="block text-sm font-medium text-gray-700">Ville *</label>
-                            <div class="mt-1">
-                                <input type="text" name="ville" id="ville" value="L'Asile" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
+                            <label for="mere_nom" class="block text-sm font-medium text-gray-700">Nom *</label>
+                            <input type="text" name="mere_nom" id="mere_nom" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="pays" class="block text-sm font-medium text-gray-700">Pays *</label>
-                            <div class="mt-1">
-                                <input type="text" name="pays" id="pays" value="Haïti" required
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
-                            </div>
+                            <label for="mere_prenom" class="block text-sm font-medium text-gray-700">Prénom *</label>
+                            <input type="text" name="mere_prenom" id="mere_prenom" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
                         </div>
 
-                        <div class="sm:col-span-6">
-                            <label class="block text-sm font-medium text-gray-700">Langues parlées à la maison *</label>
-                            <div class="mt-2 flex flex-wrap gap-4">
-                                <div class="flex items-center">
-                                    <input id="langue_creole" name="langues[]" type="checkbox" value="creole" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <label for="langue_creole" class="ml-2 block text-sm text-gray-700">Créole</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input id="langue_francais" name="langues[]" type="checkbox" value="francais" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <label for="langue_francais" class="ml-2 block text-sm text-gray-700">Français</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input id="langue_espagnol" name="langues[]" type="checkbox" value="espagnol" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <label for="langue_espagnol" class="ml-2 block text-sm text-gray-700">Espagnol</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input id="langue_anglais" name="langues[]" type="checkbox" value="anglais" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <label for="langue_anglais" class="ml-2 block text-sm text-gray-700">Anglais</label>
-                                </div>
-                            </div>
+                        <div class="sm:col-span-3">
+                            <label for="mere_statut" class="block text-sm font-medium text-gray-700">Statut *</label>
+                            <select id="mere_statut" name="mere_statut" required onchange="toggleMereOccupation(this)"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                <option value="">Sélectionnez</option>
+                                <option value="Vivante">Vivante</option>
+                                <option value="Décédée">Décédée</option>
+                            </select>
                         </div>
 
-                        <div class="sm:col-span-6">
-                            <label for="commentaires" class="block text-sm font-medium text-gray-700">Informations supplémentaires</label>
-                            <div class="mt-1">
-                                <textarea id="commentaires" name="commentaires" rows="3" placeholder="Informations médicales, besoins spéciaux, etc."
-                                    class="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"></textarea>
-                            </div>
+                        <div class="sm:col-span-3" id="mere-occupation-container" style="display: none;">
+                            <label for="mere_occupation" class="block text-sm font-medium text-gray-700">Occupation</label>
+                            <select id="mere_occupation" name="mere_occupation"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                <option value="">Sélectionnez</option>
+                                <option value="Administration publique">Administration publique</option>
+                                <option value="Secteur Privé">Secteur Privé</option>
+                                <option value="Secteur informel">Secteur informel</option>
+                                <option value="Entrepreneur indépendant">Entrepreneur indépendant</option>
+                                <option value="Cultivateur">Cultivateur</option>
+                                <option value="Ouvrier agricole">Ouvrier agricole</option>
+                                <option value="Technicien">Technicien</option>
+                                <option value="Cadre">Cadre</option>
+                                <option value="Autre">Autre (À préciser)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PARTIE D - INFORMATION SUR LE PÈRE -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">PARTIE D - INFORMATION SUR LE PÈRE DE L'ÉLÈVE</h3>
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-3">
+                            <label for="pere_nom" class="block text-sm font-medium text-gray-700">Nom *</label>
+                            <input type="text" name="pere_nom" id="pere_nom" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="pere_prenom" class="block text-sm font-medium text-gray-700">Prénom *</label>
+                            <input type="text" name="pere_prenom" id="pere_prenom" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="pere_statut" class="block text-sm font-medium text-gray-700">Statut *</label>
+                            <select id="pere_statut" name="pere_statut" required onchange="togglePereOccupation(this)"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                <option value="">Sélectionnez</option>
+                                <option value="Vivant">Vivant</option>
+                                <option value="Décédé">Décédé</option>
+                            </select>
+                        </div>
+
+                        <div class="sm:col-span-3" id="pere-occupation-container" style="display: none;">
+                            <label for="pere_occupation" class="block text-sm font-medium text-gray-700">Occupation</label>
+                            <select id="pere_occupation" name="pere_occupation"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                <option value="">Sélectionnez</option>
+                                <option value="Administration publique">Administration publique</option>
+                                <option value="Secteur Privé">Secteur Privé</option>
+                                <option value="Secteur informel">Secteur informel</option>
+                                <option value="Entrepreneur indépendant">Entrepreneur indépendant</option>
+                                <option value="Cultivateur">Cultivateur</option>
+                                <option value="Ouvrier agricole">Ouvrier agricole</option>
+                                <option value="Technicien">Technicien</option>
+                                <option value="Cadre">Cadre</option>
+                                <option value="Autre">Autre (À préciser)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PARTIE E - INFORMATION SUR LA PERSONNE RESPONSABLE -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">PARTIE E - INFORMATION SUR LA PERSONNE RESPONSABLE DE L'ÉLÈVE</h3>
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-3">
+                            <label for="responsable_nom" class="block text-sm font-medium text-gray-700">Nom *</label>
+                            <input type="text" name="responsable_nom" id="responsable_nom" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="responsable_prenom" class="block text-sm font-medium text-gray-700">Prénom *</label>
+                            <input type="text" name="responsable_prenom" id="responsable_prenom" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="responsable_lien" class="block text-sm font-medium text-gray-700">Lien de parenté *</label>
+                            <select id="responsable_lien" name="responsable_lien" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                                <option value="">Sélectionnez</option>
+                                <option value="Père">Père</option>
+                                <option value="Mère">Mère</option>
+                                <option value="Cousin">Cousin</option>
+                                <option value="Tante">Tante</option>
+                                <option value="Oncle">Oncle</option>
+                                <option value="Frère">Frère</option>
+                                <option value="Sœur">Sœur</option>
+                                <option value="Autre">Autre (préciser)</option>
+                            </select>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="responsable_nif" class="block text-sm font-medium text-gray-700">NIF</label>
+                            <input type="text" name="responsable_nif" id="responsable_nif"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="responsable_ninu" class="block text-sm font-medium text-gray-700">NINU</label>
+                            <input type="text" name="responsable_ninu" id="responsable_ninu"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="responsable_email" class="block text-sm font-medium text-gray-700">Adresse E-mail *</label>
+                            <input type="email" name="responsable_email" id="responsable_email" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="responsable_telephone" class="block text-sm font-medium text-gray-700">Téléphone *</label>
+                            <input type="tel" name="responsable_telephone" id="responsable_telephone" required
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
+                                placeholder="+509 XXXX-XXXX">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="responsable_telephone_additionnel" class="block text-sm font-medium text-gray-700">Téléphone additionnel</label>
+                            <input type="tel" name="responsable_telephone_additionnel" id="responsable_telephone_additionnel"
+                                class="mt-1 py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
+                                placeholder="+509 XXXX-XXXX">
                         </div>
                     </div>
                 </div>
 
                 <!-- Documents à fournir -->
-                <div class="pt-8 border-t border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Documents à fournir</h3>
-                    <p class="text-sm text-gray-500 mb-4">Veuillez télécharger les documents suivants :</p>
-                    
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Documents requis</h3>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Acte de naissance *</label>
-                            <div class="mt-1">
-                                <input type="file" name="acte_naissance" id="acte_naissance" required
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                            </div>
+                            <label class="block text-sm font-medium text-gray-700">Acte de naissance</label>
+                            <input type="file" name="acte_naissance" id="acte_naissance" accept=".pdf,.jpg,.jpeg,.png"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             <p class="mt-1 text-xs text-gray-500">Format PDF, JPG ou PNG. Taille maximale: 5MB.</p>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Photo d'identité *</label>
-                            <div class="mt-1">
-                                <input type="file" name="photo_identite" id="photo_identite" accept="image/*" required
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                            </div>
+                            <label class="block text-sm font-medium text-gray-700">Photo d'identité</label>
+                            <input type="file" name="photo_identite" id="photo_identite" accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             <p class="mt-1 text-xs text-gray-500">Format JPG ou PNG. Taille maximale: 2MB.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Bulletins scolaires (si disponibles)</label>
+                            <input type="file" name="bulletins" id="bulletins" accept=".pdf,.jpg,.jpeg,.png" multiple
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            <p class="mt-1 text-xs text-gray-500">Vous pouvez sélectionner plusieurs fichiers.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Confirmation -->
-                <div class="pt-8 border-t border-gray-200">
+                <!-- Note et confirmation -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-700 mb-4"><strong>N.B :</strong> Les champs marqués d'un astérisque (*) sont obligatoires.</p>
                     <div class="flex items-start">
                         <div class="flex items-center h-5">
                             <input id="confirmation" name="confirmation" type="checkbox" required
@@ -218,13 +318,17 @@
                             <p class="text-gray-500">En cochant cette case, vous acceptez les conditions d'admission de l'école.</p>
                         </div>
                     </div>
+                    <div class="mt-4 border-t pt-4">
+                        <p class="text-sm text-gray-700 mb-2"><strong>Approbation de la direction :</strong></p>
+                        <p class="text-sm text-gray-600 text-right italic">Signature : _____________________</p>
+                    </div>
                 </div>
 
                 <!-- Bouton de soumission -->
                 <div class="pt-5">
                     <button type="submit"
                         class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-[#00AEEF] hover:bg-[#0098d1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00AEEF]">
-                        Soumettre la demande d'admission
+                        Soumettre la demande d'inscription
                     </button>
                 </div>
             </form>
@@ -247,16 +351,45 @@
             duration: 800,
             once: true
         });
-
-        // Gestion de la soumission du formulaire
-        const form = document.getElementById('inscriptionForm');
-        if (form) {
-            // Validation côté client avant soumission
-            form.addEventListener('submit', function(e) {
-                // Laissons le formulaire se soumettre normalement pour traiter les fichiers
-                // Le backend s'occupera de la validation et du traitement
-            });
-        }
     });
+
+    function toggleHandicapType(select) {
+        const container = document.getElementById('handicap-type-container');
+        const typeSelect = document.getElementById('eleve_type_handicape');
+        if (select.value === 'Oui') {
+            container.style.display = 'block';
+            typeSelect.required = true;
+        } else {
+            container.style.display = 'none';
+            typeSelect.required = false;
+            typeSelect.value = '';
+        }
+    }
+
+    function toggleMereOccupation(select) {
+        const container = document.getElementById('mere-occupation-container');
+        const occupationSelect = document.getElementById('mere_occupation');
+        if (select.value === 'Vivante') {
+            container.style.display = 'block';
+            occupationSelect.required = true;
+        } else {
+            container.style.display = 'none';
+            occupationSelect.required = false;
+            occupationSelect.value = '';
+        }
+    }
+
+    function togglePereOccupation(select) {
+        const container = document.getElementById('pere-occupation-container');
+        const occupationSelect = document.getElementById('pere_occupation');
+        if (select.value === 'Vivant') {
+            container.style.display = 'block';
+            occupationSelect.required = true;
+        } else {
+            container.style.display = 'none';
+            occupationSelect.required = false;
+            occupationSelect.value = '';
+        }
+    }
 </script>
 {% endblock %}

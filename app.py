@@ -27,6 +27,8 @@ from modules.news import news_blueprint
 from modules.whatsapp_management import whatsapp_management_blueprint
 from modules.archives import archives_blueprint
 from modules.admin import admin_blueprint
+from modules.articles import articles_bp
+from modules.resultats_admission import resultats_admission_bp
 
 # Configuration
 from config import Config
@@ -60,6 +62,8 @@ app.register_blueprint(news_blueprint)
 app.register_blueprint(whatsapp_management_blueprint)
 app.register_blueprint(archives_blueprint)
 app.register_blueprint(admin_blueprint)
+app.register_blueprint(articles_bp)
+app.register_blueprint(resultats_admission_bp)
 
 # Home route
 @app.route('/')
@@ -91,14 +95,92 @@ def programmes():
 def equipe():
     return render_template('website/team.html')
 
-@app.route('/admission')
+@app.route('/admission', methods=['GET', 'POST'])
 def admission():
+    if request.method == 'POST':
+        try:
+            # Get form data
+            prenom_eleve = request.form.get('first-name')
+            nom_eleve = request.form.get('last-name')
+            email = request.form.get('email')
+            telephone = request.form.get('phone')
+            niveau_demande = request.form.get('grade')
+            message = request.form.get('message')
+
+            # Get parent information (using student info as primary contact for now)
+            parent1_nom = f"{prenom_eleve} {nom_eleve}"
+            parent1_lien = "Parent/Tuteur"
+            parent1_telephone = telephone
+            parent1_email = email
+
+            # Get additional info
+            adresse = "À compléter lors de l'entretien"  # Default value
+            ville = "L'Asile"
+            pays = "Haïti"
+
+            # Handle file uploads
+            acte_naissance = save_uploaded_file(request.files.get('acte-naissance'), 'inscriptions')
+            bulletins_notes = None
+            if request.files.get('bulletins'):
+                bulletins_files = request.files.getlist('bulletins')
+                bulletins_paths = []
+                for file in bulletins_files:
+                    path = save_uploaded_file(file, 'inscriptions')
+                    if path:
+                        bulletins_paths.append(path)
+                bulletins_notes = ';'.join(bulletins_paths) if bulletins_paths else None
+
+            photo_identite = save_uploaded_file(request.files.get('photo'), 'inscriptions')
+
+            # Create inscription record
+            nouvelle_inscription = Inscription(
+                prenom_eleve=prenom_eleve,
+                nom_eleve=nom_eleve,
+                date_naissance=datetime.now().date(),  # Default - should be collected properly
+                lieu_naissance="À compléter",
+                genre="Non spécifié",  # Should be collected
+                niveau_demande=niveau_demande,
+                parent1_nom=parent1_nom,
+                parent1_lien=parent1_lien,
+                parent1_telephone=parent1_telephone,
+                parent1_email=parent1_email,
+                adresse=adresse,
+                ville=ville,
+                pays=pays,
+                commentaires=message,
+                acte_naissance=acte_naissance,
+                bulletins_notes=bulletins_notes,
+                photo_identite=photo_identite
+            )
+
+            # Save to database
+            db.session.add(nouvelle_inscription)
+            db.session.commit()
+
+            # Show success message
+            flash('Votre demande d\'admission a été soumise avec succès. Nous vous contacterons bientôt pour les prochaines étapes.', 'success')
+            return redirect(url_for('admission'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Une erreur est survenue lors de la soumission de votre demande: {str(e)}', 'error')
+            return redirect(url_for('admission'))
+
+    # GET request - show the form
     return render_template('website/admission.html')
 
 
 @app.route('/evenements')
 def evenements():
-    return render_template('website/events.html')
+    from models import Article
+    categorie = request.args.get('categorie')
+    
+    query = Article.query.filter_by(actif=True)
+    if categorie:
+        query = query.filter_by(categorie=categorie)
+    
+    articles = query.order_by(Article.date_creation.desc()).all()
+    return render_template('website/events.html', articles=articles, categorie_active=categorie)
 
 @app.route('/gallery')
 def gallery():
@@ -429,6 +511,14 @@ def inject_data():
     )
 
 # Create database tables if they don't exist
+# Template filters
+@app.template_filter('nl2br')
+def nl2br_filter(s):
+    """Convert newlines to <br> tags"""
+    if s is None:
+        return ''
+    return s.replace('\n', '<br>\n')
+
 # Note: before_first_request is deprecated in newer Flask versions
 # We'll use app.app_context() and create tables directly when the app starts
 

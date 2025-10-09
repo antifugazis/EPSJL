@@ -1,12 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'admin/base_admin.html' %}
 
 {% block title %}Tableau de Bord Financier{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Tableau de Bord Financier</h1>
-        <div class="flex space-x-2">
+<div class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Tableau de Bord Financier</h1>
+
+        <div class="flex space-x-2 mb-6">
             <a href="{{ url_for('finances.frais') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Gérer les frais
             </a>
@@ -14,7 +15,6 @@
                 Voir les paiements
             </a>
         </div>
-    </div>
 
     <!-- Financial summary cards -->
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-6">
@@ -146,6 +146,102 @@
 </div>
 
 <!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for monthly revenue chart
+    const monthlyData = {
+        labels: [
+            {% for month in revenus_par_mois %}
+                '{{ ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"][month.mois-1] }}',
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Revenus mensuels (HTG)',
+            data: [
+                {% for month in revenus_par_mois %}
+                    {{ month.total }},
+                {% endfor %}
+            ],
+            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+            borderColor: 'rgb(59, 130, 246)',
+            borderWidth: 1
+        }]
+    };
+
+    // Data for fee type chart
+    const feeTypeData = {
+        labels: [
+            {% for type in revenus_par_type %}
+                '{{ type.type|capitalize }}',
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Revenus par type de frais (HTG)',
+            data: [
+                {% for type in revenus_par_type %}
+                    {{ type.total }},
+                {% endfor %}
+            ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 159, 64, 0.5)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Initialize charts when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Monthly revenue chart
+        const monthlyCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+        new Chart(monthlyCtx, {
+            type: 'bar',
+            data: monthlyData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Fee type chart
+        const feeTypeCtx = document.getElementById('feeTypeChart').getContext('2d');
+        new Chart(feeTypeCtx, {
+            type: 'pie',
+            data: feeTypeData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    });
+</script>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Data for monthly revenue chart

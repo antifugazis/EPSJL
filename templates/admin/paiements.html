@@ -33,19 +33,19 @@
 
     <!-- Statistiques -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6 stat-card">
+        <div class="bg-blue-600 text-white rounded-xl shadow-lg p-6 stat-card">
             <p class="text-blue-100 text-sm font-medium">Total des paiements</p>
             <p class="text-3xl font-bold mt-2">{{ stats.total }}</p>
         </div>
-        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl shadow-lg p-6 stat-card">
+        <div class="bg-green-600 text-white rounded-xl shadow-lg p-6 stat-card">
             <p class="text-green-100 text-sm font-medium">Montant total</p>
             <p class="text-3xl font-bold mt-2">{{ "{:,.0f}".format(stats.montant_total) }} HTG</p>
         </div>
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl shadow-lg p-6 stat-card">
+        <div class="bg-purple-600 text-white rounded-xl shadow-lg p-6 stat-card">
             <p class="text-purple-100 text-sm font-medium">Espèces</p>
             <p class="text-3xl font-bold mt-2">{{ stats.especes }}</p>
         </div>
-        <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl shadow-lg p-6 stat-card">
+        <div class="bg-orange-600 text-white rounded-xl shadow-lg p-6 stat-card">
             <p class="text-orange-100 text-sm font-medium">Chèques/Virements</p>
             <p class="text-3xl font-bold mt-2">{{ stats.cheque + stats.virement }}</p>
         </div>

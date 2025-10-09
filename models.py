@@ -321,6 +321,76 @@ class News(db.Model):
     def __repr__(self):
         return f'<News {self.id}: {self.content[:30]}...>'
 
+# Article model (pour les actualités complètes avec images)
+class Article(db.Model):
+    __tablename__ = 'articles'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    titre = db.Column(db.String(200), nullable=False)
+    slug = db.Column(db.String(250), unique=True, nullable=False)
+    description_courte = db.Column(db.String(500))
+    contenu = db.Column(db.Text, nullable=False)
+    image_couverture = db.Column(db.String(255))
+    categorie = db.Column(db.String(50))  # vie-scolaire, annonces, culture, celebrations
+    date_evenement = db.Column(db.Date)
+    auteur_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    actif = db.Column(db.Boolean, default=True)
+    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    date_modification = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    vues = db.Column(db.Integer, default=0)
+    
+    # Relationships
+    auteur = db.relationship('User', backref=db.backref('articles', lazy=True))
+    
+    def __repr__(self):
+        return f'<Article {self.titre}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'titre': self.titre,
+            'slug': self.slug,
+            'description_courte': self.description_courte,
+            'contenu': self.contenu,
+            'image_couverture': self.image_couverture,
+            'categorie': self.categorie,
+            'date_evenement': self.date_evenement.strftime('%Y-%m-%d') if self.date_evenement else None,
+            'auteur': f"{self.auteur.prenom} {self.auteur.nom}" if self.auteur else None,
+            'actif': self.actif,
+            'date_creation': self.date_creation.strftime('%Y-%m-%d %H:%M') if self.date_creation else None,
+            'vues': self.vues
+        }
+
+# Resultat Admission model (pour les résultats d'admission)
+class ResultatAdmission(db.Model):
+    __tablename__ = 'resultats_admission'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100), nullable=False)
+    prenom = db.Column(db.String(100), nullable=False)
+    classe = db.Column(db.String(50), nullable=False)  # Ex: "5e Année Fondamentale"
+    promotion = db.Column(db.String(20), nullable=False)  # Ex: "2024-2025"
+    statut = db.Column(db.String(20), default='admis')  # admis, non_admis, en_attente
+    date_publication = db.Column(db.DateTime, default=datetime.utcnow)
+    publie = db.Column(db.Boolean, default=True)
+    
+    def __repr__(self):
+        return f'<ResultatAdmission {self.prenom} {self.nom} - {self.classe}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nom': self.nom,
+            'prenom': self.prenom,
+            'classe': self.classe,
+            'promotion': self.promotion,
+            'statut': self.statut,
+            'date_publication': self.date_publication.strftime('%Y-%m-%d %H:%M') if self.date_publication else None,
+            'publie': self.publie
+        }
+
+
+
 # Archive Dossier model (pour la gestion des dossiers d'archives)
 class ArchiveDossier(db.Model):
     __tablename__ = 'archive_dossiers'
