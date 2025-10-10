@@ -244,6 +244,8 @@ class Inscription(db.Model):
     lieu_naissance = db.Column(db.String(100), nullable=False)
     genre = db.Column(db.String(20), nullable=False)
     niveau_demande = db.Column(db.String(50), nullable=False)
+    ancienne_classe = db.Column(db.String(100), nullable=True)
+    promotion = db.Column(db.String(20), nullable=True)
     
     # Informations parent/tuteur 1
     parent1_nom = db.Column(db.String(100), nullable=False)

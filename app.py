@@ -99,16 +99,35 @@ def equipe():
 def admission():
     if request.method == 'POST':
         try:
-            # Get form data
-            prenom_eleve = request.form.get('first-name')
-            nom_eleve = request.form.get('last-name')
-            email = request.form.get('email')
-            telephone = request.form.get('phone')
-            niveau_demande = request.form.get('grade')
-            message = request.form.get('message')
+            # Get form data from simplified form
+            nom_eleve = request.form.get('eleve-nom')
+            ancienne_classe = request.form.get('ancienne-classe')
+            promotion = request.form.get('promotion')
+
+            # Split full name into first and last name
+            if nom_eleve:
+                name_parts = nom_eleve.strip().split()
+                if len(name_parts) >= 2:
+                    prenom_eleve = ' '.join(name_parts[:-1])  # Everything except last name
+                    nom_eleve_split = name_parts[-1]  # Last name only
+                elif len(name_parts) == 1:
+                    prenom_eleve = name_parts[0]
+                    nom_eleve_split = ""
+                else:
+                    prenom_eleve = nom_eleve
+                    nom_eleve_split = ""
+            else:
+                prenom_eleve = "Non spécifié"
+                nom_eleve_split = "Non spécifié"
+
+            # Set default values for required fields
+            email = "contact@ecole-saint-joseph.org"  # Default contact email
+            telephone = "Non spécifié"
+            niveau_demande = ancienne_classe if ancienne_classe else "Non spécifié"
+            commentaires = f"Ancienne classe: {ancienne_classe}, Promotion: {promotion}"
 
             # Get parent information (using student info as primary contact for now)
-            parent1_nom = f"{prenom_eleve} {nom_eleve}"
+            parent1_nom = nom_eleve
             parent1_lien = "Parent/Tuteur"
             parent1_telephone = telephone
             parent1_email = email
@@ -118,28 +137,21 @@ def admission():
             ville = "L'Asile"
             pays = "Haïti"
 
-            # Handle file uploads
-            acte_naissance = save_uploaded_file(request.files.get('acte-naissance'), 'inscriptions')
+            # Handle file uploads (set to None for simplified form)
+            acte_naissance = None
             bulletins_notes = None
-            if request.files.get('bulletins'):
-                bulletins_files = request.files.getlist('bulletins')
-                bulletins_paths = []
-                for file in bulletins_files:
-                    path = save_uploaded_file(file, 'inscriptions')
-                    if path:
-                        bulletins_paths.append(path)
-                bulletins_notes = ';'.join(bulletins_paths) if bulletins_paths else None
-
-            photo_identite = save_uploaded_file(request.files.get('photo'), 'inscriptions')
+            photo_identite = None
 
             # Create inscription record
             nouvelle_inscription = Inscription(
                 prenom_eleve=prenom_eleve,
-                nom_eleve=nom_eleve,
+                nom_eleve=nom_eleve_split,
                 date_naissance=datetime.now().date(),  # Default - should be collected properly
                 lieu_naissance="À compléter",
                 genre="Non spécifié",  # Should be collected
                 niveau_demande=niveau_demande,
+                ancienne_classe=ancienne_classe,
+                promotion=promotion,
                 parent1_nom=parent1_nom,
                 parent1_lien=parent1_lien,
                 parent1_telephone=parent1_telephone,
@@ -147,7 +159,7 @@ def admission():
                 adresse=adresse,
                 ville=ville,
                 pays=pays,
-                commentaires=message,
+                commentaires=commentaires,
                 acte_naissance=acte_naissance,
                 bulletins_notes=bulletins_notes,
                 photo_identite=photo_identite
