@@ -17,7 +17,7 @@ class User(db.Model, UserMixin):
     prenom = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='parent')
     actif = db.Column(db.Boolean, default=True)
-    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    date_creation = db.Column(db.DateTime, default=datetime.now)
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -39,7 +39,7 @@ class Eleve(db.Model):
     classe_id = db.Column(db.Integer, db.ForeignKey('classes.id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     photo = db.Column(db.String(255))
-    date_inscription = db.Column(db.Date, default=datetime.utcnow)
+    date_inscription = db.Column(db.Date, default=datetime.now)
     actif = db.Column(db.Boolean, default=True)
     
     # Relationships
@@ -184,7 +184,7 @@ class Annonce(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titre = db.Column(db.String(100), nullable=False)
     contenu = db.Column(db.Text, nullable=False)
-    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    date_creation = db.Column(db.DateTime, default=datetime.now)
     date_expiration = db.Column(db.Date)
     public = db.Column(db.Boolean, default=True)
     important = db.Column(db.Boolean, default=False)
@@ -203,7 +203,7 @@ class Document(db.Model):
     description = db.Column(db.Text)
     fichier = db.Column(db.String(255), nullable=False)
     type = db.Column(db.String(50))  # bulletin, certificat, etc.
-    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    date_creation = db.Column(db.DateTime, default=datetime.now)
     cree_par = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     eleve_id = db.Column(db.Integer, db.ForeignKey('eleves.id'))
     
@@ -273,7 +273,7 @@ class Inscription(db.Model):
     
     # Statut de la demande
     statut = db.Column(db.String(20), default='en_attente')  # en_attente, approuvee, rejetee, completee
-    date_soumission = db.Column(db.DateTime, default=datetime.utcnow)
+    date_soumission = db.Column(db.DateTime, default=datetime.now)
     date_traitement = db.Column(db.DateTime)
     notes_admin = db.Column(db.Text)
     
@@ -301,7 +301,7 @@ class Contact(db.Model):
     email = db.Column(db.String(120), nullable=False)
     sujet = db.Column(db.String(200), nullable=False)
     message = db.Column(db.Text, nullable=False)
-    date_envoi = db.Column(db.DateTime, default=datetime.utcnow)
+    date_envoi = db.Column(db.DateTime, default=datetime.now)
     lu = db.Column(db.Boolean, default=False)
     traite = db.Column(db.Boolean, default=False)
     notes_admin = db.Column(db.Text)
@@ -317,8 +317,8 @@ class News(db.Model):
     content = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean, default=True)
     priority = db.Column(db.Integer, default=0)  # Higher number = higher priority
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    date_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    date_created = db.Column(db.DateTime, default=datetime.now)
+    date_updated = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     
     def __repr__(self):
         return f'<News {self.id}: {self.content[:30]}...>'
@@ -337,8 +337,8 @@ class Article(db.Model):
     date_evenement = db.Column(db.Date)
     auteur_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     actif = db.Column(db.Boolean, default=True)
-    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
-    date_modification = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    date_creation = db.Column(db.DateTime, default=datetime.now)
+    date_modification = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     vues = db.Column(db.Integer, default=0)
     
     # Relationships
@@ -373,7 +373,7 @@ class ResultatAdmission(db.Model):
     classe = db.Column(db.String(50), nullable=False)  # Ex: "5e Année Fondamentale"
     promotion = db.Column(db.String(20), nullable=False)  # Ex: "2024-2025"
     statut = db.Column(db.String(20), default='admis')  # admis, non_admis, en_attente
-    date_publication = db.Column(db.DateTime, default=datetime.utcnow)
+    date_publication = db.Column(db.DateTime, default=datetime.now)
     publie = db.Column(db.Boolean, default=True)
     
     def __repr__(self):
@@ -400,14 +400,14 @@ class ArchiveDossier(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(200), nullable=False)
     photo_couverture = db.Column(db.String(255))
-    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    date_creation = db.Column(db.DateTime, default=datetime.now)
     nombre_fichiers = db.Column(db.Integer, default=0)
     informations_supplementaires = db.Column(db.Text)
     sauvegarde_serveur = db.Column(db.Boolean, default=True)  # True = serveur, False = local
     confidentiel = db.Column(db.Boolean, default=False)
     code_pin = db.Column(db.String(255))  # Hashé si confidentiel
     cree_par = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    date_modification = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    date_modification = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     supprime = db.Column(db.Boolean, default=False)
     date_suppression = db.Column(db.DateTime)
     
@@ -440,7 +440,7 @@ class ArchiveFichier(db.Model):
     dossier_id = db.Column(db.Integer, db.ForeignKey('archive_dossiers.id'), nullable=False)
     nom_document = db.Column(db.String(200), nullable=False)
     photo_couverture = db.Column(db.String(255))
-    date_ajout = db.Column(db.DateTime, default=datetime.utcnow)
+    date_ajout = db.Column(db.DateTime, default=datetime.now)
     fichier_path = db.Column(db.String(500), nullable=False)  # Chemin du fichier
     fichier_type = db.Column(db.String(50))  # Extension du fichier (pdf, docx, mp3, etc.)
     fichier_taille = db.Column(db.Integer)  # Taille en bytes

@@ -35,14 +35,13 @@
             </div>
         </div>
 
-        <!-- Inscriptions -->
         <div class="stat-card bg-purple-600 text-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all cursor-pointer"
-             onclick="window.location.href='{{ url_for('admin.admissions') }}'">
+             onclick="window.location.href='{{ url_for('resultats_admission.admin_liste') }}'">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-purple-100 text-sm font-medium">Inscriptions</p>
-                    <p class="text-3xl font-bold mt-2">{{ stats.inscriptions_total }}</p>
-                    <p class="text-purple-100 text-xs mt-1">{{ stats.inscriptions_en_attente }} en attente</p>
+                    <p class="text-purple-100 text-sm font-medium">Demandes d'Admission</p>
+                    <p class="text-3xl font-bold mt-2">{{ stats.demandes_en_attente }}</p>
+                    <p class="text-purple-100 text-xs mt-1">{{ stats.demandes_total }} au total</p>
                 </div>
                 <div class="bg-white bg-opacity-20 rounded-full p-4">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,41 +114,39 @@
             </div>
         </div>
 
-        <!-- Dernières inscriptions -->
+        <!-- Dernières demandes d'admission -->
         <div class="bg-white rounded-xl shadow-lg p-6 content-card">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-800">Dernières inscriptions</h2>
-                <a href="{{ url_for('admin.admissions') }}" class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+                <h2 class="text-xl font-bold text-gray-800">Dernières demandes</h2>
+                <a href="{{ url_for('resultats_admission.admin_liste') }}" class="text-purple-600 hover:text-purple-700 text-sm font-medium">
                     Voir tout →
                 </a>
             </div>
             <div class="space-y-3">
-                {% if dernieres_inscriptions %}
-                    {% for inscription in dernieres_inscriptions %}
+                {% if dernieres_demandes %}
+                    {% for demande in dernieres_demandes %}
                     <div class="inscription-item p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                         onclick="window.location.href='{{ url_for('admin.view_admission', id=inscription.id) }}'">
+                         onclick="window.location.href='{{ url_for('resultats_admission.admin_modifier', resultat_id=demande.id) }}'">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <p class="font-semibold text-gray-800">{{ inscription.prenom_eleve }} {{ inscription.nom_eleve }}</p>
-                                <p class="text-sm text-gray-600 mt-1">{{ inscription.niveau_demande }}</p>
-                                <p class="text-xs text-gray-500 mt-1">{{ inscription.date_soumission.strftime('%d/%m/%Y %H:%M') }}</p>
+                                <p class="font-semibold text-gray-800">{{ demande.prenom }} {{ demande.nom }}</p>
+                                <p class="text-sm text-gray-600 mt-1">{{ demande.classe }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ demande.date_publication.strftime('%d/%m/%Y %H:%M') if demande.date_publication else 'En attente' }}</p>
                             </div>
                             <div>
-                                {% if inscription.statut == 'en_attente' %}
+                                {% if demande.statut == 'en_attente' %}
                                 <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full font-medium">En attente</span>
-                                {% elif inscription.statut == 'approuvee' %}
-                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">Approuvée</span>
-                                {% elif inscription.statut == 'rejetee' %}
-                                <span class="px-3 py-1 bg-red-100 text-red-800 text-xs rounded-full font-medium">Rejetée</span>
-                                {% elif inscription.statut == 'completee' %}
-                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">Complétée</span>
+                                {% elif demande.statut == 'admis' %}
+                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">Admis</span>
+                                {% elif demande.statut == 'non_admis' %}
+                                <span class="px-3 py-1 bg-red-100 text-red-800 text-xs rounded-full font-medium">Non admis</span>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
-                    <p class="text-gray-500 text-center py-8">Aucune inscription récente</p>
+                    <p class="text-gray-500 text-center py-8">Aucune demande récente</p>
                 {% endif %}
             </div>
         </div>
@@ -183,24 +180,20 @@
             </div>
         </div>
 
-        <!-- Inscriptions -->
+        <!-- Inscriptions (Réinscription) -->
         <div class="bg-white rounded-xl shadow-lg p-6 section-card">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                     </svg>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800">Inscriptions</h3>
+                <h3 class="text-lg font-bold text-gray-800">Inscriptions Élèves</h3>
             </div>
             <div class="space-y-2">
-                <a href="{{ url_for('admin.admissions', statut='en_attente') }}" class="block p-3 bg-gray-50 hover:bg-purple-50 rounded-lg transition-colors">
-                    <p class="font-medium text-gray-800">En attente</p>
-                    <p class="text-sm text-gray-600">{{ stats.inscriptions_en_attente }} demandes</p>
-                </a>
-                <a href="{{ url_for('admin.admissions') }}" class="block p-3 bg-gray-50 hover:bg-purple-50 rounded-lg transition-colors">
-                    <p class="font-medium text-gray-800">Toutes les demandes</p>
-                    <p class="text-sm text-gray-600">{{ stats.inscriptions_total }} au total</p>
+                <a href="{{ url_for('inscriptions.liste') }}" class="block p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">Réinscriptions</p>
+                    <p class="text-sm text-gray-600">{{ stats.inscriptions_en_attente }} demandes en attente</p>
                 </a>
             </div>
         </div>
@@ -303,6 +296,9 @@
                 </a>
                 <a href="{{ url_for('eleves.ajouter') }}" class="block p-3 bg-gray-50 hover:bg-red-50 rounded-lg transition-colors">
                     <p class="font-medium text-gray-800">+ Nouvel élève</p>
+                </a>
+                <a href="{{ url_for('inscriptions.formulaire') }}" class="block p-3 bg-gray-50 hover:bg-red-50 rounded-lg transition-colors">
+                    <p class="font-medium text-gray-800">📋 Formulaire d'inscription</p>
                 </a>
             </div>
         </div>

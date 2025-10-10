@@ -68,11 +68,11 @@ def index():
     # Appliquer les filtres
     if filtre == 'recent':
         # Ajoutés récemment (≤ 1 mois)
-        one_month_ago = datetime.utcnow() - timedelta(days=30)
+        one_month_ago = datetime.now() - timedelta(days=30)
         query = query.filter(ArchiveDossier.date_creation >= one_month_ago)
     elif filtre == 'modifies':
         # Modifiés récemment
-        one_month_ago = datetime.utcnow() - timedelta(days=30)
+        one_month_ago = datetime.now() - timedelta(days=30)
         query = query.filter(ArchiveDossier.date_modification >= one_month_ago)
     elif filtre == 'confidentiel':
         query = query.filter_by(confidentiel=True)
@@ -83,10 +83,10 @@ def index():
     counts = {
         'tous': ArchiveDossier.query.filter_by(supprime=False).count(),
         'recent': ArchiveDossier.query.filter_by(supprime=False).filter(
-            ArchiveDossier.date_creation >= datetime.utcnow() - timedelta(days=30)
+            ArchiveDossier.date_creation >= datetime.now() - timedelta(days=30)
         ).count(),
         'modifies': ArchiveDossier.query.filter_by(supprime=False).filter(
-            ArchiveDossier.date_modification >= datetime.utcnow() - timedelta(days=30)
+            ArchiveDossier.date_modification >= datetime.now() - timedelta(days=30)
         ).count(),
         'confidentiel': ArchiveDossier.query.filter_by(supprime=False, confidentiel=True).count()
     }
@@ -295,7 +295,7 @@ def modifier(dossier_id):
                         file.save(file_path)
                         dossier.photo_couverture = file_path
             
-            dossier.date_modification = datetime.utcnow()
+            dossier.date_modification = datetime.now()
             db.session.commit()
             
             flash(f'Le dossier "{dossier.nom}" a été modifié avec succès', 'success')
@@ -315,7 +315,7 @@ def supprimer(dossier_id):
     
     try:
         dossier.supprime = True
-        dossier.date_suppression = datetime.utcnow()
+        dossier.date_suppression = datetime.now()
         db.session.commit()
         
         return jsonify({
@@ -334,7 +334,7 @@ def supprimer(dossier_id):
 @login_required
 def corbeille():
     # Dossiers supprimés depuis moins de 30 jours
-    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    thirty_days_ago = datetime.now() - timedelta(days=30)
     dossiers = ArchiveDossier.query.filter(
         ArchiveDossier.supprime == True,
         ArchiveDossier.date_suppression >= thirty_days_ago
@@ -343,7 +343,7 @@ def corbeille():
     # Calculer les jours restants pour chaque dossier
     for dossier in dossiers:
         if dossier.date_suppression:
-            jours_restants = 30 - (datetime.utcnow() - dossier.date_suppression).days
+            jours_restants = 30 - (datetime.now() - dossier.date_suppression).days
             dossier.jours_restants = max(0, jours_restants)
     
     return render_template('archives/corbeille.html', dossiers=dossiers)
@@ -439,10 +439,10 @@ def export_excel():
     query = ArchiveDossier.query.filter_by(supprime=False)
     
     if filtre == 'recent':
-        one_month_ago = datetime.utcnow() - timedelta(days=30)
+        one_month_ago = datetime.now() - timedelta(days=30)
         query = query.filter(ArchiveDossier.date_creation >= one_month_ago)
     elif filtre == 'modifies':
-        one_month_ago = datetime.utcnow() - timedelta(days=30)
+        one_month_ago = datetime.now() - timedelta(days=30)
         query = query.filter(ArchiveDossier.date_modification >= one_month_ago)
     elif filtre == 'confidentiel':
         query = query.filter_by(confidentiel=True)
@@ -506,7 +506,7 @@ def export_excel():
 # Nettoyage automatique de la corbeille (à appeler périodiquement)
 def nettoyer_corbeille():
     """Supprime définitivement les dossiers dans la corbeille depuis plus de 30 jours"""
-    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    thirty_days_ago = datetime.now() - timedelta(days=30)
     dossiers_a_supprimer = ArchiveDossier.query.filter(
         ArchiveDossier.supprime == True,
         ArchiveDossier.date_suppression < thirty_days_ago

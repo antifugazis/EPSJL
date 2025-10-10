@@ -66,7 +66,7 @@ def edit_news(id):
         news_item.priority = int(priority)
     
     news_item.active = active
-    news_item.date_updated = datetime.utcnow()
+    news_item.date_updated = datetime.now()
     
     db.session.commit()
     

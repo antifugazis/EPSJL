@@ -3,7 +3,7 @@ from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import check_password_hash
 from functools import wraps
 from datetime import datetime, date
-from models import db, User, Contact, Inscription, Annonce, News, Paiement, Eleve
+from models import db, User, Contact, Inscription, Annonce, News, Paiement, Eleve, ResultatAdmission
 
 admin_blueprint = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -58,6 +58,8 @@ def dashboard():
         'contacts_total': Contact.query.count(),
         'inscriptions_en_attente': Inscription.query.filter_by(statut='en_attente').count(),
         'inscriptions_total': Inscription.query.count(),
+        'demandes_en_attente': ResultatAdmission.query.filter_by(statut='en_attente').count(),
+        'demandes_total': ResultatAdmission.query.count(),
         'annonces_actives': Annonce.query.filter(
             Annonce.public == True,
             (Annonce.date_expiration.is_(None)) | (Annonce.date_expiration >= date.today())
@@ -69,13 +71,13 @@ def dashboard():
     # Derniers contacts
     derniers_contacts = Contact.query.order_by(Contact.date_envoi.desc()).limit(5).all()
     
-    # Dernières inscriptions
-    dernieres_inscriptions = Inscription.query.order_by(Inscription.date_soumission.desc()).limit(5).all()
+    # Dernières demandes d'admission
+    dernieres_demandes = ResultatAdmission.query.order_by(ResultatAdmission.date_publication.desc()).limit(5).all()
     
     return render_template('admin/dashboard.html', 
                          stats=stats,
                          derniers_contacts=derniers_contacts,
-                         dernieres_inscriptions=dernieres_inscriptions,
+                         dernieres_demandes=dernieres_demandes,
                          datetime=datetime)
 
 # ==================== SECTION FORMULAIRES ====================
@@ -313,7 +315,7 @@ def modifier_actualite(id):
             news.content = request.form.get('content')
             news.active = request.form.get('active') == 'on'
             news.priority = int(request.form.get('priority', 0))
-            news.date_updated = datetime.utcnow()
+            news.date_updated = datetime.now()
             
             db.session.commit()
             
@@ -346,43 +348,16 @@ def supprimer_actualite(id):
 @login_required
 @admin_required
 def admissions():
-    """Gestion des admissions et inscriptions"""
+    """Gestion des admissions et inscriptions - Redirect to proper inscriptions admin"""
     statut = request.args.get('statut', 'tous')
-    
-    query = Inscription.query
-    
-    if statut == 'en_attente':
-        query = query.filter_by(statut='en_attente')
-    elif statut == 'approuvee':
-        query = query.filter_by(statut='approuvee')
-    elif statut == 'rejetee':
-        query = query.filter_by(statut='rejetee')
-    elif statut == 'completee':
-        query = query.filter_by(statut='completee')
-    
-    inscriptions = query.order_by(Inscription.date_soumission.desc()).all()
-    
-    # Statistiques
-    stats = {
-        'total': Inscription.query.count(),
-        'en_attente': Inscription.query.filter_by(statut='en_attente').count(),
-        'approuvee': Inscription.query.filter_by(statut='approuvee').count(),
-        'rejetee': Inscription.query.filter_by(statut='rejetee').count(),
-        'completee': Inscription.query.filter_by(statut='completee').count()
-    }
-    
-    return render_template('admin/admissions.html', 
-                         inscriptions=inscriptions,
-                         statut_actuel=statut,
-                         stats=stats)
+    return redirect(url_for('inscriptions.liste', statut=statut))
 
 @admin_blueprint.route('/admissions/<int:id>')
 @login_required
 @admin_required
 def view_admission(id):
-    """Voir les détails d'une admission"""
-    inscription = Inscription.query.get_or_404(id)
-    return render_template('admin/view_admission.html', inscription=inscription)
+    """Voir les détails d'une admission - Redirect to proper inscription details"""
+    return redirect(url_for('inscriptions.details', id=id))
 
 @admin_blueprint.route('/admissions/<int:id>/statut', methods=['POST'])
 @login_required
@@ -395,7 +370,7 @@ def update_admission_statut(id):
     try:
         if 'statut' in data:
             inscription.statut = data['statut']
-            inscription.date_traitement = datetime.utcnow()
+            inscription.date_traitement = datetime.now()
         
         if 'notes_admin' in data:
             inscription.notes_admin = data['notes_admin']

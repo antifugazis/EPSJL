@@ -99,7 +99,7 @@ def test_archives():
         print("\n6. Test de la corbeille...")
         try:
             test_dossier.supprime = True
-            test_dossier.date_suppression = datetime.utcnow()
+            test_dossier.date_suppression = datetime.now()
             db.session.commit()
             print(f"   ✓ Dossier déplacé vers la corbeille")
             

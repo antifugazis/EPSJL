@@ -10,7 +10,7 @@ import json
 import uuid
 from functools import wraps
 from flask_migrate import Migrate
-from models import Cours, db, User, Eleve, Evenement, Annonce, Inscription, Contact
+from models import Cours, db, User, Eleve, Evenement, Annonce, Inscription, Contact, ResultatAdmission
 
 # Import modules
 from modules.auth import auth_blueprint
@@ -120,53 +120,19 @@ def admission():
                 prenom_eleve = "Non spécifié"
                 nom_eleve_split = "Non spécifié"
 
-            # Set default values for required fields
-            email = "contact@ecole-saint-joseph.org"  # Default contact email
-            telephone = "Non spécifié"
-            niveau_demande = ancienne_classe if ancienne_classe else "Non spécifié"
-            commentaires = f"Ancienne classe: {ancienne_classe}, Promotion: {promotion}"
-
-            # Get parent information (using student info as primary contact for now)
-            parent1_nom = nom_eleve
-            parent1_lien = "Parent/Tuteur"
-            parent1_telephone = telephone
-            parent1_email = email
-
-            # Get additional info
-            adresse = "À compléter lors de l'entretien"  # Default value
-            ville = "L'Asile"
-            pays = "Haïti"
-
-            # Handle file uploads (set to None for simplified form)
-            acte_naissance = None
-            bulletins_notes = None
-            photo_identite = None
-
-            # Create inscription record
-            nouvelle_inscription = Inscription(
-                prenom_eleve=prenom_eleve,
-                nom_eleve=nom_eleve_split,
-                date_naissance=datetime.now().date(),  # Default - should be collected properly
-                lieu_naissance="À compléter",
-                genre="Non spécifié",  # Should be collected
-                niveau_demande=niveau_demande,
-                ancienne_classe=ancienne_classe,
-                promotion=promotion,
-                parent1_nom=parent1_nom,
-                parent1_lien=parent1_lien,
-                parent1_telephone=parent1_telephone,
-                parent1_email=parent1_email,
-                adresse=adresse,
-                ville=ville,
-                pays=pays,
-                commentaires=commentaires,
-                acte_naissance=acte_naissance,
-                bulletins_notes=bulletins_notes,
-                photo_identite=photo_identite
+            # Create admission result record
+            nouvelle_demande = ResultatAdmission(
+                nom=nom_eleve_split,
+                prenom=prenom_eleve,
+                classe=ancienne_classe if ancienne_classe else "Non spécifié",
+                promotion=promotion if promotion else "2024-2025",
+                statut='en_attente',  # Default status for new applications
+                publie=False,  # Not published until approved
+                date_publication=datetime.now()  # Explicitly set the publication date
             )
 
             # Save to database
-            db.session.add(nouvelle_inscription)
+            db.session.add(nouvelle_demande)
             db.session.commit()
 
             # Show success message

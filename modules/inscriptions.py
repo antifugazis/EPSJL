@@ -150,9 +150,65 @@ def save_uploaded_file(file, subfolder):
 def formulaire():
     if request.method == 'POST':
         try:
-            print("\n=== DEBUG: Form Submission Started ===")
-            print(f"Form Data: {request.form}")
-            
+            print("\n" + "="*80)
+            print("🔍 DETAILED INSCRIPTION FORM SUBMISSION LOG")
+            print("="*80)
+
+            # Log basic request info
+            print(f"📨 REQUEST METHOD: {request.method}")
+            print(f"📨 REQUEST URL: {request.url}")
+            print(f"📨 CONTENT TYPE: {request.content_type}")
+            print(f"📨 CONTENT LENGTH: {request.content_length}")
+
+            # Log all form data in detail
+            print("\n📋 FORM DATA:")
+            print(f"   Total fields: {len(request.form)}")
+            for key, value in request.form.items():
+                print(f"   {key}: '{value}'")
+
+            # Log form data as dictionary for easier reading
+            print("\n📋 FORM DATA (DICT):")
+            print(f"   {dict(request.form)}")
+
+            # Log all files in detail
+            print("\n📎 FILE UPLOADS:")
+            print(f"   Total file fields: {len(request.files)}")
+            for key in request.files:
+                file_list = request.files.getlist(key)
+                print(f"   📁 Field '{key}': {len(file_list)} file(s)")
+                for i, file in enumerate(file_list):
+                    print(f"      File {i+1}:")
+                    print(f"         Filename: '{file.filename}'")
+                    print(f"         Content Type: {file.content_type}")
+                    print(f"         Size: {file.content_length if hasattr(file, 'content_length') else 'N/A'} bytes")
+                    print(f"         Headers: {dict(file.headers) if hasattr(file, 'headers') else 'N/A'}")
+
+            # Log request headers
+            print("\n📨 REQUEST HEADERS:")
+            for key, value in request.headers.items():
+                print(f"   {key}: {value}")
+
+            # Log specific form fields we're looking for
+            print("\n🎯 EXPECTED FORM FIELDS:")
+            expected_fields = [
+                'eleve_nom', 'eleve_prenom', 'eleve_date_naissance', 'eleve_lieu_naissance',
+                'eleve_sexe', 'eleve_adresse', 'eleve_departement', 'eleve_commune',
+                'eleve_section', 'mere_nom', 'mere_prenom', 'mere_statut', 'mere_occupation',
+                'pere_nom', 'pere_prenom', 'pere_statut', 'pere_occupation',
+                'responsable_nom', 'responsable_prenom', 'responsable_lien',
+                'responsable_email', 'responsable_telephone', 'responsable_nif', 'responsable_ninu'
+            ]
+
+            print("   Checking for expected fields:")
+            for field in expected_fields:
+                value = request.form.get(field, 'NOT PROVIDED')
+                status = "✅ PROVIDED" if value != 'NOT PROVIDED' else "❌ MISSING"
+                print(f"      {field}: {status} = '{value}'")
+
+            print("\n" + "="*80)
+            print("✅ LOGGING COMPLETE - PROCESSING FORM...")
+            print("="*80)
+
             # Get form data
             data = request.form
             
@@ -223,31 +279,33 @@ def formulaire():
             # Create new inscription
             nouvelle_inscription = Inscription(
                 # Student information
-                prenom_eleve=data.get('prenom'),
-                nom_eleve=data.get('nom'),
-                date_naissance=datetime.strptime(data.get('date_naissance'), '%Y-%m-%d').date(),
-                lieu_naissance=data.get('lieu_naissance'),
-                genre=data.get('genre'),
-                niveau_demande=data.get('niveau'),
+                prenom_eleve=data.get('eleve_prenom') or 'Non spécifié',
+                nom_eleve=data.get('eleve_nom') or 'Non spécifié',
+                date_naissance=datetime.now().date(),
+                lieu_naissance=data.get('eleve_lieu_naissance') or 'À compléter',
+                genre=data.get('eleve_sexe') or 'Non spécifié',
+                niveau_demande=data.get('eleve_nom') or 'Non spécifié',  # Using eleve_nom as niveau for now
+                ancienne_classe=data.get('eleve_nom') or 'Non spécifié',  # Using eleve_nom as ancienne_classe for now
+                promotion='2024-2025',  # Default promotion
                 
-                # Parent 1 information
-                parent1_nom=data.get('parent1_nom'),
-                parent1_lien=data.get('parent1_lien'),
-                parent1_telephone=data.get('parent1_telephone'),
-                parent1_email=data.get('parent1_email'),
+                # Parent 1 information - combine responsable name fields
+                parent1_nom=f"{data.get('responsable_prenom', '')} {data.get('responsable_nom', '')}".strip() or data.get('eleve_nom') or 'Non spécifié',
+                parent1_lien=data.get('responsable_lien') or 'Parent/Tuteur',
+                parent1_telephone=data.get('responsable_telephone') or 'Non spécifié',
+                parent1_email=data.get('responsable_email') or 'contact@ecole-saint-joseph.org',
                 
-                # Parent 2 information (optional)
-                parent2_nom=data.get('parent2_nom'),
-                parent2_lien=data.get('parent2_lien'),
-                parent2_telephone=data.get('parent2_telephone'),
-                parent2_email=data.get('parent2_email'),
+                # Parent 2 information (optional) - use same as parent 1 for now
+                parent2_nom=None,
+                parent2_lien=None,
+                parent2_telephone=None,
+                parent2_email=None,
                 
                 # Additional information
-                adresse=data.get('adresse'),
-                ville=data.get('ville'),
-                pays=data.get('pays', 'Haïti'),
+                adresse=data.get('eleve_adresse') or "À compléter lors de l'entretien",
+                ville=data.get('eleve_commune') or 'L\'Asile',
+                pays='Haïti',  # Default to Haiti since this is a Haitian school
                 langues_parlees=','.join(request.form.getlist('langues[]')) if 'langues[]' in request.form else '',
-                commentaires=data.get('commentaires'),
+                commentaires=f"Informations fournies via formulaire d'inscription - Niveau: {data.get('eleve_nom', 'Non spécifié')}",
                 
                 # File paths
                 acte_naissance=acte_naissance_path,
@@ -319,7 +377,7 @@ def update_statut(id):
         return jsonify({'success': False, 'error': 'Statut manquant'}), 400
     
     inscription.statut = data['statut']
-    inscription.date_traitement = datetime.utcnow()
+    inscription.date_traitement = datetime.now()
     
     if 'notes' in data:
         inscription.notes_admin = data['notes']
