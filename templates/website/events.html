@@ -21,7 +21,7 @@
                 </div>
              </div>
              <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
-                <button class="filter-btn active px-3 py-1 text-sm rounded-full bg-[#00AEEF] text-white" data-filter="all">Tous <span class="count">(4)</span></button>
+                <button class="filter-btn active px-3 py-1 text-sm rounded-full bg-[#00AEEF] text-white" data-filter="all">Tous <span class="count">({{ articles|length if articles else 0 }})</span></button>
                 <button class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-filter="recent">Ajoutés récemment</button>
                 <button class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-filter="upcoming">À venir</button>
                 <button class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-filter="past">Passés</button>
@@ -30,10 +30,10 @@
           
           <!-- Category filters -->
           <div class="flex flex-wrap justify-center gap-2 mb-8">
-             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="vie-scolaire">Vie scolaire <span class="count">(1)</span></button>
-             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="annonces">Annonces officielles <span class="count">(1)</span></button>
-             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="culture">Culture et foi <span class="count">(1)</span></button>
-             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="celebrations">Célébrations religieuses <span class="count">(1)</span></button>
+             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="vie-scolaire">Vie scolaire <span class="count">({{ articles|selectattr('categorie', 'equalto', 'vie-scolaire')|list|length }})</span></button>
+             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="annonces">Annonces officielles <span class="count">({{ articles|selectattr('categorie', 'equalto', 'annonces')|list|length }})</span></button>
+             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="culture">Culture et foi <span class="count">({{ articles|selectattr('categorie', 'equalto', 'culture')|list|length }})</span></button>
+             <button class="category-btn px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" data-category="celebrations">Célébrations religieuses <span class="count">({{ articles|selectattr('categorie', 'equalto', 'celebrations')|list|length }})</span></button>
           </div>
        </div>
        
