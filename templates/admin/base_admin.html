@@ -3,213 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00AEEF">
+    <meta name="msapplication-TileColor" content="#00AEEF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="EPSJA Admin">
+    <link rel="icon" href="/static/assets/logo.jpg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="/static/assets/logo.jpg">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/assets/logo.jpg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/assets/logo.jpg">
+    <link rel="apple-touch-icon" sizes="167x167" href="/static/assets/logo.jpg">
     <title>{% block title %}Administration{% endblock %} - EPSJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        .sidebar {
-            transition: transform 0.3s ease;
-        }
-        .sidebar-hidden {
-            transform: translateX(-100%);
-        }
-        @media (min-width: 1024px) {
-            .sidebar-hidden {
-                transform: translateX(0);
-            }
-        }
-        .nav-item {
-            transition: all 0.3s ease;
-        }
-        .nav-item:hover {
-            transform: translateX(5px);
-        }
         .nav-item.active {
-            background: #667eea;
+            background: #00AEEF;
             color: white;
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar w-64 bg-white shadow-xl flex-shrink-0 overflow-y-auto relative" style="padding-bottom: 120px;">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 w-full bg-white shadow-md">
+        <div class="container mx-auto">
+            <div class="flex h-16 items-center justify-between px-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{{ url_for('admin.dashboard') }}" class="flex items-center">
+                        <img src="/static/assets/logo.jpg" alt="EPSJA" class="h-10 w-10 rounded-full">
+                        <div class="ml-3">
+                            <h1 class="text-sm font-bold text-black md:text-base">EPSJA</h1>
+                            <p class="text-xs text-[#00AEEF] md:text-sm">Administration</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex lg:items-center lg:space-x-1">
+                    <a href="{{ url_for('admin.dashboard') }}" class="text-sm font-medium text-black hover:text-[#00AEEF] px-3 py-2 rounded-md {% if request.endpoint == 'admin.dashboard' %}bg-[#00AEEF] text-white{% endif %}">Dashboard</a>
+                    
+                    <!-- Site Web Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.away="open = false" class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF] px-3 py-2 rounded-md">
+                            Site Web
+                            <svg class="h-4 w-4 ml-1" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" x-transition class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
+                            <a href="{{ url_for('admin.formulaires', type='contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages</a>
+                            <a href="{{ url_for('admin.newsletters') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Newsletter</a>
+                            <a href="{{ url_for('admin.contenu', type='annonces') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Annonces</a>
+                        </div>
                     </div>
-                    <div>
-                        <h1 class="font-bold text-gray-800">EPSJA</h1>
-                        <p class="text-xs text-gray-500">Administration</p>
+
+                    <!-- Inscriptions Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.away="open = false" class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF] px-3 py-2 rounded-md">
+                            Inscriptions
+                            <svg class="h-4 w-4 ml-1" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" x-transition class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
+                            <a href="{{ url_for('admin.admissions') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Demandes d'Inscription</a>
+                            <a href="{{ url_for('resultats_admission.admin_liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Résultats d'Admission</a>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <nav class="p-4 space-y-1">
-                <!-- Dashboard -->
-                <a href="{{ url_for('admin.dashboard') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
-                    <span class="font-medium">Dashboard</span>
-                </a>
+                    <!-- Autres Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.away="open = false" class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF] px-3 py-2 rounded-md">
+                            Plus
+                            <svg class="h-4 w-4 ml-1" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" x-transition class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
+                            <a href="{{ url_for('articles.admin_liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Articles</a>
+                            <a href="{{ url_for('calendrier.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Calendrier</a>
+                            <a href="{{ url_for('archives.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Archives</a>
+                            <a href="{{ url_for('rapports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rapports</a>
+                        </div>
+                    </div>
 
-                <!-- Section: Site Web -->
-                <div class="pt-4">
-                    <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Site Web</p>
-                    
-                    <a href="{{ url_for('admin.formulaires', type='contacts') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 {% if request.endpoint in ['admin.formulaires', 'admin.view_contact'] %}active{% endif %}">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                        <span class="font-medium">Messages</span>
-                    </a>
+                    <!-- User Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.away="open = false" class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF] px-3 py-2 rounded-md">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Mon compte
+                            <svg class="h-4 w-4 ml-1" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" x-transition class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
+                            <a href="{{ url_for('admin.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    Mon profil
+                                </div>
+                            </a>
+                            <a href="{{ url_for('accueil') }}" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                    Voir le site
+                                </div>
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Déconnexion
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
 
-                    <a href="{{ url_for('admin.contenu', type='annonces') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 {% if request.endpoint in ['admin.contenu', 'admin.nouvelle_annonce', 'admin.modifier_annonce', 'admin.nouvelle_actualite', 'admin.modifier_actualite'] %}active{% endif %}">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-                        </svg>
-                        <span class="font-medium">Annonces & Actualités</span>
-                    </a>
-                </div>
-
-                <!-- Section: Inscriptions -->
-                <div class="pt-4">
-                    <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Inscriptions & Admissions</p>
-                    
-                    <a href="{{ url_for('admin.admissions') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 {% if request.endpoint in ['admin.admissions', 'admin.view_admission'] %}active{% endif %}">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                        </svg>
-                        <span class="font-medium">Demandes d'Inscription</span>
-                    </a>
-                    <a href="{{ url_for('resultats_admission.admin_liste') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="font-medium">Résultats d'Admission</span>
-                    </a>
-                </div>
-
-                <!-- Section: Finances -->
-                
-
-                <!-- Section: Autres -->
-                <div class="pt-4">
-                    <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Autres</p>
-                    
-                    <a href="{{ url_for('articles.admin_liste') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                        </svg>
-                        <span class="font-medium">Articles/Actualités</span>
-                    </a>
-                    
-                    <a href="{{ url_for('calendrier.index') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span class="font-medium">Calendrier</span>
-                    </a>
-
-                    <a href="{{ url_for('archives.index') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
-                        </svg>
-                        <span class="font-medium">Archives</span>
-                    </a>
-
-                    <a href="{{ url_for('rapports.index') }}" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span class="font-medium">Rapports</span>
-                    </a>
-                </div>
-            </nav>
-
-            <!-- User info & logout -->
-            
-        </aside>
-
-        <!-- Main content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top bar -->
-            <header class="bg-white shadow-sm z-10">
-                <div class="flex items-center justify-between px-6 py-4">
-                    <button id="sidebarToggle" class="lg:hidden text-gray-600 hover:text-gray-800">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Mobile menu button -->
+                <div class="flex lg:hidden">
+                    <button type="button" id="mobile-menu-button" class="inline-flex items-center justify-center rounded-md p-2 text-black hover:bg-[#00AEEF]/10">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
+                </div>
+            </div>
+        </div>
 
-                    <div class="flex items-center gap-4">
-                        <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-gradient-to-br from-white to-gray-50 shadow-2xl rounded-b-2xl overflow-hidden max-h-[85vh] overflow-y-auto">
+            <div class="p-4">
+                <!-- Dashboard -->
+                <div class="mb-3">
+                    <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md {% if request.endpoint == 'admin.dashboard' %}bg-[#00AEEF] text-white{% endif %}">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                             </svg>
-                            <span class="font-medium">Dashboard</span>
-                        </a>
-                        <a href="{{ url_for('accueil') }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                            </svg>
-                            <span class="text-sm font-medium">Voir le site</span>
-                        </a>
-                    </div>
+                            Dashboard
+                        </div>
+                    </a>
                 </div>
-            </header>
 
-            <!-- Breadcrumb -->
-            {% block breadcrumb %}
-            <div class="px-6 py-3 bg-gray-50 border-b border-gray-200">
-                <nav class="flex" aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                        <li class="inline-flex items-center">
-                            <a href="{{ url_for('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-purple-600">
-                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                <!-- Site Web Section -->
+                <div class="mb-3">
+                    <p class="px-2 py-1 text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Site Web</p>
+                    <div class="space-y-1">
+                        <a href="{{ url_for('admin.formulaires', type='contacts') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
-                                Dashboard
-                            </a>
-                        </li>
-                        {% block breadcrumb_items %}{% endblock %}
-                    </ol>
-                </nav>
-            </div>
-            {% endblock %}
-
-            <!-- Messages flash -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                <div class="px-6 pt-4">
-                    {% for category, message in messages %}
-                    <div class="flash-message mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700{% elif category == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
-                        {{ message }}
+                                Messages
+                            </div>
+                        </a>
+                        <a href="{{ url_for('admin.newsletters') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                                Newsletter
+                            </div>
+                        </a>
+                        <a href="{{ url_for('admin.contenu', type='annonces') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                                </svg>
+                                Annonces
+                            </div>
+                        </a>
                     </div>
-                    {% endfor %}
                 </div>
-                {% endif %}
-            {% endwith %}
 
-            <!-- Page content -->
-            <main class="flex-1 overflow-y-auto">
-                {% block content %}{% endblock %}
-            </main>
+                <!-- Inscriptions Section -->
+                <div class="mb-3">
+                    <p class="px-2 py-1 text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Inscriptions</p>
+                    <div class="space-y-1">
+                        <a href="{{ url_for('admin.admissions') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                                Demandes
+                            </div>
+                        </a>
+                        <a href="{{ url_for('resultats_admission.admin_liste') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Résultats
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Gestion Scolaire Section -->
+                <div class="mb-3 hidden">
+                    <p class="px-2 py-1 text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Gestion Scolaire</p>
+                    <div class="space-y-1">
+                        <a href="{{ url_for('eleves.liste') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                Élèves
+                            </div>
+                        </a>
+                        <a href="{{ url_for('cours.liste') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                                Cours
+                            </div>
+                        </a>
+                        <a href="{{ url_for('presence.saisie') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                </svg>
+                                Présences
+                            </div>
+                        </a>
+                        <a href="{{ url_for('notes.index') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                                Notes
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- User Profile Section -->
+                <div class="border-t border-gray-300 my-3 pt-3">
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-3 mb-3">
+                        <p class="px-2 py-1 text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Mon Compte</p>
+                        <div class="space-y-1">
+                            <a href="{{ url_for('admin.profile') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-white hover:shadow-md rounded-lg transition-all duration-200">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    Mon Profil
+                                </div>
+                            </a>
+                            <a href="{{ url_for('accueil') }}" target="_blank" class="block px-4 py-3 text-sm font-medium text-[#00AEEF] hover:bg-white hover:shadow-md rounded-lg transition-all duration-200">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                    Voir le site
+                                </div>
+                            </a>
+                            <a href="{{ url_for('auth.logout') }}" class="block px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 hover:shadow-md rounded-lg transition-all duration-200">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Déconnexion
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="container mx-auto px-4 pt-4">
+            {% for category, message in messages %}
+            <div class="mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700{% elif category == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Page content -->
+    <main class="container mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
 
     <script>
-        // Toggle sidebar on mobile
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebarToggle');
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
         
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('sidebar-hidden');
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
             });
         }
     </script>

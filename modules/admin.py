@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, abort, session
 from flask_login import login_required, current_user, login_user, logout_user
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
 from datetime import datetime, date
-from models import db, User, Contact, Inscription, Annonce, News, Paiement, Eleve, ResultatAdmission
+from models import db, User, Contact, Inscription, Annonce, News, Paiement, Eleve, ResultatAdmission, Newsletter
 
 admin_blueprint = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -65,14 +65,16 @@ def dashboard():
             (Annonce.date_expiration.is_(None)) | (Annonce.date_expiration >= date.today())
         ).count(),
         'news_actives': News.query.filter_by(active=True).count(),
-        'eleves_actifs': Eleve.query.filter_by(actif=True).count()
+        'eleves_actifs': Eleve.query.filter_by(actif=True).count(),
+        'newsletters_actifs': Newsletter.query.filter_by(actif=True).count(),
+        'newsletters_total': Newsletter.query.count()
     }
     
     # Derniers contacts
     derniers_contacts = Contact.query.order_by(Contact.date_envoi.desc()).limit(5).all()
     
     # Dernières demandes d'admission
-    dernieres_demandes = ResultatAdmission.query.order_by(ResultatAdmission.date_publication.desc()).limit(5).all()
+    dernieres_demandes = ResultatAdmission.query.order_by(ResultatAdmission.date_soumission.desc()).limit(5).all()
     
     return render_template('admin/dashboard.html', 
                          stats=stats,
@@ -428,3 +430,114 @@ def paiements():
                          paiements=paiements,
                          methode_actuelle=methode,
                          stats=stats)
+
+# ==================== SECTION NEWSLETTER ====================
+
+@admin_blueprint.route('/newsletters')
+@login_required
+@admin_required
+def newsletters():
+    """Gestion des abonnements newsletter"""
+    statut = request.args.get('statut', 'tous')
+    
+    query = Newsletter.query
+    
+    if statut == 'actif':
+        query = query.filter_by(actif=True)
+    elif statut == 'inactif':
+        query = query.filter_by(actif=False)
+    
+    newsletters = query.order_by(Newsletter.date_inscription.desc()).all()
+    
+    stats = {
+        'total': Newsletter.query.count(),
+        'actifs': Newsletter.query.filter_by(actif=True).count(),
+        'inactifs': Newsletter.query.filter_by(actif=False).count()
+    }
+    
+    return render_template('admin/newsletters.html', 
+                         newsletters=newsletters,
+                         statut_actuel=statut,
+                         stats=stats)
+
+@admin_blueprint.route('/newsletters/<int:id>/toggle', methods=['POST'])
+@login_required
+@admin_required
+def toggle_newsletter(id):
+    """Activer/désactiver un abonnement newsletter (AJAX)"""
+    newsletter = Newsletter.query.get_or_404(id)
+    
+    try:
+        newsletter.actif = not newsletter.actif
+        db.session.commit()
+        return jsonify({'success': True, 'actif': newsletter.actif})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@admin_blueprint.route('/newsletters/<int:id>', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_newsletter(id):
+    """Supprimer un abonnement newsletter (AJAX)"""
+    newsletter = Newsletter.query.get_or_404(id)
+    
+    try:
+        db.session.delete(newsletter)
+        db.session.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ==================== SECTION PROFIL UTILISATEUR ====================
+
+@admin_blueprint.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    """Page de profil utilisateur pour modifier username et mot de passe"""
+    if 'user_id' not in session:
+        flash('Accès non autorisé', 'error')
+        return redirect(url_for('auth.login'))
+    
+    user = User.query.get_or_404(session['user_id'])
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        if action == 'update_username':
+            new_username = request.form.get('username', '').strip()
+            
+            if not new_username:
+                flash('Le nom d\'utilisateur ne peut pas être vide', 'error')
+            elif len(new_username) < 3:
+                flash('Le nom d\'utilisateur doit contenir au moins 3 caractères', 'error')
+            elif User.query.filter(User.username == new_username, User.id != user.id).first():
+                flash('Ce nom d\'utilisateur est déjà utilisé', 'error')
+            else:
+                user.username = new_username
+                session['user_name'] = new_username
+                db.session.commit()
+                flash('Nom d\'utilisateur modifié avec succès!', 'success')
+                return redirect(url_for('admin.profile'))
+        
+        elif action == 'update_password':
+            current_password = request.form.get('current_password')
+            new_password = request.form.get('new_password')
+            confirm_password = request.form.get('confirm_password')
+            
+            if not current_password or not new_password or not confirm_password:
+                flash('Tous les champs sont requis', 'error')
+            elif not check_password_hash(user.password, current_password):
+                flash('Mot de passe actuel incorrect', 'error')
+            elif len(new_password) < 6:
+                flash('Le nouveau mot de passe doit contenir au moins 6 caractères', 'error')
+            elif new_password != confirm_password:
+                flash('Les mots de passe ne correspondent pas', 'error')
+            else:
+                user.password = generate_password_hash(new_password)
+                db.session.commit()
+                flash('Mot de passe modifié avec succès!', 'success')
+                return redirect(url_for('admin.profile'))
+    
+    return render_template('admin/profile.html', user=user)

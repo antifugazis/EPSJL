@@ -7,11 +7,8 @@
       <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
       <!-- AOS Animation -->
       <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-      <!-- GSAP -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+      <!-- Alpine.js for better dropdown handling -->
+      <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
       <!-- Google Fonts -->
       <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
@@ -95,7 +92,7 @@
          </div>
       </div>
       
-      <div id="root">
+      <div id="root" class="overflow-hidden">
          <!-- Dynamic Announcement Ticker -->
          {% if annonces and annonces|length > 0 %}
          <div class="ticker-wrap w-full">
@@ -305,34 +302,33 @@
          </script>
          {% endif %}
          
-         <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm">
-            <div class="container mx-auto">
-               <div class="flex h-24 items-center justify-between">
-                     <div class="flex items-center">
+         <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm overflow-x-hidden">
+            <div class="container mx-auto px-4">
+               <div class="flex h-20 items-center justify-between">
+                     <div class="flex items-center flex-shrink-0">
                         <a href="#" class="flex items-center">
-                           <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-10 w-10 rounded-full">
+                           <img src="/static/assets/logo.jpg" alt="École Presbytérale Saint Joseph de L'Asile" class="h-10 w-10 rounded-full flex-shrink-0">
                            <div class="ml-3">
-                              <h1 class="text-sm font-bold text-black md:text-base">École Presbytérale</h1>
-                              <p class="text-xs text-[#00AEEF] md:text-sm">Saint Joseph de L'Asile</p>
+                              <h1 class="text-sm font-bold text-black md:text-base whitespace-nowrap">École Presbytérale</h1>
+                              <p class="text-xs text-[#00AEEF] md:text-sm whitespace-nowrap">Saint Joseph de L'Asile</p>
                            </div>
                         </a>
                      </div>
                      <nav class="hidden lg:flex lg:items-center lg:space-x-4">
                        <a href="{{ url_for('accueil') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Accueil</a>
-                       <a href="{{ url_for('a_propos') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">À Propos</a>
                        <a href="{{ url_for('programmes') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Programmes</a>
                        <a href="{{ url_for('admission') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Admission</a>
                        <a href="{{ url_for('evenements') }}" class="text-sm font-medium text-black hover:text-[#00AEEF]">Actualités</a>
                        
                        <!-- Dropdown for additional links -->
-                       <div class="relative group">
-                           <button class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF]">
+                       <div class="relative" x-data="{ open: false }">
+                           <button @click="open = !open" @click.away="open = false" class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF] focus:outline-none focus:text-[#00AEEF]">
                                Plus
-                               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                </svg>
                            </button>
-                           <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                           <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                                <a href="{{ url_for('contact') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Contact</a>
                                <a href="{{ url_for('payment') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Paiement</a>
                                <a href="{{ url_for('inscriptions.formulaire') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inscription</a>
@@ -340,14 +336,14 @@
                        </div>
                        
                        {% if session.get('user_id') %}
-                           <div class="relative group">
-                               <button class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF]">
+                           <div class="relative" x-data="{ open: false }">
+                               <button @click="open = !open" @click.away="open = false" class="flex items-center text-sm font-medium text-black hover:text-[#00AEEF] focus:outline-none focus:text-[#00AEEF]">
                                    {{ session.get('user_name', 'Utilisateur') }}
-                                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                    </svg>
                                </button>
-                               <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block hover-delay-dropdown">
+                               <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                                    {% if session.get('user_role') in ['admin', 'directeur'] %}
                                        <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard Admin</a>
                                    {% endif %}
@@ -372,47 +368,107 @@
                   </div>
                </div>
                               <!-- Mobile menu, show/hide based on menu state -->
-                <div id="mobile-menu" class="hidden lg:hidden bg-white shadow-lg rounded-b-lg overflow-y-auto max-h-[80vh]">
-                    <div class="p-2">
-                        <!-- Main Navigation Links in 2-column grid -->
-                        <div class="grid grid-cols-2 gap-2 mb-2">
-                            <a href="{{ url_for('accueil') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Accueil</a>
-                            <a href="{{ url_for('a_propos') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">À Propos</a>
-                            <a href="{{ url_for('programmes') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Programmes</a>
-                            <a href="{{ url_for('admission') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Admission</a>
-                            <a href="{{ url_for('evenements') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Actualités</a>
-                            <a href="{{ url_for('contact') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Contact</a>
-                            <a href="{{ url_for('payment') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Paiement</a>
-                            <a href="{{ url_for('inscriptions.formulaire') }}" class="px-3 py-2 text-sm font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors flex items-center justify-center text-center">Inscription</a>
+                <div id="mobile-menu" class="hidden lg:hidden bg-gradient-to-br from-white to-gray-50 shadow-2xl rounded-b-2xl overflow-hidden max-h-[85vh] overflow-y-auto">
+                    <div class="p-4">
+                        <!-- Main Navigation Links -->
+                        <div class="space-y-1 mb-4">
+                            <a href="{{ url_for('accueil') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                    </svg>
+                                    Accueil
+                                </div>
+                            </a>
+                            
+                            <a href="{{ url_for('programmes') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                    Programmes
+                                </div>
+                            </a>
+                            <a href="{{ url_for('admission') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Admission
+                                </div>
+                            </a>
+                            <a href="{{ url_for('evenements') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                    </svg>
+                                    Actualités
+                                </div>
+                            </a>
+                            <a href="{{ url_for('contact') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Contact
+                                </div>
+                            </a>
+                            <a href="{{ url_for('payment') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                    Paiement
+                                </div>
+                            </a>
+                            <a href="{{ url_for('inscriptions.formulaire') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    Inscription
+                                </div>
+                            </a>
                         </div>
                         
                         {% if session.get('user_id') %}
-                            <div class="border-t border-gray-200 my-2"></div>
+                            <div class="border-t border-gray-300 my-3"></div>
                             
                             <!-- Admin Links -->
                             {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
-                                <div class="px-1 py-1">
-                                    <p class="px-2 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gestion</p>
-                                    <div class="grid grid-cols-2 gap-2">
-                                        {% if session.get('user_role') in ['admin', 'directeur', 'professeur'] %}
-                                            <a href="{{ url_for('eleves.liste') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Élèves</a>
-                                            <a href="{{ url_for('cours.liste') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Cours</a>
-                                            <a href="{{ url_for('notes.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Notes</a>
-                                            <a href="{{ url_for('presence.saisie') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Présence</a>
-                                            <a href="{{ url_for('inscriptions.liste') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Inscriptions</a>
-                                        {% endif %}
-                                        
-                                        <a href="{{ url_for('communication.index') }}" class="px-3 py-2 text-xs font-medium text-gray-700 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded transition-colors text-center">Annonces</a>
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 mb-3">
+                                    <p class="px-2 py-1 text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Administration</p>
+                                    <div class="space-y-1">
+                                        <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-white hover:shadow-md rounded-lg transition-all duration-200">
+                                            <div class="flex items-center">
+                                                <svg class="w-5 h-5 mr-3 text-[#00AEEF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                                </svg>
+                                                Dashboard Admin
+                                            </div>
+                                        </a>
+                                        <a href="{{ url_for('auth.logout') }}" class="block px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 hover:shadow-md rounded-lg transition-all duration-200">
+                                            <div class="flex items-center">
+                                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                                </svg>
+                                                Déconnexion
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
                             {% endif %}
                             
-                            <div class="border-t border-gray-200 my-2"></div>
-                            <a href="{{ url_for('auth.logout') }}" class="block px-4 py-3 text-base font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors">Déconnexion</a>
-                            
                         {% else %}
-                            <div class="border-t border-gray-200 my-2 pt-2">
-                                <a href="{{ url_for('auth.login') }}" class="block px-4 py-3 text-base font-medium text-gray-900 hover:bg-[#00AEEF]/10 hover:text-[#00AEEF] rounded-md transition-colors">Connexion</a>
+                            <div class="border-t border-gray-300 my-3 pt-3">
+                                <a href="{{ url_for('auth.login') }}" class="block px-4 py-3 text-sm font-medium text-white bg-[#00AEEF] hover:bg-[#0098d1] rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg text-center">
+                                    <div class="flex items-center justify-center">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                        </svg>
+                                        Connexion
+                                    </div>
+                                </a>
                             </div>
                         {% endif %}
                     </div>
@@ -455,17 +511,16 @@
                      <div>
                         <h3 class="text-base font-medium text-white">Liens Rapides</h3>
                         <ul class="mt-4 space-y-2">
-                           <li><a href="{{ url_for('a_propos') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">À Propos</a></li>
                            <li><a href="{{ url_for('programmes') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Programmes</a></li>
                            <li><a href="{{ url_for('evenements') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Actualités</a></li>
                            <li><a href="{{ url_for('contact') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Contact</a></li>
                         </ul>
                      </div>
                      <div>
-                        <h3 class="text-base font-medium text-white">Admissions</h3>
+                        <h3 class="text-base font-medium text-white">Inscription & Admissions</h3>
                         <ul class="mt-4 space-y-2">
-                           <li><a href="{{ url_for('admission') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Nous Rejoindre</a></li>
-                           <li><a href="{{ url_for('admission') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Admissions</a></li>
+                           <li><a href="{{ url_for('inscriptions.formulaire') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Nous rejoindre</a></li>
+                           <li><a href="{{ url_for('admission') }}" class="text-sm text-gray-300 hover:text-[#00AEEF]">Demandes d'admission</a></li>
                         </ul>
                      </div>
                      <div>
@@ -495,7 +550,7 @@
                               <svg class="mt-1 h-5 w-5 text-[#00AEEF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                               </svg>
-                              <span class="ml-2 text-sm text-gray-300">info@ecolepresbyteral-stjoseph.ht</span>
+                              <span class="ml-2 text-sm text-gray-300">saintjopresbyterale@gmail.com</span>
                            </li>
                         </ul>
                      </div>
@@ -505,9 +560,10 @@
                         <h3 class="text-base font-medium text-white mb-4">Newsletter</h3>
                         <p class="text-sm text-gray-300 mb-4">Inscrivez-vous à notre newsletter pour recevoir les dernières actualités de l'école</p>
                         <form id="newsletter-form" class="flex flex-col sm:flex-row gap-2">
-                           <input type="email" placeholder="Votre adresse email" required class="px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00AEEF] flex-grow">
+                           <input type="email" name="email" placeholder="Votre adresse email" required class="px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00AEEF] flex-grow">
                            <button type="submit" class="px-4 py-2 bg-[#00AEEF] text-white rounded-md hover:bg-[#0098d1] transition-colors">S'inscrire</button>
                         </form>
+                        <div id="newsletter-message" class="mt-2 text-sm hidden"></div>
                      </div>
                      <p class="text-center text-sm text-gray-400">© 2025 École Presbytérale Saint Joseph de L'Asile. Tous droits réservés. 
                         <a href="{{ url_for('credits') }}" class="text-[#00AEEF] hover:underline ml-2">Crédits</a>
@@ -517,12 +573,47 @@
                   <script>
                      document.getElementById('newsletter-form').addEventListener('submit', function(e) {
                         e.preventDefault();
-                        const email = this.querySelector('input[type="email"]').value;
+                        const form = this;
+                        const email = form.querySelector('input[type="email"]').value;
+                        const messageDiv = document.getElementById('newsletter-message');
+                        const submitBtn = form.querySelector('button[type="submit"]');
                         
-                        // Here you would normally send the email to your backend
-                        // For now, we'll just show a success message
-                        alert('Merci de vous être inscrit à notre newsletter avec l\'adresse : ' + email);
-                        this.reset();
+                        // Disable submit button
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = 'Inscription...';
+                        
+                        // Send to backend
+                        fetch('{{ url_for("newsletter_subscribe") }}', {
+                           method: 'POST',
+                           headers: {
+                              'Content-Type': 'application/x-www-form-urlencoded',
+                           },
+                           body: 'email=' + encodeURIComponent(email)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                           messageDiv.classList.remove('hidden');
+                           if (data.success) {
+                              messageDiv.className = 'mt-2 text-sm text-green-400';
+                              messageDiv.textContent = data.message;
+                              form.reset();
+                           } else {
+                              messageDiv.className = 'mt-2 text-sm text-red-400';
+                              messageDiv.textContent = data.message;
+                           }
+                        })
+                        .catch(error => {
+                           messageDiv.classList.remove('hidden');
+                           messageDiv.className = 'mt-2 text-sm text-red-400';
+                           messageDiv.textContent = 'Une erreur est survenue. Veuillez réessayer.';
+                        })
+                        .finally(() => {
+                           submitBtn.disabled = false;
+                           submitBtn.textContent = 'S\'inscrire';
+                           setTimeout(() => {
+                              messageDiv.classList.add('hidden');
+                           }, 5000);
+                        });
                      });
                   </script>
                </div>
@@ -628,43 +719,6 @@
             });
          });
       </script>
-   <script>
-   // Enhanced dropdown with hover delay
-   document.addEventListener('DOMContentLoaded', function() {
-      const dropdowns = document.querySelectorAll('.hover-delay-dropdown');
-
-      dropdowns.forEach(dropdown => {
-         let hideTimeout;
-
-         // Show dropdown immediately on hover
-         dropdown.parentElement.addEventListener('mouseenter', () => {
-            clearTimeout(hideTimeout);
-            dropdown.style.display = 'block';
-         });
-
-         // Delay hiding when mouse leaves
-         dropdown.parentElement.addEventListener('mouseleave', () => {
-            hideTimeout = setTimeout(() => {
-               dropdown.style.display = 'none';
-            }, 300); // 300ms delay before hiding
-         });
-
-         // Keep dropdown visible when hovering over it
-         dropdown.addEventListener('mouseenter', () => {
-            clearTimeout(hideTimeout);
-         });
-
-         // Hide dropdown when mouse leaves the dropdown itself
-         dropdown.addEventListener('mouseleave', () => {
-            hideTimeout = setTimeout(() => {
-               dropdown.style.display = 'none';
-            }, 300); // 300ms delay
-         });
-      });
-   });
-   </script>
-   {% block scripts %}{% endblock %}
-   
    <script>
    // Load news ticker items dynamically
    document.addEventListener('DOMContentLoaded', function() {

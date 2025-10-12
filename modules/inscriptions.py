@@ -36,7 +36,7 @@ def ensure_upload_dirs():
     os.makedirs(upload_folder, exist_ok=True)
     
     # Create subdirectories for different document types
-    for subfolder in ['actes_naissance', 'bulletins', 'photos_identite']:
+    for subfolder in ['actes_naissance', 'bulletins', 'photos_identite', 'recus_paiement']:
         os.makedirs(os.path.join(upload_folder, subfolder), exist_ok=True)
     
     return upload_folder
@@ -224,6 +224,7 @@ def formulaire():
             acte_naissance_path = None
             bulletins_paths = []
             photo_identite_path = None
+            recu_paiement_path = None
             
             try:
                 # Process acte de naissance
@@ -242,9 +243,16 @@ def formulaire():
                 
                 # Process bulletins de notes (multiple files)
                 print("\n=== Processing Bulletins de Notes ===")
+                bulletin_field = None
                 if 'bulletins_notes' in request.files:
-                    files = request.files.getlist('bulletins_notes')
-                    print(f"Found {len(files)} bulletin(s) to process")
+                    bulletin_field = 'bulletins_notes'
+                elif 'bulletins' in request.files:
+                    # Support legacy field name
+                    bulletin_field = 'bulletins'
+                
+                if bulletin_field:
+                    files = request.files.getlist(bulletin_field)
+                    print(f"Found {len(files)} bulletin(s) to process from '{bulletin_field}'")
                     for i, file in enumerate(files):
                         if file and file.filename != '':
                             print(f"Processing bulletin {i+1}: {file.filename}")
@@ -266,6 +274,20 @@ def formulaire():
                             error_msg = 'Erreur lors du téléchargement de la photo d\'identité'
                             print(error_msg)
                             flash(error_msg, 'error')
+                
+                # Process reçu de paiement
+                print("\n=== Processing Reçu de Paiement ===")
+                if 'recu_paiement' in request.files:
+                    file = request.files['recu_paiement']
+                    print(f"Reçu de paiement file: {file.filename if file.filename else 'No file'}")
+                    if file and file.filename != '':
+                        print(f"Saving reçu de paiement: {file.filename}")
+                        recu_paiement_path = save_uploaded_file(file, 'recus_paiement')
+                        print(f"Saved to: {recu_paiement_path}")
+                        if not recu_paiement_path:
+                            error_msg = 'Erreur lors du téléchargement du reçu de paiement'
+                            print(error_msg)
+                            flash(error_msg, 'error')
                             
             except Exception as e:
                 error_msg = f'Erreur lors du traitement des fichiers: {str(e)}'
@@ -279,13 +301,13 @@ def formulaire():
             # Create new inscription
             nouvelle_inscription = Inscription(
                 # Student information
-                prenom_eleve=data.get('eleve_prenom') or 'Non spécifié',
                 nom_eleve=data.get('eleve_nom') or 'Non spécifié',
-                date_naissance=datetime.now().date(),
+                prenom_eleve=data.get('eleve_prenom') or 'Non spécifié',
+                date_naissance=datetime.strptime(data.get('eleve_date_naissance'), '%Y-%m-%d').date() if data.get('eleve_date_naissance') else datetime.now().date(),
                 lieu_naissance=data.get('eleve_lieu_naissance') or 'À compléter',
                 genre=data.get('eleve_sexe') or 'Non spécifié',
-                niveau_demande=data.get('eleve_nom') or 'Non spécifié',  # Using eleve_nom as niveau for now
-                ancienne_classe=data.get('eleve_nom') or 'Non spécifié',  # Using eleve_nom as ancienne_classe for now
+                niveau_demande=data.get('eleve_nom') or 'Non spécifié',
+                ancienne_classe=data.get('eleve_nom') or 'Non spécifié',
                 promotion='2024-2025',  # Default promotion
                 
                 # Parent 1 information - combine responsable name fields
@@ -311,6 +333,7 @@ def formulaire():
                 acte_naissance=acte_naissance_path,
                 bulletins_notes=';'.join(bulletins_paths) if bulletins_paths else None,
                 photo_identite=photo_identite_path,
+                recu_paiement=recu_paiement_path,
                 
                 # Default status
                 statut='en_attente'
@@ -401,7 +424,7 @@ def delete(id):
     
     try:
         # Delete associated files
-        for file_path in [inscription.acte_naissance, inscription.photo_identite]:
+        for file_path in [inscription.acte_naissance, inscription.photo_identite, inscription.recu_paiement]:
             if file_path and os.path.exists(file_path):
                 os.remove(file_path)
         

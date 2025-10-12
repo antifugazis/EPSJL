@@ -270,6 +270,7 @@ class Inscription(db.Model):
     acte_naissance = db.Column(db.String(255))
     bulletins_notes = db.Column(db.String(500))  # Chemins multiples séparés par des points-virgules
     photo_identite = db.Column(db.String(255))
+    recu_paiement = db.Column(db.String(255))  # Reçu de paiement des frais d'inscription
     
     # Statut de la demande
     statut = db.Column(db.String(20), default='en_attente')  # en_attente, approuvee, rejetee, completee
@@ -363,31 +364,32 @@ class Article(db.Model):
             'vues': self.vues
         }
 
-# Resultat Admission model (pour les résultats d'admission)
+# Resultat Admission model (pour les demandes d'admission/examen)
 class ResultatAdmission(db.Model):
     __tablename__ = 'resultats_admission'
     
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(100), nullable=False)
-    prenom = db.Column(db.String(100), nullable=False)
-    classe = db.Column(db.String(50), nullable=False)  # Ex: "5e Année Fondamentale"
-    promotion = db.Column(db.String(20), nullable=False)  # Ex: "2024-2025"
-    statut = db.Column(db.String(20), default='admis')  # admis, non_admis, en_attente
-    date_publication = db.Column(db.DateTime, default=datetime.now)
-    publie = db.Column(db.Boolean, default=True)
+    type_examen = db.Column(db.String(50), nullable=False)  # Examen 9AF, Bac, Admission
+    nom_complet = db.Column(db.String(200), nullable=False)
+    date_naissance = db.Column(db.Date, nullable=False)
+    contact = db.Column(db.String(200), nullable=False)  # WhatsApp ou Email
+    statut = db.Column(db.String(20), default='en_attente')  # en_attente, approuve, rejete
+    date_soumission = db.Column(db.DateTime, default=datetime.now)
+    publie = db.Column(db.Boolean, default=False)
+    notes_admin = db.Column(db.Text)
     
     def __repr__(self):
-        return f'<ResultatAdmission {self.prenom} {self.nom} - {self.classe}>'
+        return f'<ResultatAdmission {self.nom_complet} - {self.type_examen}>'
     
     def to_dict(self):
         return {
             'id': self.id,
-            'nom': self.nom,
-            'prenom': self.prenom,
-            'classe': self.classe,
-            'promotion': self.promotion,
+            'type_examen': self.type_examen,
+            'nom_complet': self.nom_complet,
+            'date_naissance': self.date_naissance.strftime('%Y-%m-%d') if self.date_naissance else None,
+            'contact': self.contact,
             'statut': self.statut,
-            'date_publication': self.date_publication.strftime('%Y-%m-%d %H:%M') if self.date_publication else None,
+            'date_soumission': self.date_soumission.strftime('%Y-%m-%d %H:%M') if self.date_soumission else None,
             'publie': self.publie
         }
 
@@ -460,4 +462,24 @@ class ArchiveFichier(db.Model):
             'fichier_type': self.fichier_type,
             'fichier_taille': self.fichier_taille,
             'note_additionnelle': self.note_additionnelle
+        }
+
+# Newsletter model (pour les inscriptions à la newsletter)
+class Newsletter(db.Model):
+    __tablename__ = 'newsletters'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    date_inscription = db.Column(db.DateTime, default=datetime.now)
+    actif = db.Column(db.Boolean, default=True)
+    
+    def __repr__(self):
+        return f'<Newsletter {self.email}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'date_inscription': self.date_inscription.strftime('%Y-%m-%d %H:%M') if self.date_inscription else None,
+            'actif': self.actif
         }

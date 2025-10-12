@@ -2,6 +2,11 @@
 
 {% block title %}Détails de l'inscription - Administration{% endblock %}
 
+{% block extra_css %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+{% endblock %}
+
 {% block content %}
 <div class="p-6">
     <div class="max-w-7xl mx-auto">
@@ -52,9 +57,12 @@
                             </button>
                             {% endif %}
                             
-                            <button type="button" onclick="window.print()" 
+                            <button type="button" onclick="generatePDF()" 
                                 class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                Imprimer
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                                Télécharger PDF
                             </button>
                         </div>
                     </div>
@@ -216,9 +224,15 @@
                                         Acte de naissance
                                     </dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        <a href="{{ url_for('static', filename=inscription.acte_naissance) }}" target="_blank" class="text-blue-600 hover:text-blue-800">
+                                        <a href="/{{ inscription.acte_naissance }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
                                             Voir le document
                                         </a>
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            Fichier: {{ inscription.acte_naissance.split('/')[-1] }}
+                                        </div>
                                     </dd>
                                 </div>
                                 {% endif %}
@@ -229,13 +243,19 @@
                                         Bulletins de notes
                                     </dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        <ul class="list-disc pl-5 space-y-1">
+                                        <ul class="space-y-2">
                                             {% for bulletin in inscription.bulletins_notes.split(';') %}
                                                 {% if bulletin %}
                                                 <li>
-                                                    <a href="{{ url_for('static', filename=bulletin) }}" target="_blank" class="text-blue-600 hover:text-blue-800">
-                                                        Voir le bulletin {{ loop.index }}
+                                                    <a href="/{{ bulletin }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                        </svg>
+                                                        Bulletin {{ loop.index }}
                                                     </a>
+                                                    <div class="text-xs text-gray-500 mt-1">
+                                                        Fichier: {{ bulletin.split('/')[-1] }}
+                                                    </div>
                                                 </li>
                                                 {% endif %}
                                             {% endfor %}
@@ -250,14 +270,46 @@
                                         Photo d'identité
                                     </dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        <a href="{{ url_for('static', filename=inscription.photo_identite) }}" target="_blank" class="text-blue-600 hover:text-blue-800">
+                                        <a href="/{{ inscription.photo_identite }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
                                             Voir la photo
                                         </a>
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            Fichier: {{ inscription.photo_identite.split('/')[-1] }}
+                                        </div>
+                                        <!-- Image preview -->
+                                        <div class="mt-3">
+                                            <img src="/{{ inscription.photo_identite }}" alt="Photo d'identité" class="h-32 w-32 object-cover rounded-lg border border-gray-300">
+                                        </div>
                                     </dd>
                                 </div>
                                 {% endif %}
                                 
-                                {% if not inscription.acte_naissance and not inscription.bulletins_notes and not inscription.photo_identite %}
+                                {% if inscription.recu_paiement %}
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Reçu de paiement
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        <a href="/{{ inscription.recu_paiement }}" target="_blank" class="inline-flex items-center text-green-600 hover:text-green-800 font-medium">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            Voir le reçu de paiement
+                                        </a>
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            Fichier: {{ inscription.recu_paiement.split('/')[-1] }}
+                                        </div>
+                                        <div class="mt-2 p-2 bg-green-50 border border-green-200 rounded text-xs text-green-700">
+                                            <strong>500 Gourdes</strong> - Frais d'inscription payés via compte KPLAN #3575
+                                        </div>
+                                    </dd>
+                                </div>
+                                {% endif %}
+                                
+                                {% if not inscription.acte_naissance and not inscription.bulletins_notes and not inscription.photo_identite and not inscription.recu_paiement %}
                                 <div class="bg-gray-50 px-4 py-5 text-center">
                                     <p class="text-sm text-gray-500 italic">Aucun document fourni</p>
                                 </div>
@@ -415,10 +467,167 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
 <script>
+// Fonction pour générer le PDF
+function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Configuration de la police et couleurs
+    const schoolBlue = [0, 174, 239]; // #00AEEF
+    const darkGray = [51, 51, 51]; // #333333
+    
+    // En-tête avec branding et informations scolaires
+    doc.setFillColor(...schoolBlue);
+    doc.rect(0, 0, 210, 35, 'F');
+    
+    // Titre principal
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('ÉCOLE PRESBYTÉRALE SAINT JOSEPH DE L\'ASILE', 105, 16, { align: 'center' });
+    
+    // Adresse et contact
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'normal');
+    doc.text('01, Rue Calvaire, L\'Asile • Tél: (509) 4892-3158 • Email: saintjopresbyterale@gmail.com', 105, 24, { align: 'center' });
+    doc.text('NIPPES, Haïti', 105, 29, { align: 'center' });
+    
+    // Section principale du document
+    doc.setTextColor(...darkGray);
+    doc.setFontSize(18);
+    doc.setFont(undefined, 'bold');
+    doc.text('FICHE D\'INSCRIPTION', 105, 50, { align: 'center' });
+    
+    // Ligne de séparation
+    doc.setDrawColor(...schoolBlue);
+    doc.setLineWidth(0.5);
+    doc.line(14, 55, 196, 55);
+    
+    // Informations de base
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('Date d\'inscription: {{ inscription.date_soumission.strftime("%d/%m/%Y") }}', 14, 65);
+    doc.text('Statut: {{ inscription.statut|replace("_", " ")|capitalize }}', 14, 70);
+    doc.text('ID: #{{ inscription.id }}', 14, 75);
+    
+    // Informations de l'élève
+    const studentData = [
+        ['Nom complet', '{{ inscription.prenom_eleve }} {{ inscription.nom_eleve }}'],
+        ['Sexe', '{{ inscription.genre|capitalize }}'],
+        ['Date de naissance', '{{ inscription.date_naissance.strftime("%d/%m/%Y") }}'],
+        ['Lieu de naissance', '{{ inscription.lieu_naissance }}'],
+        {% if inscription.ancienne_classe %}['Ancienne classe', '{{ inscription.ancienne_classe }}'],{% endif %}
+        {% if inscription.promotion %}['Promotion', '{{ inscription.promotion }}'],{% endif %}
+    ];
+    
+    doc.autoTable({
+        startY: 85,
+        head: [['INFORMATIONS DE L\'ÉLÈVE', '']],
+        body: studentData,
+        theme: 'grid',
+        headStyles: { fillColor: schoolBlue, fontSize: 12, fontStyle: 'bold' },
+        columnStyles: {
+            0: { cellWidth: 60, fontStyle: 'bold' },
+            1: { cellWidth: 'auto' }
+        },
+        margin: { left: 14, right: 14 }
+    });
+    
+    // Informations des parents
+    const parentData = [
+        ['Parent/Tuteur 1', '{{ inscription.parent1_nom }}'],
+        ['Lien de parenté', '{{ inscription.parent1_lien|capitalize }}'],
+        ['Téléphone', '{{ inscription.parent1_telephone }}'],
+        ['Email', '{{ inscription.parent1_email }}'],
+        {% if inscription.parent2_nom %}
+        ['Parent/Tuteur 2', '{{ inscription.parent2_nom }}'],
+        {% if inscription.parent2_lien %}['Lien de parenté', '{{ inscription.parent2_lien|capitalize }}'],{% endif %}
+        {% if inscription.parent2_telephone %}['Téléphone', '{{ inscription.parent2_telephone }}'],{% endif %}
+        {% if inscription.parent2_email %}['Email', '{{ inscription.parent2_email }}'],{% endif %}
+        {% endif %}
+    ];
+    
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 10,
+        head: [['INFORMATIONS DES PARENTS/TUTEURS', '']],
+        body: parentData,
+        theme: 'grid',
+        headStyles: { fillColor: [0, 174, 239], fontSize: 12, fontStyle: 'bold' },
+        columnStyles: {
+            0: { cellWidth: 60, fontStyle: 'bold' },
+            1: { cellWidth: 'auto' }
+        },
+        margin: { left: 14, right: 14 }
+    });
+    
+    // Adresse
+    const addressData = [
+        ['Adresse', '{{ inscription.adresse }}'],
+        ['Ville/Commune', '{{ inscription.ville }}'],
+        ['Pays', '{{ inscription.pays }}'],
+    ];
+    
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 10,
+        head: [['ADRESSE', '']],
+        body: addressData,
+        theme: 'grid',
+        headStyles: { fillColor: [0, 174, 239], fontSize: 12, fontStyle: 'bold' },
+        columnStyles: {
+            0: { cellWidth: 60, fontStyle: 'bold' },
+            1: { cellWidth: 'auto' }
+        },
+        margin: { left: 14, right: 14 }
+    });
+    
+    // Documents fournis
+    const documentsData = [
+        ['Acte de naissance', {{ ('Fourni ✓' if inscription.acte_naissance else 'Non fourni ✗') | tojson }}],
+        ['Photo d\'identité', {{ ('Fourni ✓' if inscription.photo_identite else 'Non fourni ✗') | tojson }}],
+        ['Bulletins scolaires', {{ ('Fourni ✓' if inscription.bulletins_notes else 'Non fourni ✗') | tojson }}],
+        ['Reçu de paiement (500 Gourdes)', {{ ('Fourni ✓' if inscription.recu_paiement else 'Non fourni ✗') | tojson }}]
+    ];
+    
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 10,
+        head: [['DOCUMENTS FOURNIS', '']],
+        body: documentsData,
+        theme: 'grid',
+        headStyles: { fillColor: schoolBlue, fontSize: 12, fontStyle: 'bold' },
+        columnStyles: {
+            0: { cellWidth: 60, fontStyle: 'bold' },
+            1: { cellWidth: 'auto' }
+        },
+        margin: { left: 14, right: 14 }
+    });
+    
+    // Pied de page
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        const footerY = doc.internal.pageSize.height;
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(...darkGray);
+        doc.text('École Presbytérale Saint Joseph de L\'Asile', 105, footerY - 15, { align: 'center' });
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'normal');
+        doc.text('01, Rue Calvaire, L\'Asile • Tél: (509) 4892-3158 • Email: saintjopresbyterale@gmail.com', 105, footerY - 10, { align: 'center' });
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'italic');
+        doc.setTextColor(...schoolBlue);
+        doc.text('Plus fort, Plus haut, Plus loin !', 105, footerY - 5, { align: 'center' });
+    }
+    
+    // Télécharger le PDF
+    doc.save('inscription_{{ inscription.prenom_eleve }}_{{ inscription.nom_eleve }}.pdf');
+}
+
 // Fonction pour mettre à jour le statut de l'inscription
 function updateStatut(statut) {
     fetch(`/inscriptions/admin/{{ inscription.id }}/statut`, {
@@ -548,6 +757,4 @@ function deleteInscription() {
     showDeleteModal();
 }
 </script>
-    </div>
-</div>
 {% endblock %}

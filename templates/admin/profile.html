@@ -1,0 +1,174 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+    <!-- En-tête -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Mon Profil</h1>
+            <p class="text-gray-600 mt-1">Gérez vos informations personnelles</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Modifier le nom d'utilisateur -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">Nom d'utilisateur</h2>
+                    <p class="text-sm text-gray-500">Modifier votre nom d'utilisateur</p>
+                </div>
+            </div>
+
+            <form method="POST" class="space-y-4">
+                <input type="hidden" name="action" value="update_username">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nom d'utilisateur actuel</label>
+                    <div class="px-4 py-3 bg-gray-50 rounded-lg text-gray-600 font-medium">
+                        {{ user.username }}
+                    </div>
+                </div>
+
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Nouveau nom d'utilisateur</label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           value="{{ user.username }}"
+                           required
+                           minlength="3"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    <p class="mt-1 text-xs text-gray-500">Minimum 3 caractères</p>
+                </div>
+
+                <button type="submit" 
+                        class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Modifier le nom d'utilisateur
+                </button>
+            </form>
+        </div>
+
+        <!-- Modifier le mot de passe -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">Mot de passe</h2>
+                    <p class="text-sm text-gray-500">Modifier votre mot de passe</p>
+                </div>
+            </div>
+
+            <form method="POST" class="space-y-4">
+                <input type="hidden" name="action" value="update_password">
+                
+                <div>
+                    <label for="current_password" class="block text-sm font-medium text-gray-700 mb-2">Mot de passe actuel</label>
+                    <input type="password" 
+                           id="current_password" 
+                           name="current_password" 
+                           required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                </div>
+
+                <div>
+                    <label for="new_password" class="block text-sm font-medium text-gray-700 mb-2">Nouveau mot de passe</label>
+                    <input type="password" 
+                           id="new_password" 
+                           name="new_password" 
+                           required
+                           minlength="6"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                    <p class="mt-1 text-xs text-gray-500">Minimum 6 caractères</p>
+                </div>
+
+                <div>
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-2">Confirmer le nouveau mot de passe</label>
+                    <input type="password" 
+                           id="confirm_password" 
+                           name="confirm_password" 
+                           required
+                           minlength="6"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                </div>
+
+                <button type="submit" 
+                        class="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Modifier le mot de passe
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Informations du compte -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Informations du compte</h2>
+                <p class="text-sm text-gray-500">Détails de votre compte</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-500 mb-1">Nom d'utilisateur</p>
+                <p class="font-semibold text-gray-800">{{ user.username }}</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-500 mb-1">Rôle</p>
+                <p class="font-semibold text-gray-800">
+                    {% if user.role == 'admin' %}
+                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Administrateur</span>
+                    {% elif user.role == 'directeur' %}
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Directeur</span>
+                    {% elif user.role == 'professeur' %}
+                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Professeur</span>
+                    {% else %}
+                        <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">{{ user.role }}</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-500 mb-1">Email</p>
+                <p class="font-semibold text-gray-800">{{ user.email or 'Non renseigné' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Validation du formulaire de mot de passe
+document.querySelector('form[action*="update_password"]')?.addEventListener('submit', function(e) {
+    const newPassword = document.getElementById('new_password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    
+    if (newPassword !== confirmPassword) {
+        e.preventDefault();
+        alert('Les mots de passe ne correspondent pas!');
+        return false;
+    }
+});
+</script>
+{% endblock %}

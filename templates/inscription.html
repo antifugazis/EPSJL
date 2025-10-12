@@ -5,9 +5,9 @@
     <div class="max-w-4xl mx-auto">
         <!-- En-tête de la page -->
         <div class="text-center mb-12" data-aos="fade-up">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Demande d'Admission</h1>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Demande d'Inscription</h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Remplissez le formulaire ci-dessous pour faire une demande d'admission à l'École Presbytérale Saint Joseph de L'Asile.
+                Remplissez le formulaire ci-dessous pour faire une demande d'inscription à l'École Presbytérale Saint Joseph de L'Asile.
             </p>
             <div class="mt-4 text-sm text-gray-500">
                 <p>Tous les champs marqués d'un astérisque (*) sont obligatoires.</p>
@@ -298,9 +298,45 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Bulletins scolaires (si disponibles)</label>
-                            <input type="file" name="bulletins" id="bulletins" accept=".pdf,.jpg,.jpeg,.png" multiple
+                            <input type="file" name="bulletins_notes" id="bulletins" accept=".pdf,.jpg,.jpeg,.png" multiple
                                 class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             <p class="mt-1 text-xs text-gray-500">Vous pouvez sélectionner plusieurs fichiers.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PARTIE F - PAIEMENT DES FRAIS D'INSCRIPTION -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">PARTIE F - PAIEMENT DES FRAIS D'INSCRIPTION</h3>
+
+                    <!-- Informations sur les frais -->
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-blue-800">Frais d'inscription</h3>
+                                <div class="mt-2 text-sm text-blue-700">
+                                    <p><strong>Montant :</strong> 500 Gourdes</p>
+                                    <p class="mt-1"><strong>Instructions de paiement :</strong></p>
+                                    <p class="mt-1">Les frais d'inscription doivent être déposés sur le compte KPLAN de l'école via le numéro de compte <strong>3575</strong>.</p>
+                                    <p class="mt-2 text-xs">⚠️ Important : Conservez votre reçu de paiement car il sera nécessaire pour finaliser votre inscription.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload du reçu de paiement -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Reçu de paiement *</label>
+                            <input type="file" name="recu_paiement" id="recu_paiement" accept=".pdf,.jpg,.jpeg,.png" required
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                            <p class="mt-1 text-xs text-gray-500">Format PDF, JPG ou PNG. Téléchargez votre reçu de paiement de 500 Gourdes. Taille maximale: 5MB.</p>
+                            <p class="mt-2 text-xs text-red-600">* Champ obligatoire - Vous devez fournir le reçu de paiement pour que votre demande soit traitée.</p>
                         </div>
                     </div>
                 </div>
@@ -318,10 +354,7 @@
                             <p class="text-gray-500">En cochant cette case, vous acceptez les conditions d'admission de l'école.</p>
                         </div>
                     </div>
-                    <div class="mt-4 border-t pt-4">
-                        <p class="text-sm text-gray-700 mb-2"><strong>Approbation de la direction :</strong></p>
-                        <p class="text-sm text-gray-600 text-right italic">Signature : _____________________</p>
-                    </div>
+                   
                 </div>
 
                 <!-- Bouton de soumission -->
@@ -337,7 +370,7 @@
         <!-- Informations supplémentaires -->
         <div class="mt-8 text-center text-sm text-gray-500">
             <p>Pour toute question ou assistance, n'hésitez pas à <a href="{{ url_for('contact') }}" class="font-medium text-[#00AEEF] hover:text-[#0098d1]">nous contacter</a>.</p>
-            <p class="mt-2">Téléphone: <span class="font-medium">+509 4892-3158</span> | Email: <span class="font-medium">simeonlucson@gmail.com</span></p>
+            <p class="mt-2">Téléphone: <span class="font-medium">+509 4892-3158</span> | Email: <span class="font-medium">saintjopresbyterale@gmail.com</span></p>
         </div>
     </div>
 </div>

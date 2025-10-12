@@ -1,0 +1,235 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Abonnements Newsletter - Administration{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+    <!-- En-tête -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Abonnements Newsletter</h1>
+            <p class="text-gray-600 mt-1">Gérer les inscriptions à la newsletter</p>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="exportEmails()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exporter les emails
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-blue-600 text-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-medium">Total</p>
+                    <p class="text-3xl font-bold mt-2">{{ stats.total }}</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-green-600 text-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-100 text-sm font-medium">Actifs</p>
+                    <p class="text-3xl font-bold mt-2">{{ stats.actifs }}</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-600 text-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-100 text-sm font-medium">Inactifs</p>
+                    <p class="text-3xl font-bold mt-2">{{ stats.inactifs }}</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ url_for('admin.newsletters', statut='tous') }}" 
+               class="px-4 py-2 rounded-lg transition-colors {{ 'bg-blue-600 text-white' if statut_actuel == 'tous' else 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                Tous ({{ stats.total }})
+            </a>
+            <a href="{{ url_for('admin.newsletters', statut='actif') }}" 
+               class="px-4 py-2 rounded-lg transition-colors {{ 'bg-green-600 text-white' if statut_actuel == 'actif' else 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                Actifs ({{ stats.actifs }})
+            </a>
+            <a href="{{ url_for('admin.newsletters', statut='inactif') }}" 
+               class="px-4 py-2 rounded-lg transition-colors {{ 'bg-gray-600 text-white' if statut_actuel == 'inactif' else 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                Inactifs ({{ stats.inactifs }})
+            </a>
+        </div>
+    </div>
+
+    <!-- Liste des abonnements -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'inscription</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% if newsletters %}
+                        {% for newsletter in newsletters %}
+                        <tr class="hover:bg-gray-50 transition-colors" id="newsletter-{{ newsletter.id }}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span class="text-sm font-medium text-gray-900">{{ newsletter.email }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-sm text-gray-600">{{ newsletter.date_inscription.strftime('%d/%m/%Y %H:%M') }}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {% if newsletter.actif %}
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Actif
+                                </span>
+                                {% else %}
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    Inactif
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="toggleNewsletter({{ newsletter.id }})" 
+                                        class="text-blue-600 hover:text-blue-900 mr-3">
+                                    {% if newsletter.actif %}
+                                    Désactiver
+                                    {% else %}
+                                    Activer
+                                    {% endif %}
+                                </button>
+                                <button onclick="deleteNewsletter({{ newsletter.id }})" 
+                                        class="text-red-600 hover:text-red-900">
+                                    Supprimer
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                <p class="text-lg font-medium">Aucun abonnement trouvé</p>
+                                <p class="text-sm mt-1">Les inscriptions à la newsletter apparaîtront ici</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleNewsletter(id) {
+    if (!confirm('Êtes-vous sûr de vouloir changer le statut de cet abonnement ?')) {
+        return;
+    }
+    
+    fetch(`/admin/newsletters/${id}/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Erreur: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Une erreur est survenue');
+        console.error('Error:', error);
+    });
+}
+
+function deleteNewsletter(id) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cet abonnement ? Cette action est irréversible.')) {
+        return;
+    }
+    
+    fetch(`/admin/newsletters/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`newsletter-${id}`).remove();
+            location.reload();
+        } else {
+            alert('Erreur: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Une erreur est survenue');
+        console.error('Error:', error);
+    });
+}
+
+function exportEmails() {
+    const emails = [];
+    document.querySelectorAll('tbody tr').forEach(row => {
+        const emailCell = row.querySelector('td:first-child span');
+        if (emailCell) {
+            emails.push(emailCell.textContent);
+        }
+    });
+    
+    if (emails.length === 0) {
+        alert('Aucun email à exporter');
+        return;
+    }
+    
+    const emailList = emails.join('\n');
+    const blob = new Blob([emailList], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `newsletter-emails-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+</script>
+{% endblock %}

@@ -10,7 +10,7 @@ import json
 import uuid
 from functools import wraps
 from flask_migrate import Migrate
-from models import Cours, db, User, Eleve, Evenement, Annonce, Inscription, Contact, ResultatAdmission
+from models import Cours, db, User, Eleve, Evenement, Annonce, Inscription, Contact, ResultatAdmission, Newsletter
 
 # Import modules
 from modules.auth import auth_blueprint
@@ -100,35 +100,23 @@ def admission():
     if request.method == 'POST':
         try:
             # Get form data from simplified form
-            nom_eleve = request.form.get('eleve-nom')
-            ancienne_classe = request.form.get('ancienne-classe')
-            promotion = request.form.get('promotion')
+            type_examen = request.form.get('type_examen')
+            nom_complet = request.form.get('nom_complet')
+            date_naissance_str = request.form.get('date_naissance')
+            contact = request.form.get('contact')
 
-            # Split full name into first and last name
-            if nom_eleve:
-                name_parts = nom_eleve.strip().split()
-                if len(name_parts) >= 2:
-                    prenom_eleve = ' '.join(name_parts[:-1])  # Everything except last name
-                    nom_eleve_split = name_parts[-1]  # Last name only
-                elif len(name_parts) == 1:
-                    prenom_eleve = name_parts[0]
-                    nom_eleve_split = ""
-                else:
-                    prenom_eleve = nom_eleve
-                    nom_eleve_split = ""
-            else:
-                prenom_eleve = "Non spécifié"
-                nom_eleve_split = "Non spécifié"
+            # Parse date
+            date_naissance = datetime.strptime(date_naissance_str, '%Y-%m-%d').date() if date_naissance_str else None
 
-            # Create admission result record
+            # Create admission request record
             nouvelle_demande = ResultatAdmission(
-                nom=nom_eleve_split,
-                prenom=prenom_eleve,
-                classe=ancienne_classe if ancienne_classe else "Non spécifié",
-                promotion=promotion if promotion else "2024-2025",
-                statut='en_attente',  # Default status for new applications
-                publie=False,  # Not published until approved
-                date_publication=datetime.now()  # Explicitly set the publication date
+                type_examen=type_examen,
+                nom_complet=nom_complet,
+                date_naissance=date_naissance,
+                contact=contact,
+                statut='en_attente',
+                publie=False,
+                date_soumission=datetime.now()
             )
 
             # Save to database
@@ -209,6 +197,39 @@ def contact():
     
     # Afficher le formulaire pour les requêtes GET
     return render_template('website/contact.html')
+
+@app.route('/newsletter/subscribe', methods=['POST'])
+def newsletter_subscribe():
+    """Handle newsletter subscription"""
+    try:
+        email = request.form.get('email')
+        
+        if not email:
+            return jsonify({'success': False, 'message': 'Adresse email requise'}), 400
+        
+        # Check if email already exists
+        existing = Newsletter.query.filter_by(email=email).first()
+        
+        if existing:
+            if existing.actif:
+                return jsonify({'success': False, 'message': 'Cette adresse email est déjà inscrite à notre newsletter'}), 400
+            else:
+                # Reactivate subscription
+                existing.actif = True
+                existing.date_inscription = datetime.now()
+                db.session.commit()
+                return jsonify({'success': True, 'message': 'Votre abonnement a été réactivé avec succès!'})
+        
+        # Create new subscription
+        nouvelle_inscription = Newsletter(email=email)
+        db.session.add(nouvelle_inscription)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Merci de vous être inscrit à notre newsletter!'})
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Une erreur est survenue: {str(e)}'}), 500
 
 
 

@@ -1,30 +1,14 @@
 {% extends "admin/base_admin.html" %}
 
-{% block title %}Résultats d'Admission - Administration{% endblock %}
+{% block title %}Demandes d'Admission - Administration{% endblock %}
 
 {% block content %}
 <div class="p-6 space-y-6">
     <!-- En-tête -->
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-800">Résultats d'Admission</h1>
-            <p class="text-gray-600 mt-1">Gérez les résultats d'admission des élèves</p>
-        </div>
-        <div class="flex gap-2">
-            <a href="{{ url_for('resultats_admission.admin_importer') }}"
-               class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                </svg>
-                Importer en masse
-            </a>
-            <a href="{{ url_for('resultats_admission.admin_nouveau') }}"
-               class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Nouveau Résultat
-            </a>
+            <h1 class="text-3xl font-bold text-gray-800">Demandes d'Admission</h1>
+            <p class="text-gray-600 mt-1">Gérez les demandes d'admission et d'examen</p>
         </div>
     </div>
 
@@ -32,21 +16,21 @@
     <div class="bg-white rounded-xl shadow-lg p-6">
         <form method="GET" class="flex gap-4">
             <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Promotion</label>
-                <select name="promotion" class="w-full px-4 py-2 border border-gray-300 rounded-lg" onchange="this.form.submit()">
-                    <option value="">Toutes les promotions</option>
-                    {% for promo in promotions %}
-                    <option value="{{ promo }}" {% if promo == promotion_active %}selected{% endif %}>{{ promo }}</option>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Type d'Examen</label>
+                <select name="type_examen" class="w-full px-4 py-2 border border-gray-300 rounded-lg" onchange="this.form.submit()">
+                    <option value="">Tous les types</option>
+                    {% for type in types_examen %}
+                    <option value="{{ type }}" {% if type == type_examen_actif %}selected{% endif %}>{{ type }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Classe</label>
-                <select name="classe" class="w-full px-4 py-2 border border-gray-300 rounded-lg" onchange="this.form.submit()">
-                    <option value="">Toutes les classes</option>
-                    {% for cl in classes %}
-                    <option value="{{ cl }}" {% if cl == classe_active %}selected{% endif %}>{{ cl }}</option>
-                    {% endfor %}
+                <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+                <select name="statut" class="w-full px-4 py-2 border border-gray-300 rounded-lg" onchange="this.form.submit()">
+                    <option value="">Tous les statuts</option>
+                    <option value="en_attente" {% if statut_actif == 'en_attente' %}selected{% endif %}>En attente</option>
+                    <option value="approuve" {% if statut_actif == 'approuve' %}selected{% endif %}>Approuvé</option>
+                    <option value="rejete" {% if statut_actif == 'rejete' %}selected{% endif %}>Rejeté</option>
                 </select>
             </div>
             <div class="flex items-end">
@@ -58,48 +42,55 @@
         </form>
     </div>
 
-    <!-- Liste des résultats -->
+    <!-- Liste des demandes -->
     <div class="bg-white rounded-xl shadow-lg overflow-hidden">
         {% if resultats %}
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prénom</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Promotion</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type d'Examen</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom Complet</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de Naissance</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Publié</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 {% for resultat in resultats %}
                 <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ resultat.nom }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ resultat.prenom }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ resultat.classe }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ resultat.promotion }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        {% if resultat.statut == 'admis' %}
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Admis</span>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full
+                            {% if resultat.type_examen == 'Examen 9AF' %}bg-blue-100 text-blue-800
+                            {% elif resultat.type_examen == 'Bac' %}bg-purple-100 text-purple-800
+                            {% else %}bg-green-100 text-green-800{% endif %}">
+                            {{ resultat.type_examen }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ resultat.nom_complet }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ resultat.date_naissance.strftime('%d/%m/%Y') }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if '@' in resultat.contact %}
+                            <a href="mailto:{{ resultat.contact }}" class="text-blue-600 hover:underline">{{ resultat.contact }}</a>
+                        {% else %}
+                            <a href="https://wa.me/{{ resultat.contact.replace('+', '').replace(' ', '').replace('-', '') }}" target="_blank" class="text-green-600 hover:underline">{{ resultat.contact }}</a>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if resultat.statut == 'approuve' %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Approuvé</span>
                         {% elif resultat.statut == 'en_attente' %}
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">En attente</span>
                         {% else %}
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Non admis</span>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Rejeté</span>
                         {% endif %}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        {% if resultat.publie %}
-                        <span class="text-green-600">✓ Oui</span>
-                        {% else %}
-                        <span class="text-gray-400">✗ Non</span>
-                        {% endif %}
-                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ resultat.date_soumission.strftime('%d/%m/%Y') }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="{{ url_for('resultats_admission.admin_modifier', resultat_id=resultat.id) }}"
-                           class="text-blue-600 hover:text-blue-900 mr-3">Modifier</a>
-                        <button onclick="supprimerResultat({{ resultat.id }}, '{{ resultat.nom }}')"
+                        <a href="{{ url_for('resultats_admission.admin_view', demande_id=resultat.id) }}"
+                           class="text-blue-600 hover:text-blue-900 mr-3">Voir</a>
+                        <button onclick="supprimerDemande({{ resultat.id }}, '{{ resultat.nom_complet }}')"
                                 class="text-red-600 hover:text-red-900">Supprimer</button>
                     </td>
                 </tr>
@@ -111,27 +102,18 @@
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun résultat</h3>
-            <p class="mt-1 text-sm text-gray-500">Commencez par créer un résultat d'admission.</p>
-            <div class="mt-6">
-                <a href="{{ url_for('resultats_admission.admin_nouveau') }}"
-                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Nouveau Résultat
-                </a>
-            </div>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune demande</h3>
+            <p class="mt-1 text-sm text-gray-500">Les demandes d'admission apparaîtront ici.</p>
         </div>
         {% endif %}
     </div>
 </div>
 
 <script>
-function supprimerResultat(resultatId, nom) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le résultat de "${nom}" ?`)) {
-        fetch(`/admission/admin/supprimer/${resultatId}`, {
-            method: 'POST',
+function supprimerDemande(demandeId, nom) {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer la demande de "${nom}" ?`)) {
+        fetch(`/admission/admin/${demandeId}/delete`, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             }
