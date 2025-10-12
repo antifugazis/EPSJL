@@ -92,7 +92,7 @@
          </div>
       </div>
       
-      <div id="root" class="overflow-hidden">
+      <div id="root" class="overflow-y-hidden">
          <!-- Dynamic Announcement Ticker -->
          {% if annonces and annonces|length > 0 %}
          <div class="ticker-wrap w-full">
@@ -302,7 +302,7 @@
          </script>
          {% endif %}
          
-         <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm overflow-x-hidden">
+         <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm zindex-1000">
             <div class="container mx-auto px-4">
                <div class="flex h-20 items-center justify-between">
                      <div class="flex items-center flex-shrink-0">
