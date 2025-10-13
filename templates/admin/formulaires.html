@@ -35,9 +35,9 @@
     <div class="bg-white rounded-xl shadow-lg p-6">
         <div class="flex flex-wrap gap-4">
             <!-- Type de formulaire -->
-            <div class="flex gap-2">
+            <div class="flex gap-2 overflow-x-auto">
                 <a href="{{ url_for('admin.formulaires', type='contacts', statut=statut_actuel) }}" 
-                   class="px-4 py-2 rounded-lg font-medium transition-all {% if type_form == 'contacts' %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                   class="px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap {% if type_form == 'contacts' %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
                     Messages de contact
                 </a>
             </div>
@@ -45,21 +45,21 @@
             <div class="border-l border-gray-300"></div>
 
             <!-- Statut -->
-            <div class="flex gap-2">
+            <div class="flex gap-2 overflow-x-auto">
                 <a href="{{ url_for('admin.formulaires', type=type_form, statut='tous') }}" 
-                   class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'tous' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                   class="px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap {% if statut_actuel == 'tous' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
                     Tous
                 </a>
                 <a href="{{ url_for('admin.formulaires', type=type_form, statut='non_lu') }}" 
-                   class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'non_lu' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                   class="px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap {% if statut_actuel == 'non_lu' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
                     Non lus
                 </a>
                 <a href="{{ url_for('admin.formulaires', type=type_form, statut='non_traite') }}" 
-                   class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'non_traite' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                   class="px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap {% if statut_actuel == 'non_traite' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
                     Non traités
                 </a>
                 <a href="{{ url_for('admin.formulaires', type=type_form, statut='traite') }}" 
-                   class="px-4 py-2 rounded-lg font-medium transition-all {% if statut_actuel == 'traite' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                   class="px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap {% if statut_actuel == 'traite' %}bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
                     Traités
                 </a>
             </div>

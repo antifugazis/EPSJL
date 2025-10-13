@@ -483,3 +483,43 @@ class Newsletter(db.Model):
             'date_inscription': self.date_inscription.strftime('%Y-%m-%d %H:%M') if self.date_inscription else None,
             'actif': self.actif
         }
+
+# Doleance model (pour les doléances/plaintes)
+class Doleance(db.Model):
+    __tablename__ = 'doleances'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nom_complet_eleve = db.Column(db.String(200), nullable=False)
+    classe = db.Column(db.String(50), nullable=False)
+    telephone1 = db.Column(db.String(20), nullable=False)
+    telephone2 = db.Column(db.String(20))
+    email = db.Column(db.String(120))
+    photo_recu = db.Column(db.String(255))
+    description = db.Column(db.Text, nullable=False)
+    statut = db.Column(db.String(20), default='en_attente')  # en_attente, en_cours, resolu, rejete
+    date_soumission = db.Column(db.DateTime, default=datetime.now)
+    date_traitement = db.Column(db.DateTime)
+    reponse_admin = db.Column(db.Text)
+    traite_par = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
+    # Relationship
+    admin = db.relationship('User', backref=db.backref('doleances_traitees', lazy=True))
+    
+    def __repr__(self):
+        return f'<Doleance {self.id}: {self.nom_complet_eleve}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nom_complet_eleve': self.nom_complet_eleve,
+            'classe': self.classe,
+            'telephone1': self.telephone1,
+            'telephone2': self.telephone2,
+            'email': self.email,
+            'photo_recu': self.photo_recu,
+            'description': self.description,
+            'statut': self.statut,
+            'date_soumission': self.date_soumission.strftime('%Y-%m-%d %H:%M') if self.date_soumission else None,
+            'date_traitement': self.date_traitement.strftime('%Y-%m-%d %H:%M') if self.date_traitement else None,
+            'reponse_admin': self.reponse_admin
+        }

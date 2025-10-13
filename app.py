@@ -29,6 +29,7 @@ from modules.archives import archives_blueprint
 from modules.admin import admin_blueprint
 from modules.articles import articles_bp
 from modules.resultats_admission import resultats_admission_bp
+from modules.doleances import doleances_blueprint
 
 # Configuration
 from config import Config
@@ -64,6 +65,7 @@ app.register_blueprint(archives_blueprint)
 app.register_blueprint(admin_blueprint)
 app.register_blueprint(articles_bp)
 app.register_blueprint(resultats_admission_bp)
+app.register_blueprint(doleances_blueprint)
 
 # Home route
 @app.route('/')

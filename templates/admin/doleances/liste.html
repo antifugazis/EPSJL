@@ -1,0 +1,193 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Doléances - Administration{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+    <!-- En-tête -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Gestion des Doléances</h1>
+            <p class="text-gray-600 mt-1">Gérez les doléances et plaintes des parents</p>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Total</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ stats.total }}</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">En attente</p>
+                    <p class="text-2xl font-bold text-orange-600">{{ stats.en_attente }}</p>
+                </div>
+                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">En cours</p>
+                    <p class="text-2xl font-bold text-blue-600">{{ stats.en_cours }}</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Résolu</p>
+                    <p class="text-2xl font-bold text-green-600">{{ stats.resolu }}</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Rejeté</p>
+                    <p class="text-2xl font-bold text-red-600">{{ stats.rejete }}</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ url_for('doleances.admin_liste') }}" 
+               class="px-4 py-2 rounded-lg {% if not statut_actif %}bg-[#00AEEF] text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Tous
+            </a>
+            <a href="{{ url_for('doleances.admin_liste', statut='en_attente') }}" 
+               class="px-4 py-2 rounded-lg {% if statut_actif == 'en_attente' %}bg-orange-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                En attente
+            </a>
+            <a href="{{ url_for('doleances.admin_liste', statut='en_cours') }}" 
+               class="px-4 py-2 rounded-lg {% if statut_actif == 'en_cours' %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                En cours
+            </a>
+            <a href="{{ url_for('doleances.admin_liste', statut='resolu') }}" 
+               class="px-4 py-2 rounded-lg {% if statut_actif == 'resolu' %}bg-green-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Résolu
+            </a>
+            <a href="{{ url_for('doleances.admin_liste', statut='rejete') }}" 
+               class="px-4 py-2 rounded-lg {% if statut_actif == 'rejete' %}bg-red-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Rejeté
+            </a>
+        </div>
+    </div>
+
+    <!-- Liste des doléances -->
+    <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
+        {% if doleances %}
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Élève</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Téléphone</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for doleance in doleances %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ doleance.id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ doleance.nom_complet_eleve }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ doleance.classe }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ doleance.telephone1 }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ doleance.date_soumission.strftime('%d/%m/%Y') }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if doleance.statut == 'en_attente' %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">En attente</span>
+                        {% elif doleance.statut == 'en_cours' %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">En cours</span>
+                        {% elif doleance.statut == 'resolu' %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Résolu</span>
+                        {% elif doleance.statut == 'rejete' %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Rejeté</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <a href="{{ url_for('doleances.admin_details', id=doleance.id) }}" 
+                           class="text-[#00AEEF] hover:text-[#0098d1] mr-3">Voir</a>
+                        <button onclick="supprimerDoleance({{ doleance.id }})" 
+                                class="text-red-600 hover:text-red-900">Supprimer</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="mt-4 text-gray-500">Aucune doléance trouvée</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function supprimerDoleance(id) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette doléance ?')) {
+        fetch(`/doleances/admin/supprimer/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erreur lors de la suppression');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erreur lors de la suppression');
+        });
+    }
+}
+</script>
+{% endblock %}

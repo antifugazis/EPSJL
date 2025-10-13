@@ -54,6 +54,7 @@
                         </button>
                         <div x-show="open" x-transition class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
                             <a href="{{ url_for('admin.formulaires', type='contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages</a>
+                            <a href="{{ url_for('doleances.admin_liste') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Doléances</a>
                             <a href="{{ url_for('admin.newsletters') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Newsletter</a>
                             <a href="{{ url_for('admin.contenu', type='annonces') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Annonces</a>
                         </div>
@@ -167,6 +168,14 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
                                 Messages
+                            </div>
+                        </a>
+                        <a href="{{ url_for('doleances.admin_liste') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Doléances
                             </div>
                         </a>
                         <a href="{{ url_for('admin.newsletters') }}" class="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-[#00AEEF] hover:text-white rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-md">

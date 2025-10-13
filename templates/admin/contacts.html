@@ -3,13 +3,13 @@
 {% block title %}Gestion des Messages - Administration{% endblock %}
 
 {% block content %}
-<div class="p-6">
+<div class="p-6 overflow-scroll">
     <div class="max-w-7xl mx-auto">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Gestion des Messages de Contact</h1>
                     <!-- Filtres -->
-                    <div class="mb-6 bg-white shadow sm:rounded-lg p-4">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                            <div class="flex space-x-2">
+                    <div class="mb-6 bg-white shadow sm:rounded-lg p-4 overflow-scroll">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between overflow-scroll">
+                            <div class="flex space-x-2 overflow-scroll">
                                 <a href="{{ url_for('admin_contacts', statut='tous') }}" 
                                    class="px-3 py-1 rounded-full text-sm font-medium {{ 'bg-blue-100 text-blue-800' if statut_actuel == 'tous' else 'bg-gray-100 text-gray-800 hover:bg-gray-200' }}">
                                     Tous ({{ contacts|length }})

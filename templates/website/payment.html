@@ -46,7 +46,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Type de paiement:</span>
-                            <span class="font-medium">Frais de scolarité, décollage ou autres</span>
+                            <span class="font-medium">Frais de scolarité, d'écolage ou autres</span>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,8 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm text-yellow-700">
-                                Important: Veuillez conserver votre reçu de paiement comme preuve de transaction.
+                                Veuillez conserver votre reçu de paiement comme preuve de transaction.
+Déposez l’original du reçu à l’administration du collège en y inscrivant le nom de l’élève.
                             </p>
                         </div>
                     </div>
@@ -71,69 +72,87 @@
             <div class="bg-white p-8 rounded-xl shadow-lg" data-aos="fade-left">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6">Formulaire de doléance</h2>
                 
-                <form id="payment-form" class="space-y-6" enctype="multipart/form-data">
+                <form method="POST" action="{{ url_for('doleances.formulaire') }}" class="space-y-6" enctype="multipart/form-data">
                     <div>
-                        <label for="student_name" class="block text-sm font-medium text-gray-700">Nom complet de l'élève</label>
-                        <input type="text" id="student_name" name="student_name" required 
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <label for="nom_complet_eleve" class="block text-sm font-medium text-gray-700">Nom complet de l'élève <span class="text-red-500">*</span></label>
+                        <input type="text" id="nom_complet_eleve" name="nom_complet_eleve" required 
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-[#00AEEF]">
                     </div>
 
                     <div>
-                        <label for="class" class="block text-sm font-medium text-gray-700">Classe</label>
-                        <input type="text" id="class" name="class" required
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <label for="classe" class="block text-sm font-medium text-gray-700">Classe <span class="text-red-500">*</span></label>
+                        <select id="classe" name="classe" required
+                                class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-[#00AEEF]">
+                            <option value="">Sélectionnez une classe</option>
+                            <option value="Préscolaire">Préscolaire</option>
+                            <option value="1ère AF">1ère AF</option>
+                            <option value="2ème AF">2ème AF</option>
+                            <option value="3ème AF">3ème AF</option>
+                            <option value="4ème AF">4ème AF</option>
+                            <option value="5ème AF">5ème AF</option>
+                            <option value="6ème AF">6ème AF</option>
+                            <option value="7ème AF">7ème AF</option>
+                            <option value="8ème AF">8ème AF</option>
+                            <option value="9ème AF">9ème AF</option>
+                            <option value="3ème Secondaire">3ème Secondaire</option>
+                            <option value="2ème Secondaire">2ème Secondaire</option>
+                            <option value="1ère Secondaire">1ère Secondaire</option>
+                            <option value="Rhéto">Rhéto</option>
+                            <option value="Philo">Philo</option>
+                        </select>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="phone1" class="block text-sm font-medium text-gray-700">Téléphone 1</label>
-                            <input type="tel" id="phone1" name="phone1" required
-                                   class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <label for="telephone1" class="block text-sm font-medium text-gray-700">Téléphone 1 <span class="text-red-500">*</span></label>
+                            <input type="tel" id="telephone1" name="telephone1" required
+                                   class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-[#00AEEF]">
                         </div>
                         <div>
-                            <label for="phone2" class="block text-sm font-medium text-gray-700">Téléphone 2</label>
-                            <input type="tel" id="phone2" name="phone2"
-                                   class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <label for="telephone2" class="block text-sm font-medium text-gray-700">Téléphone 2</label>
+                            <input type="tel" id="telephone2" name="telephone2"
+                                   class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-[#00AEEF]">
                         </div>
                     </div>
 
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">Adresse email</label>
-                        <input type="email" id="email" name="email" required
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <input type="email" id="email" name="email"
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-[#00AEEF]">
                     </div>
 
                     <div>
-                        <label for="receipt" class="block text-sm font-medium text-gray-700">Photo du reçu</label>
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                        <label for="photo_recu" class="block text-sm font-medium text-gray-700">Photo du reçu</label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#00AEEF] transition-colors">
                             <div class="space-y-1 text-center">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                                 <div class="flex text-sm text-gray-600">
-                                    <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                    <label for="photo_recu" class="relative cursor-pointer bg-white rounded-md font-medium text-[#00AEEF] hover:text-[#0098d1] focus-within:outline-none">
                                         <span>Télécharger un fichier</span>
-                                        <input id="file-upload" name="file-upload" type="file" class="sr-only" accept="image/*">
+                                        <input id="photo_recu" name="photo_recu" type="file" class="sr-only" accept="image/*,.pdf">
                                     </label>
                                     <p class="pl-1">ou glisser-déposer</p>
                                 </div>
-                                <p class="text-xs text-gray-500">
-                                    PNG, JPG, GIF jusqu'à 10MB
-                                </p>
+                                <p class="text-xs text-gray-500">PNG, JPG, GIF, PDF jusqu'à 10MB</p>
+                                <p id="file-name-display" class="text-sm text-[#00AEEF] font-medium mt-2"></p>
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700">Description de la doléance</label>
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description de la doléance <span class="text-red-500">*</span></label>
                         <textarea id="description" name="description" rows="5" required
-                                  class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                  class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00AEEF] focus:border-[#00AEEF]"
+                                  placeholder="Décrivez votre doléance en détail..."></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Minimum 20 caractères</p>
                     </div>
 
                     <div>
                         <button type="submit" 
-                                class="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 font-medium">
-                            Envoyer la doléance
+                                class="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-white bg-[#00AEEF] hover:bg-[#0098d1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00AEEF] font-medium transition-colors">
+                            Soumettre la doléance
                         </button>
                     </div>
                 </form>
@@ -147,95 +166,35 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize AOS animations
-        AOS.init({
-            duration: 800,
-            once: true
-        });
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                duration: 800,
+                once: true
+            });
+        }
 
-        // File upload preview
-        const fileUpload = document.getElementById('file-upload');
-        const uploadContainer = fileUpload.closest('div.flex').parentElement.parentElement;
+        // File upload display
+        const photoRecu = document.getElementById('photo_recu');
+        const fileNameDisplay = document.getElementById('file-name-display');
         
-        fileUpload.addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    // Remove existing preview if any
-                    const existingPreview = uploadContainer.querySelector('.preview-image');
-                    if (existingPreview) {
-                        existingPreview.remove();
-                    }
-                    
-                    // Create preview
-                    const preview = document.createElement('div');
-                    preview.className = 'preview-image mt-3';
-                    preview.innerHTML = `
-                        <div class="relative">
-                            <img src="${e.target.result}" alt="Receipt preview" class="h-32 mx-auto rounded-lg object-cover">
-                            <button type="button" class="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none">
-                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-1">${fileUpload.files[0].name}</p>
-                    `;
-                    
-                    uploadContainer.appendChild(preview);
-                    
-                    // Add remove functionality
-                    const removeButton = preview.querySelector('button');
-                    removeButton.addEventListener('click', function() {
-                        preview.remove();
-                        fileUpload.value = '';
-                    });
-                }
-                
-                reader.readAsDataURL(this.files[0]);
+        photoRecu.addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            if (fileName) {
+                fileNameDisplay.textContent = `Fichier sélectionné: ${fileName}`;
+            } else {
+                fileNameDisplay.textContent = '';
             }
         });
 
-        // Form submission
-        const form = document.getElementById('payment-form');
+        // Form validation
+        const form = document.querySelector('form');
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Here you would normally send the form data to your backend
-            // For now, we'll just show a success message
-            
-            // Create success message
-            const successMessage = document.createElement('div');
-            successMessage.className = 'fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50';
-            successMessage.innerHTML = `
-                <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
-                    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mx-auto">
-                        <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900 mt-4 text-center">Doléance envoyée avec succès!</h3>
-                    <p class="text-gray-600 mt-2 text-center">Votre doléance a bien été envoyée. Veuillez patienter pour un suivi.</p>
-                    <div class="mt-6">
-                        <button type="button" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Fermer
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(successMessage);
-            
-            // Add close functionality
-            const closeButton = successMessage.querySelector('button');
-            closeButton.addEventListener('click', function() {
-                successMessage.remove();
-                form.reset();
-                const preview = document.querySelector('.preview-image');
-                if (preview) {
-                    preview.remove();
-                }
-            });
+            const description = document.getElementById('description').value;
+            if (description.length < 20) {
+                e.preventDefault();
+                alert('La description doit contenir au moins 20 caractères');
+                return false;
+            }
         });
     });
 </script>
