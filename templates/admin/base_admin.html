@@ -317,17 +317,18 @@
         // Delete functions for annonces and actualites
         function deleteAnnonce(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) {
-                fetch(`/admin/annonce/${id}/delete`, {
-                    method: 'POST',
+                fetch(`/admin/contenu/annonce/${id}`, {
+                    method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json',
                     },
                 })
-                .then(response => {
-                    if (response.ok) {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
                         location.reload();
                     } else {
-                        alert('Erreur lors de la suppression');
+                        alert('Erreur lors de la suppression: ' + (data.error || 'Erreur inconnue'));
                     }
                 })
                 .catch(error => {
@@ -339,17 +340,18 @@
 
         function deleteActualite(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?')) {
-                fetch(`/admin/actualite/${id}/delete`, {
-                    method: 'POST',
+                fetch(`/admin/contenu/actualite/${id}`, {
+                    method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json',
                     },
                 })
-                .then(response => {
-                    if (response.ok) {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
                         location.reload();
                     } else {
-                        alert('Erreur lors de la suppression');
+                        alert('Erreur lors de la suppression: ' + (data.error || 'Erreur inconnue'));
                     }
                 })
                 .catch(error => {
