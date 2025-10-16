@@ -314,6 +314,18 @@
     </main>
 
     <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+
         // Delete functions for annonces and actualites
         function deleteAnnonce(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) {

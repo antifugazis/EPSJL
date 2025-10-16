@@ -4,17 +4,17 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Détails de l'annonce</h1>
-        <div class="flex space-x-2">
-            <a href="{{ url_for('communication.annonces') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Détails de l'annonce</h1>
+        <div class="flex flex-col sm:flex-row gap-2">
+            <a href="{{ url_for('communication.annonces') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded text-center">
                 Retour aux annonces
             </a>
             {% if session.get('user_role') in ['admin', 'directeur'] or (session.get('user_id') == annonce.auteur_id and session.get('user_role') == 'professeur') %}
-            <a href="{{ url_for('communication.modifier_annonce', annonce_id=annonce.id) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+            <a href="{{ url_for('communication.modifier_annonce', annonce_id=annonce.id) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded text-center">
                 Modifier
             </a>
-            <button onclick="confirmDelete()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+            <button onclick="confirmDelete()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded text-center">
                 Supprimer
             </button>
             <form id="delete-form" action="{{ url_for('communication.supprimer_annonce', annonce_id=annonce.id) }}" method="POST" class="hidden">
